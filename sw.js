@@ -1,51 +1,44 @@
-const CACHE_NAME = 'expense-manager-v1';
-const ASSETS = [
-  '/expense-manager/',
-  '/expense-manager/index.html',
-  '/expense-manager/manifest.json'
-];
+const CACHE_NAME = 'expense-manager-v2';
 
-// Install — cache all assets
-self.addEventListener('install', function(event) {
-  event.waitUntil(
+self.addEventListener('install', function(e) {
+  e.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(ASSETS);
+      return cache.addAll([
+        '/expense-manager/',
+        '/expense-manager/index.html',
+        '/expense-manager/manifest.json',
+        '/expense-manager/icon.png'
+      ]).catch(function(err) {
+        console.log('Cache addAll error (non-fatal):', err);
+      });
     })
   );
   self.skipWaiting();
 });
 
-// Activate — clean old caches
-self.addEventListener('activate', function(event) {
-  event.waitUntil(
+self.addEventListener('activate', function(e) {
+  e.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(
-        keys.filter(function(key) {
-          return key !== CACHE_NAME;
-        }).map(function(key) {
-          return caches.delete(key);
-        })
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
       );
     })
   );
   self.clients.claim();
 });
 
-// Fetch — serve from cache, fallback to network
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request).then(function(response) {
-      if (response) {
-        return response;
-      }
-      return fetch(event.request).then(function(networkResponse) {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(event.request, responseClone);
-          });
+self.addEventListener('fetch', function(e) {
+  // Only handle GET requests
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(function(cached) {
+      if (cached) return cached;
+      return fetch(e.request).then(function(response) {
+        if (response && response.status === 200 && response.type !== 'opaque') {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
         }
-        return networkResponse;
+        return response;
       }).catch(function() {
         return caches.match('/expense-manager/index.html');
       });

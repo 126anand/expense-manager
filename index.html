@@ -818,38 +818,63 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
 // ==================== DATA STORE ====================
 // ===== PERSISTENT STORAGE =====
 function loadDB() {
+  const empty = { bike:[], kitchen:[], food:[], clothes:[], friends:[], others:[] };
   try {
-    // Try localStorage first
     const saved = localStorage.getItem('expenseDB');
-    if (saved) {
+    if (saved && saved !== 'null' && saved !== 'undefined') {
       const parsed = JSON.parse(saved);
-      // Validate structure
       if (parsed && typeof parsed === 'object') {
-        const base = { bike:[], kitchen:[], food:[], clothes:[], friends:[], others:[] };
-        Object.keys(base).forEach(k => { if (!Array.isArray(parsed[k])) parsed[k] = []; });
+        // Ensure all keys exist and are arrays
+        Object.keys(empty).forEach(k => {
+          if (!Array.isArray(parsed[k])) parsed[k] = [];
+        });
+        const total = Object.values(parsed).reduce((s,a)=>s+a.length,0);
+        console.log('Loaded', total, 'entries from localStorage');
         return parsed;
       }
+    } else {
+      console.log('No saved data found in localStorage');
     }
-  } catch(e) { console.log('Load error:', e); }
-  // Try sessionStorage fallback
+  } catch(e) {
+    console.error('loadDB error:', e);
+  }
+  // sessionStorage fallback
   try {
     const saved2 = sessionStorage.getItem('expenseDB');
-    if (saved2) return JSON.parse(saved2);
+    if (saved2) {
+      console.log('Loading from sessionStorage fallback');
+      return JSON.parse(saved2);
+    }
   } catch(e) {}
-  return { bike:[], kitchen:[], food:[], clothes:[], friends:[], others:[] };
+  console.log('Starting with empty DB');
+  return empty;
 }
 function saveDB() {
   try {
     const data = JSON.stringify(DB);
+    // Test write first
+    localStorage.setItem('expenseDB_test', '1');
+    localStorage.removeItem('expenseDB_test');
+    // Real save
     localStorage.setItem('expenseDB', data);
     localStorage.setItem('expenseBudgets', JSON.stringify(
       Object.fromEntries(Object.entries(budgets).map(([k,v])=>[k,v.budget]))
     ));
     localStorage.setItem('expenseLastSave', new Date().toISOString());
+    // Update header to confirm save
+    const sub = document.getElementById('dash-month');
+    if (sub) {
+      const total = Object.values(DB).reduce((s,a)=>s+a.length,0);
+      const now = new Date();
+      sub.title = 'Saved ' + total + ' entries at ' + now.toLocaleTimeString();
+    }
   } catch(e) {
-    // Try sessionStorage as fallback
-    try { sessionStorage.setItem('expenseDB', JSON.stringify(DB)); } catch(e2) {}
-    console.log('Save error:', e);
+    console.error('SAVE FAILED:', e);
+    // sessionStorage fallback
+    try {
+      sessionStorage.setItem('expenseDB', JSON.stringify(DB));
+      console.log('Saved to sessionStorage instead');
+    } catch(e2) { console.error('sessionStorage also failed:', e2); }
   }
 }
 
@@ -901,8 +926,8 @@ function showScreen(scr) {
 function goTo(scr) {
   if (navStack[navStack.length-1] === scr) return;
   navStack.push(scr);
-  // Push a state so Android back button triggers popstate
-  history.pushState({ scr: scr, stackLen: navStack.length }, '', '');
+  // Use hash so Android back button fires popstate reliably
+  history.pushState({ scr: scr }, '', '#' + scr);
   showScreen(scr);
 }
 
@@ -911,24 +936,26 @@ function goBack() {
     navStack.pop();
   }
   const prev = navStack[navStack.length-1] || 'scr-dashboard';
+  history.replaceState({ scr: prev }, '', prev === 'scr-dashboard' ? '#' : '#' + prev);
   showScreen(prev);
   updateDash();
 }
 
-// Handle Android hardware back button
+// Handle Android hardware back button — fires when user presses physical back
 window.addEventListener('popstate', function(e) {
+  // Always prevent app from closing — handle navigation ourselves
+  const state = e.state;
   if (navStack.length > 1) {
     navStack.pop();
     const prev = navStack[navStack.length-1] || 'scr-dashboard';
     showScreen(prev);
     updateDash();
-    // Push state again so back button still works on dashboard
-    if (prev !== 'scr-dashboard') {
-      history.pushState({ scr: prev, stackLen: navStack.length }, '', '');
-    }
   } else {
-    // Already on dashboard — push state so next back still works
-    history.pushState({ scr: 'scr-dashboard', stackLen: 1 }, '', '');
+    // On dashboard - push a dummy state so next back press fires popstate again
+    // This prevents app from closing
+    showScreen('scr-dashboard');
+    history.pushState({ scr: 'scr-dashboard' }, '', '#home');
+    updateDash();
   }
 });
 
@@ -1763,7 +1790,9 @@ function editEntry(id,mod) {
 function init() {
   loadBudgets();
   // Push initial history state so Android back button works
-  history.replaceState({ scr: 'scr-dashboard', stackLen: 1 }, '', '');
+  // Set initial history state for back button support
+  history.replaceState({ scr: 'scr-dashboard' }, '', '#home');
+  history.pushState({ scr: 'scr-dashboard' }, '', '#home');
   initFoodForms();
   initKChips();
   updateFrChips();
