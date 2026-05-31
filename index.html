@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Life Expense Manager</title>
+<meta name="description" content="Offline personal expense manager">
+<meta name="theme-color" content="#0f0f0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Expense Manager">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
 <link rel="manifest" href="data:application/json,{}">
 <style>
 :root {
@@ -1658,6 +1665,17 @@ function init() {
   switchRpt('daily', document.querySelector('.rpt-tab.on'));
 }
 init();
+</script>
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("sw.js").then(function(reg){
+      console.log("SW registered");
+    }).catch(function(err){
+      console.log("SW failed:", err);
+    });
+  });
+}
 </script>
 </body>
 </html>
