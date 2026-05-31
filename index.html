@@ -819,19 +819,48 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
 // ===== PERSISTENT STORAGE =====
 function loadDB() {
   try {
+    // Try localStorage first
     const saved = localStorage.getItem('expenseDB');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Validate structure
+      if (parsed && typeof parsed === 'object') {
+        const base = { bike:[], kitchen:[], food:[], clothes:[], friends:[], others:[] };
+        Object.keys(base).forEach(k => { if (!Array.isArray(parsed[k])) parsed[k] = []; });
+        return parsed;
+      }
+    }
+  } catch(e) { console.log('Load error:', e); }
+  // Try sessionStorage fallback
+  try {
+    const saved2 = sessionStorage.getItem('expenseDB');
+    if (saved2) return JSON.parse(saved2);
   } catch(e) {}
   return { bike:[], kitchen:[], food:[], clothes:[], friends:[], others:[] };
 }
 function saveDB() {
   try {
-    localStorage.setItem('expenseDB', JSON.stringify(DB));
+    const data = JSON.stringify(DB);
+    localStorage.setItem('expenseDB', data);
     localStorage.setItem('expenseBudgets', JSON.stringify(
       Object.fromEntries(Object.entries(budgets).map(([k,v])=>[k,v.budget]))
     ));
-  } catch(e) { console.log('Save error:', e); }
+    localStorage.setItem('expenseLastSave', new Date().toISOString());
+  } catch(e) {
+    // Try sessionStorage as fallback
+    try { sessionStorage.setItem('expenseDB', JSON.stringify(DB)); } catch(e2) {}
+    console.log('Save error:', e);
+  }
 }
+
+// Auto-save when user leaves/minimizes app
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'hidden') {
+    saveDB();
+  }
+});
+window.addEventListener('pagehide', function() { saveDB(); });
+window.addEventListener('beforeunload', function() { saveDB(); });
 function loadBudgets() {
   try {
     const saved = localStorage.getItem('expenseBudgets');
@@ -860,21 +889,48 @@ let delTarget = null;
 let delMod = null;
 let activeFilter = 'all';
 let navStack = ['scr-dashboard'];
+let isNavigating = false;
 
 // ==================== NAVIGATION ====================
-function goTo(scr) {
+function showScreen(scr) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(scr).classList.add('active');
   document.getElementById(scr).scrollTop = 0;
-  if (navStack[navStack.length-1] !== scr) navStack.push(scr);
 }
+
+function goTo(scr) {
+  if (navStack[navStack.length-1] === scr) return;
+  navStack.push(scr);
+  // Push a state so Android back button triggers popstate
+  history.pushState({ scr: scr, stackLen: navStack.length }, '', '');
+  showScreen(scr);
+}
+
 function goBack() {
-  navStack.pop();
+  if (navStack.length > 1) {
+    navStack.pop();
+  }
   const prev = navStack[navStack.length-1] || 'scr-dashboard';
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(prev).classList.add('active');
+  showScreen(prev);
   updateDash();
 }
+
+// Handle Android hardware back button
+window.addEventListener('popstate', function(e) {
+  if (navStack.length > 1) {
+    navStack.pop();
+    const prev = navStack[navStack.length-1] || 'scr-dashboard';
+    showScreen(prev);
+    updateDash();
+    // Push state again so back button still works on dashboard
+    if (prev !== 'scr-dashboard') {
+      history.pushState({ scr: prev, stackLen: navStack.length }, '', '');
+    }
+  } else {
+    // Already on dashboard — push state so next back still works
+    history.pushState({ scr: 'scr-dashboard', stackLen: 1 }, '', '');
+  }
+});
 
 // ==================== TOAST ====================
 function showToast(msg) {
@@ -1706,6 +1762,8 @@ function editEntry(id,mod) {
 // ==================== INIT ====================
 function init() {
   loadBudgets();
+  // Push initial history state so Android back button works
+  history.replaceState({ scr: 'scr-dashboard', stackLen: 1 }, '', '');
   initFoodForms();
   initKChips();
   updateFrChips();
@@ -1715,17 +1773,37 @@ function init() {
   renderReports();
   // Set default daily report
   switchRpt('daily', document.querySelector('.rpt-tab.on'));
+  // Show data loaded confirmation
+  const totalEntries = Object.values(DB).reduce((s,arr)=>s+arr.length,0);
+  if (totalEntries > 0) {
+    setTimeout(() => showToast('Data loaded: ' + totalEntries + ' entries ✓'), 500);
+  }
+  // Refresh all module histories
+  renderBikeHist(); updateBikeSummary();
+  renderKHist(); updateKSummary();
+  renderFoodHist(); updateFoodSummary(); updateFoodCounts();
+  renderClothesHist(); updateClothesSummary();
+  renderFrHist(); updateFrSummary(); renderFrCards(); updateFrChips();
+  renderOthersHist(); updateOthersSummary();
 }
 init();
 </script>
 <script>
 if("serviceWorker" in navigator){
   window.addEventListener("load", function(){
-    navigator.serviceWorker.register("sw.js").then(function(reg){
-      console.log("SW registered");
-    }).catch(function(err){
-      console.log("SW failed:", err);
-    });
+    // Only register SW on GitHub Pages, not on preview/local URLs
+    const host = window.location.hostname;
+    const isGitHub = host.includes('github.io');
+    const isLocalFile = host === '' || host === 'localhost' || host === '127.0.0.1';
+    if(isGitHub){
+      navigator.serviceWorker.register("sw.js").then(function(reg){
+        console.log("SW registered for offline use");
+      }).catch(function(err){
+        console.log("SW not available:", err.message);
+      });
+    } else {
+      console.log("SW skipped on:", host);
+    }
   });
 }
 </script>
