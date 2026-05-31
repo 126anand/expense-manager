@@ -816,14 +816,33 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
 
 <script>
 // ==================== DATA STORE ====================
-const DB = {
-  bike: [],
-  kitchen: [],
-  food: [],
-  clothes: [],
-  friends: [],
-  others: []
-};
+// ===== PERSISTENT STORAGE =====
+function loadDB() {
+  try {
+    const saved = localStorage.getItem('expenseDB');
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return { bike:[], kitchen:[], food:[], clothes:[], friends:[], others:[] };
+}
+function saveDB() {
+  try {
+    localStorage.setItem('expenseDB', JSON.stringify(DB));
+    localStorage.setItem('expenseBudgets', JSON.stringify(
+      Object.fromEntries(Object.entries(budgets).map(([k,v])=>[k,v.budget]))
+    ));
+  } catch(e) { console.log('Save error:', e); }
+}
+function loadBudgets() {
+  try {
+    const saved = localStorage.getItem('expenseBudgets');
+    if (saved) {
+      const b = JSON.parse(saved);
+      Object.keys(b).forEach(k => { if(budgets[k]) budgets[k].budget = b[k]; });
+    }
+  } catch(e) {}
+}
+
+const DB = loadDB();
 
 const budgets = {
   bike:    { name:'Bike',    emoji:'🏍️', color:'#4caf72', bg:'#1e2a1e', budget:5000 },
@@ -874,6 +893,7 @@ function closeConfirm() { document.getElementById('confirm-ov').classList.remove
 function confirmDel() {
   if (delTarget && delMod) {
     DB[delMod] = DB[delMod].filter(e => e.id !== delTarget);
+    saveDB();
     closeConfirm();
     refreshMod(delMod);
     updateDash();
@@ -1030,6 +1050,7 @@ function savePetrol() {
   if(l===0){document.getElementById('err-pliter').classList.add('show');return;}
   const dist=curr-prev; const mil=parseFloat((dist/l).toFixed(1));
   DB.bike.unshift({id:Date.now(),type:'petrol',date:document.getElementById('p-date').value,liter:l,rate:r,total:t||l*r,dist,mileage:mil,prevMeter:prev,currMeter:curr});
+  saveDB();
   ['p-curr','p-dist','p-liter','p-rate','p-total'].forEach(id=>document.getElementById(id).value='');
   closeBikeForm('petrol'); renderBikeHist(); updateBikeSummary(); updateDash(); showToast('Petrol entry saved ✓');
 }
@@ -1164,6 +1185,7 @@ function saveK(type) {
   const date=document.getElementById(p+'-date').value;
   if(!name||qty===0){document.getElementById('err-'+p).classList.add('show');return;}
   DB.kitchen.unshift({id:Date.now(),type,name,unit,qty,rate,total,date});
+  saveDB();
   document.getElementById(p+'-name').value='';document.getElementById(p+'-qty').value='';document.getElementById(p+'-rate').value='';document.getElementById(p+'-total').value='';
   document.getElementById('hint-'+p).classList.remove('show');
   closeKForm(type); renderKHist(); updateKSummary(); updateKChips(); updateDash(); showToast(name+' saved ✓');
@@ -1264,6 +1286,7 @@ function saveFood(cat) {
   const notes=document.getElementById('f-'+cat+'-notes').value;
   const place=cat==='restaurant'?(document.getElementById('f-restaurant-place')?document.getElementById('f-restaurant-place').value:''):'';
   DB.food.unshift({id:Date.now(),cat,name,qty,rate,total,date,notes,place});
+  saveDB();
   document.getElementById('f-'+cat+'-name').value='';document.getElementById('f-'+cat+'-qty').value='';document.getElementById('f-'+cat+'-rate').value='';document.getElementById('f-'+cat+'-total').value='';document.getElementById('f-'+cat+'-notes').value='';
   document.getElementById('hint-f'+cat).classList.remove('show');
   closeFoodForm(cat); renderFoodHist(); updateFoodSummary(); updateFoodCounts(); updateDash(); showToast(name+' saved ✓');
@@ -1327,6 +1350,7 @@ function saveClothes() {
   const date=document.getElementById('c-date').value||new Date().toISOString().split('T')[0];
   const notes=document.getElementById('c-notes').value;
   DB.clothes.unshift({id:Date.now(),name,qty,price,total,season,shop,date,notes});
+  saveDB();
   ['c-name','c-qty','c-price','c-total','c-shop','c-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('c-season').value='general'; document.getElementById('hint-c').classList.remove('show');
   renderClothesHist(); updateClothesSummary(); updateDash(); showToast(name+' saved ✓');
@@ -1387,6 +1411,7 @@ function saveFr(type) {
   const date=document.getElementById(pref+'-date').value;
   const notes=document.getElementById(pref+'-notes').value;
   DB.friends.unshift({id:Date.now(),type,friend,desc,amount,date,notes});
+  saveDB();
   document.getElementById(pref+'-name').value='';document.getElementById(pref+'-desc').value='';document.getElementById(pref+'-amount').value='';document.getElementById(pref+'-notes').value='';
   closeFrForm(type); renderFrHist(); updateFrSummary(); renderFrCards(); updateFrChips(); updateDash(); showToast('Saved ✓');
 }
@@ -1442,6 +1467,7 @@ function saveOther() {
   const date=document.getElementById('o-date').value||new Date().toISOString().split('T')[0];
   const notes=document.getElementById('o-notes').value;
   DB.others.unshift({id:Date.now(),name,cat,amount,date,notes,total:amount});
+  saveDB();
   document.getElementById('o-name').value='';document.getElementById('o-amount').value='';document.getElementById('o-notes').value='';
   renderOthersHist(); updateOthersSummary(); updateDash(); showToast(name+' saved ✓');
 }
@@ -1508,7 +1534,7 @@ function toggleBudEdit(key) {
 }
 function saveBudget(key) {
   const val=parseFloat(document.getElementById('binput-'+key).value)||0;
-  if(val>0){budgets[key].budget=val;renderBudgetCards();showToast('Budget updated ✓');}
+  if(val>0){budgets[key].budget=val;saveDB();renderBudgetCards();showToast('Budget updated ✓');}
 }
 
 // ==================== SEARCH ====================
@@ -1582,26 +1608,50 @@ function showExpMsg(type) {
 
 // ==================== SETTINGS ====================
 function doBackup() {
-  const prog=document.getElementById('bkp-prog');
-  prog.classList.add('show');
-  document.getElementById('bp-title').textContent='Backing up data...';
-  document.getElementById('bp-st').textContent='Please wait...';
-  const bar=document.getElementById('bp-bar');
-  bar.style.width='0%';
-  setTimeout(()=>{bar.style.width='50%';document.getElementById('bp-st').textContent='Saving entries...';},400);
-  setTimeout(()=>{bar.style.width='100%';document.getElementById('bp-title').textContent='Backup Complete ✓';document.getElementById('bp-st').textContent='All data saved.';document.getElementById('last-bkp').textContent='Last backup: Just now';setTimeout(()=>prog.classList.remove('show'),2000);},1800);
+  try {
+    const data = { DB, budgets: Object.fromEntries(Object.entries(budgets).map(([k,v])=>[k,v.budget])), exportDate: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'expense-backup-' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    document.getElementById('last-bkp').textContent = 'Last backup: ' + new Date().toLocaleTimeString();
+    showToast('Backup downloaded ✓');
+  } catch(e) {
+    showToast('Backup failed: ' + e.message);
+  }
 }
 function doRestore() {
-  const prog=document.getElementById('bkp-prog');
-  prog.classList.add('show');
-  document.getElementById('bp-title').textContent='Restoring...';
-  document.getElementById('bp-bar').style.width='0%';
-  setTimeout(()=>document.getElementById('bp-bar').style.width='100%',400);
-  setTimeout(()=>{document.getElementById('bp-title').textContent='Restored ✓';setTimeout(()=>prog.classList.remove('show'),1500);},1600);
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (data.DB) {
+          Object.keys(data.DB).forEach(k => { if(DB[k] !== undefined) DB[k] = data.DB[k]; });
+          if (data.budgets) Object.keys(data.budgets).forEach(k => { if(budgets[k]) budgets[k].budget = data.budgets[k]; });
+          saveDB();
+          ['bike','kitchen','food','clothes','friends','others'].forEach(m => refreshMod(m));
+          updateDash();
+          showToast('Data restored ✓');
+        }
+      } catch(err) { showToast('Restore failed: invalid file'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 }
 function confirmClearAll() {
   if(confirm('Delete ALL data? This cannot be undone.')) {
     ['bike','kitchen','food','clothes','friends','others'].forEach(m=>DB[m]=[]);
+    saveDB();
     updateDash(); refreshMod('bike'); refreshMod('kitchen'); refreshMod('food'); refreshMod('clothes'); refreshMod('friends'); refreshMod('others');
     showToast('All data cleared');
   }
@@ -1629,6 +1679,7 @@ function editEntry(id,mod) {
   const e=DB[mod].find(x=>x.id===id);
   if(!e) return;
   DB[mod]=DB[mod].filter(x=>x.id!==id);
+  saveDB();
   if(mod==='bike'){
     openBikeForm(e.type);
     if(e.type==='petrol'){document.getElementById('p-date').value=e.date||'';document.getElementById('p-curr').value=e.currMeter||'';document.getElementById('p-liter').value=e.liter||'';document.getElementById('p-rate').value=e.rate||'';document.getElementById('p-total').value=e.total||'';}
@@ -1654,6 +1705,7 @@ function editEntry(id,mod) {
 
 // ==================== INIT ====================
 function init() {
+  loadBudgets();
   initFoodForms();
   initKChips();
   updateFrChips();
