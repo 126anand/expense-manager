@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Life Expense Manager</title>
+<meta name="version" content="1780302754">
 <meta name="theme-color" content="#0f0f0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Expense">
@@ -1722,7 +1723,26 @@ if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
     const host=window.location.hostname;
     if(host.includes('github.io')){
-      navigator.serviceWorker.register('sw.js').then(()=>console.log('SW ok')).catch(e=>console.log('SW:',e.message));
+      navigator.serviceWorker.register('sw.js?v=1780302754').then(reg=>{
+        console.log('SW registered v1780302754');
+        // Force check for updates
+        reg.update();
+        // When new SW is waiting, activate it immediately
+        reg.addEventListener('updatefound',()=>{
+          const newSW=reg.installing;
+          newSW.addEventListener('statechange',()=>{
+            if(newSW.state==='installed'&&navigator.serviceWorker.controller){
+              console.log('New SW ready - reloading');
+              window.location.reload();
+            }
+          });
+        });
+      }).catch(e=>console.log('SW skip:',e.message));
+      // Force reload if controlled by old SW
+      navigator.serviceWorker.addEventListener('controllerchange',()=>{
+        console.log('Controller changed - reloading for new version');
+        window.location.reload();
+      });
     }
   });
 }
