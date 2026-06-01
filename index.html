@@ -245,6 +245,14 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
 .pkey.del{font-size:16px;color:#6699cc}
 .pkey.empty{background:transparent;border-color:transparent;cursor:default}
 .lsetup{display:flex;flex-direction:column;align-items:center;width:100%}
+/* RECOVERY */
+.lpinbtn{font-size:12px;color:#50a0d0;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 16px}
+.rec-box{background:#111;border-radius:12px;padding:13px;border:.5px solid #252525;width:100%;max-width:280px;margin-bottom:9px}
+.rec-box-title{font-size:11px;font-weight:700;margin-bottom:6px}
+.rec-input{width:100%;background:#0d0d0d;border:.5px solid #2a2a2a;border-radius:8px;padding:9px 11px;font-size:13px;color:#e8e8e8;outline:none;font-family:inherit;margin-bottom:8px}
+.rec-input:focus{border-color:#4caf72}
+.rec-btn{width:100%;padding:10px;border-radius:9px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .12s}
+.rec-btn:active{transform:scale(.97)}
 ::-webkit-scrollbar{width:0}
 </style>
 </head>
@@ -286,7 +294,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
     <button class="lpinbtn" id="pinfall" style="display:none" onclick="showPinEntry()">Use PIN instead</button>
   </div>
   <!-- PIN setup -->
-  <div id="lpinsetup" style="display:none;flex-direction:column;align-items:center">
+  <div id="lpinsetup" style="display:none;flex-direction:column;align-items:center;width:100%">
     <div class="llogo">🔢</div>
     <div class="ltit">Set PIN</div>
     <div class="lsub" id="psetupsubtext">Enter a 4-digit PIN</div>
@@ -295,6 +303,17 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
       <div class="pdot" id="psd2"></div><div class="pdot" id="psd3"></div>
     </div>
     <div class="pgrid" id="psetup-grid"></div>
+    <div id="pin-q-section" style="display:none;width:100%;max-width:280px;margin-top:12px">
+      <div style="font-size:11px;color:#6699cc;margin-bottom:7px;text-align:center">Choose a security question:</div>
+      <select id="sec-q-sel" style="width:100%;background:#1a2028;border:.5px solid #2a4a6a;border-radius:9px;padding:10px 12px;font-size:12px;color:#e8e8e8;outline:none;font-family:inherit">
+        <option value="pet">What was your first pet name?</option>
+        <option value="school">What school did you attend?</option>
+        <option value="city">What city were you born in?</option>
+        <option value="mother">What is your mother first name?</option>
+        <option value="friend">Who is your best childhood friend?</option>
+        <option value="food">What is your favourite food?</option>
+      </select>
+    </div>
   </div>
   <!-- PIN entry -->
   <div id="lpinentry" style="display:none;flex-direction:column;align-items:center">
@@ -307,6 +326,49 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
     </div>
     <div class="lmsg err" id="lpinmsg"></div>
     <div class="pgrid" id="pentry-grid"></div>
+    <button class="lpinbtn" id="forgot-pin-btn" style="display:none;color:#e0a030;margin-top:8px" onclick="showForgotPin()">🔑 Forgot PIN?</button>
+  </div>
+  <!-- PIN Setup - with security question -->
+  <!-- RECOVERY SCREEN -->
+  <div id="lrecovery" style="display:none;flex-direction:column;align-items:center;width:100%;padding:0 20px">
+    <div class="llogo">🔑</div>
+    <div class="ltit">Forgot PIN</div>
+    <div class="lsub">Choose a recovery option</div>
+    <div class="rec-box">
+      <div class="rec-box-title" style="color:#4caf72">✅ Option 1 — Security Answer</div>
+      <div style="font-size:11px;color:#6699cc;margin-bottom:8px" id="rec-q-show">No question set</div>
+      <input class="rec-input" type="text" id="rec-answer" placeholder="Your answer...">
+      <button class="rec-btn" style="background:#4caf72;color:#0a1a0a" onclick="verifySecAnswer()">Verify Answer</button>
+    </div>
+    <div class="rec-box">
+      <div class="rec-box-title" style="color:#6070d0">🔢 Option 2 — Recovery Code</div>
+      <div style="font-size:11px;color:#6699cc;margin-bottom:8px">Enter the 8-digit code from setup</div>
+      <input class="rec-input" type="text" id="rec-code" placeholder="e.g. A3B7-X2Y9" maxlength="9" oninput="this.value=this.value.toUpperCase()">
+      <button class="rec-btn" style="background:#6070d0;color:#fff" onclick="verifyRecCode()">Verify Code</button>
+    </div>
+    <div class="rec-box">
+      <div class="rec-box-title" style="color:#e05050">⚠️ Option 3 — Emergency Reset</div>
+      <div style="font-size:11px;color:#aa6666;margin-bottom:8px">Removes lock only. Data is kept safe.</div>
+      <button class="rec-btn" style="background:#2a1010;border:.5px solid #e05050;color:#e05050" onclick="emergencyReset()">Reset Lock (Keep Data)</button>
+    </div>
+    <button class="lpinbtn" onclick="showPinEntry()">← Back to PIN</button>
+  </div>
+  <!-- RECOVERY CODE DISPLAY (shown after PIN setup) -->
+  <div id="lreccode" style="display:none;flex-direction:column;align-items:center;width:100%;padding:0 20px">
+    <div class="llogo">🔑</div>
+    <div class="ltit">Save Recovery Info</div>
+    <div class="lsub">Screenshot or write this down!</div>
+    <div style="background:#1a2028;border-radius:14px;padding:20px;text-align:center;border:.5px solid #2a4a6a;width:100%;max-width:280px;margin-bottom:12px">
+      <div style="font-size:10px;color:#6699cc;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Recovery Code</div>
+      <div style="font-size:26px;font-weight:700;color:#50a0d0;letter-spacing:5px" id="rec-code-show">--------</div>
+    </div>
+    <div style="background:#1a2a1a;border-radius:12px;padding:13px;width:100%;max-width:280px;margin-bottom:12px;border:.5px solid #2a4a2a">
+      <div style="font-size:11px;color:#4caf72;font-weight:700;margin-bottom:7px">📝 Security Question</div>
+      <div style="font-size:12px;color:#6699cc;margin-bottom:8px" id="rec-q-setup-show">—</div>
+      <input class="rec-input" type="text" id="rec-a-setup" placeholder="Your answer (case-insensitive)...">
+    </div>
+    <button onclick="saveRecovery()" style="width:100%;max-width:280px;padding:13px;border-radius:12px;background:#4caf72;border:none;color:#0a1a0a;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px">✅ I Saved It — Continue</button>
+    <div style="font-size:10px;color:#555;text-align:center;max-width:260px">Screenshot this screen. Use the code to unlock if you forget your PIN.</div>
   </div>
 </div>
 
@@ -717,7 +779,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
 
 <script>
 // ============================================================
-// STORAGE — check availability first
+// STORAGE - check availability first
 // ============================================================
 const CAN_STORE=(()=>{try{localStorage.setItem('_t','1');localStorage.removeItem('_t');return true}catch(e){return false}})();
 const CAN_NAV=(()=>{try{history.replaceState(null,'',location.href);return true}catch(e){return false}})();
@@ -856,7 +918,7 @@ function refresh(mod){
 }
 
 // ============================================================
-// HISTORY ITEM BUILDER — always safe, no HTML injection
+// HISTORY ITEM BUILDER - always safe, no HTML injection
 // ============================================================
 function hiItem(e,name,sub,color,mod,badge,bst){
   const amt=fmt(e.total||e.amount||0);
@@ -1198,7 +1260,7 @@ function renderFoodHist(){
   const w=document.getElementById('food-hist');
   if(!DB.food.length){w.innerHTML='<div class="empty">No entries yet</div>';return}
   const bs={home:'background:#1e2a1e;color:#4caf72',restaurant:'background:#2a1e1e;color:#e07050',snacks:'background:#22200f;color:#e0a030',drinks:'background:#1e1e2a;color:#6070d0'};
-  w.innerHTML=DB.food.slice(0,8).map(e=>{const sub=(e.qty>0?e.qty+' × Rs '+e.rate:'—')+(e.place?' | '+e.place:'');return hiItem(e,e.name,sub,FCC[e.cat]||'#e0a030','food',e.cat,bs[e.cat]||'')}).join('');
+  w.innerHTML=DB.food.slice(0,8).map(e=>{const sub=(e.qty>0?e.qty+' × Rs '+e.rate:'-')+(e.place?' | '+e.place:'');return hiItem(e,e.name,sub,FCC[e.cat]||'#e0a030','food',e.cat,bs[e.cat]||'')}).join('');
 }
 function updateFood(){
   const cm=curMonth();
@@ -1304,7 +1366,7 @@ function saveFr(type){
 function renderFrHist(){
   const w=document.getElementById('friends-hist');
   if(!DB.friends.length){w.innerHTML='<div class="empty">No entries yet</div>';return}
-  w.innerHTML=DB.friends.slice(0,8).map(e=>{const clr=e.type==='spent'?'#e07090':'#50c080';const bst=e.type==='spent'?'background:#2a1a1e;color:#e07090':'background:#1a2a1e;color:#50c080';return hiItem(e,e.friend||'Friend',e.desc||'—',clr,'friends',e.type,bst)}).join('');
+  w.innerHTML=DB.friends.slice(0,8).map(e=>{const clr=e.type==='spent'?'#e07090':'#50c080';const bst=e.type==='spent'?'background:#2a1a1e;color:#e07090':'background:#1a2a1e;color:#50c080';return hiItem(e,e.friend||'Friend',e.desc||'-',clr,'friends',e.type,bst)}).join('');
 }
 function updateFr(){
   const spent=DB.friends.filter(e=>e.type==='spent').reduce((s,e)=>s+e.amount,0);
@@ -1335,7 +1397,7 @@ function saveO(){
 function renderOHist(){
   const w=document.getElementById('others-hist');
   if(!DB.others.length){w.innerHTML='<div class="empty">No entries yet</div>';return}
-  w.innerHTML=DB.others.slice(0,8).map(e=>hiItem(e,(CEMOJI[e.cat]||'📦')+' '+e.name,e.notes||'—','#50a0d0','others',e.cat,'background:#1a2028;color:#50a0d0')).join('');
+  w.innerHTML=DB.others.slice(0,8).map(e=>hiItem(e,(CEMOJI[e.cat]||'📦')+' '+e.name,e.notes||'-','#50a0d0','others',e.cat,'background:#1a2028;color:#50a0d0')).join('');
 }
 function updateO(){
   const cm=curMonth();
@@ -1380,7 +1442,7 @@ function allData(){
   DB.kitchen.forEach(e=>all.push({mod:'kitchen',name:e.name,detail:e.qty+' '+e.unit+' @ Rs '+e.rate,amount:e.total||0,date:e.date,color:'#e07050'}));
   DB.food.forEach(e=>all.push({mod:'food',name:e.name,detail:e.cat+(e.place?' | '+e.place:''),amount:e.total||0,date:e.date,color:FCC[e.cat]||'#e0a030'}));
   DB.clothes.forEach(e=>all.push({mod:'clothes',name:e.name,detail:e.qty+' pc @ Rs '+e.price+(e.shop?' | '+e.shop:''),amount:e.total||0,date:e.date,color:'#6070d0'}));
-  DB.friends.forEach(e=>all.push({mod:'friends',name:e.friend||'Friend',detail:(e.type==='spent'?'Spent: ':'Gave: ')+(e.desc||'—'),amount:e.amount||0,date:e.date,color:e.type==='spent'?'#e07090':'#50c080'}));
+  DB.friends.forEach(e=>all.push({mod:'friends',name:e.friend||'Friend',detail:(e.type==='spent'?'Spent: ':'Gave: ')+(e.desc||'-'),amount:e.amount||0,date:e.date,color:e.type==='spent'?'#e07090':'#50c080'}));
   DB.others.forEach(e=>all.push({mod:'others',name:e.name,detail:e.cat+(e.notes?' | '+e.notes:''),amount:e.amount||0,date:e.date,color:'#50a0d0'}));
   return all;
 }
@@ -1390,7 +1452,7 @@ function doSearch(){
   if(!q){res.innerHTML='<div class="nores">Type to search all modules</div>';return}
   const filtered=allData().filter(d=>(srFilter==='all'||d.mod===srFilter)&&(d.name.toLowerCase().includes(q)||d.detail.toLowerCase().includes(q)));
   if(!filtered.length){res.innerHTML='<div class="nores">No results for "'+esc(q)+'"</div>';return}
-  res.innerHTML=filtered.slice(0,20).map(d=>'<div class="sri"><div><div class="srmod">'+MEMI[d.mod]+' '+d.mod+'</div><div class="srn">'+esc(d.name)+'</div><div class="srd">'+esc(d.detail)+'</div></div><div style="text-align:right"><div class="sramt" style="color:'+d.color+'">Rs '+fmt(d.amount)+'</div><div class="srdt">'+esc(d.date||'—')+'</div></div></div>').join('');
+  res.innerHTML=filtered.slice(0,20).map(d=>'<div class="sri"><div><div class="srmod">'+MEMI[d.mod]+' '+d.mod+'</div><div class="srn">'+esc(d.name)+'</div><div class="srd">'+esc(d.detail)+'</div></div><div style="text-align:right"><div class="sramt" style="color:'+d.color+'">Rs '+fmt(d.amount)+'</div><div class="srdt">'+esc(d.date||'-')+'</div></div></div>').join('');
 }
 
 // ============================================================
@@ -1405,6 +1467,7 @@ function renderReports(){
 }
 function switchR(p,btn){
   document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');
+  window._period=p; // store for export
   const tots=window._rtots||{};
   const grand=Object.values(tots).reduce((a,b)=>a+b,0);
   const lbls={daily:"Today's Total",weekly:"This Week",monthly:"This Month",yearly:"This Year"};
@@ -1415,14 +1478,196 @@ function switchR(p,btn){
   const mi=[{k:'bike',c:'#4caf72',n:'Bike'},{k:'kitchen',c:'#e07050',n:'Kitchen'},{k:'food',c:'#e0a030',n:'Food'},{k:'clothes',c:'#6070d0',n:'Clothes'},{k:'friends',c:'#d05090',n:'Friends'},{k:'others',c:'#50a0d0',n:'Others'}];
   document.getElementById('rrows').innerHTML=mi.filter(m=>tots[m.k]>0).map(m=>'<div class="rrow"><div class="rrl"><div class="rdot" style="background:'+m.c+'"></div>'+m.n+'</div><div class="rrv">Rs '+fmt(tots[m.k])+'</div></div>').join('')||'<div style="color:#333;font-size:12px;padding:8px 0">No data yet</div>';
 }
-function doExp(type){
-  try{const data={DB,budgets:Object.fromEntries(Object.entries(BUD).map(([k,v])=>[k,v.b])),exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='expense-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url);toast('Backup downloaded ✓')}catch(e){toast('Download: use Backup in Settings')}
-  const el=document.getElementById('expmsg');el.style.display='block';el.textContent='✓ Use Backup in Settings to export data';setTimeout(()=>el.style.display='none',3000);
+function getFilteredEntries(period){
+  const now=new Date();
+  const todayStr=today();
+  const cm=curMonth();
+  const cy=curYear();
+  // Get week start (Monday)
+  const weekStart=new Date(now);
+  weekStart.setDate(now.getDate()-now.getDay()+1);
+  const wsStr=weekStart.toISOString().split('T')[0];
+  const mods=['bike','kitchen','food','clothes','friends','others'];
+  const all=[];
+  mods.forEach(function(mod){
+    DB[mod].forEach(function(e){
+      const d=e.date||'';
+      let include=false;
+      if(period==='daily') include=d===todayStr;
+      else if(period==='weekly') include=d>=wsStr&&d<=todayStr;
+      else if(period==='monthly') include=d.startsWith(cm);
+      else if(period==='yearly') include=d.startsWith(cy);
+      if(include) all.push(Object.assign({},e,{mod:mod}));
+    });
+  });
+  all.sort(function(a,b){return (b.date||'').localeCompare(a.date||'')});
+  return all;
 }
 
-// ============================================================
-// SETTINGS
-// ============================================================
+function doExp(type){
+  const period=window._period||'monthly';
+  const entries=getFilteredEntries(period);
+  const periodLabel={daily:"Today",weekly:"This Week",monthly:"This Month",yearly:"This Year"}[period]||"Report";
+
+  if(type==='PDF'){
+    exportPDF(entries, periodLabel, period);
+  } else {
+    exportExcel(entries, periodLabel, period);
+  }
+}
+
+function exportPDF(entries, periodLabel, period){
+  if(!entries.length){toast('No entries for this period');return}
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  const timeStr=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  const grandTotal=entries.reduce(function(s,e){return s+(e.total||e.amount||0)},0);
+  const modColors={bike:'#4caf72',kitchen:'#e07050',food:'#e0a030',clothes:'#6070d0',friends:'#d05090',others:'#50a0d0'};
+  const modEmoji={bike:'🏍️',kitchen:'🍳',food:'🍔',clothes:'👕',friends:'👥',others:'📦'};
+
+  // Group by module
+  const byMod={};
+  entries.forEach(function(e){if(!byMod[e.mod])byMod[e.mod]=[];byMod[e.mod].push(e)});
+
+  // Build rows
+  let rows='';
+  let rowNum=1;
+  entries.forEach(function(e){
+    const amt=e.total||e.amount||0;
+    let name='';let detail='';
+    if(e.mod==='bike'){name=(e.type==='petrol'?'Petrol':e.name||e.type);detail=e.type==='petrol'?(e.liter+'L @ Rs '+e.rate):(e.notes||'')}
+    else if(e.mod==='kitchen'){name=e.name;detail=e.qty+' '+e.unit+' @ Rs '+e.rate}
+    else if(e.mod==='food'){name=e.name;detail=e.cat+(e.place?' | '+e.place:'')}
+    else if(e.mod==='clothes'){name=e.name;detail=e.qty+' pc @ Rs '+e.price}
+    else if(e.mod==='friends'){name=e.friend||'Friend';detail=(e.type==='spent'?'Spent: ':'Gave: ')+(e.desc||'')}
+    else if(e.mod==='others'){name=e.name;detail=e.cat}
+    const bg=rowNum%2===0?'#1a1a1a':'#141414';
+    rows+='<tr style="background:'+bg+'">'
+      +'<td style="padding:7px 10px;color:#666;font-size:11px;text-align:center">'+rowNum+'</td>'
+      +'<td style="padding:7px 10px;color:#888;font-size:10px">'+e.date+'</td>'
+      +'<td style="padding:7px 10px;font-size:12px">'+modEmoji[e.mod]+' <span style="color:'+modColors[e.mod]+'">'+e.mod+'</span></td>'
+      +'<td style="padding:7px 10px;font-size:12px;color:#e8e8e8;font-weight:600">'+esc(name)+'</td>'
+      +'<td style="padding:7px 10px;font-size:11px;color:#888">'+esc(detail)+'</td>'
+      +'<td style="padding:7px 10px;font-size:12px;color:#4caf72;font-weight:700;text-align:right">Rs '+fmt(amt)+'</td>'
+      +'</tr>';
+    rowNum++;
+  });
+
+  // Category summary
+  let summaryRows='';
+  const modTotals={};
+  entries.forEach(function(e){modTotals[e.mod]=(modTotals[e.mod]||0)+(e.total||e.amount||0)});
+  Object.entries(modTotals).sort(function(a,b){return b[1]-a[1]}).forEach(function(kv){
+    summaryRows+='<tr>'
+      +'<td style="padding:6px 12px;color:#aaa;font-size:12px">'+modEmoji[kv[0]]+' '+kv[0]+'</td>'
+      +'<td style="padding:6px 12px;text-align:right;color:'+modColors[kv[0]]+';font-size:12px;font-weight:700">Rs '+fmt(kv[1])+'</td>'
+      +'</tr>';
+  });
+
+  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Expense Report - '+periodLabel+'</title>'
+    +'<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0f0f0f;color:#e8e8e8;font-family:-apple-system,Arial,sans-serif;padding:20px}'
+    +'@media print{body{background:#fff;color:#000}.no-print{display:none}td,th{color:#000!important}}'
+    +'table{width:100%;border-collapse:collapse}.card{background:#1a1a1a;border-radius:12px;padding:16px;border:1px solid #252525}'
+    +'</style></head><body>'
+    +'<div style="text-align:center;margin-bottom:24px">'
+    +'<div style="font-size:32px;margin-bottom:8px">💰</div>'
+    +'<div style="font-size:22px;font-weight:700;color:#fff">Life Expense Manager</div>'
+    +'<div style="font-size:14px;color:#4caf72;margin-top:4px">'+periodLabel+' Report</div>'
+    +'<div style="font-size:11px;color:#666;margin-top:4px">Generated: '+dateStr+' at '+timeStr+'</div>'
+    +'</div>'
+    // Grand total banner
+    +'<div style="background:linear-gradient(135deg,#1e2a1e,#1a2a1a);border-radius:12px;padding:16px;text-align:center;border:1px solid #4caf72;margin-bottom:20px">'
+    +'<div style="font-size:11px;color:#4caf72;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Total Expenses - '+periodLabel+'</div>'
+    +'<div style="font-size:32px;font-weight:700;color:#4caf72">Rs '+fmt(grandTotal)+'</div>'
+    +'<div style="font-size:11px;color:#666;margin-top:4px">'+entries.length+' transactions</div>'
+    +'</div>'
+    // Category summary
+    +'<div class="card" style="margin-bottom:20px">'
+    +'<div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:700">Category Summary</div>'
+    +'<table><tbody>'+summaryRows+'</tbody></table>'
+    +'</div>'
+    // Detailed entries
+    +'<div class="card">'
+    +'<div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:700">All Transactions</div>'
+    +'<table>'
+    +'<thead><tr style="background:#252525">'
+    +'<th style="padding:8px 10px;text-align:center;font-size:10px;color:#888;text-transform:uppercase">#</th>'
+    +'<th style="padding:8px 10px;font-size:10px;color:#888;text-transform:uppercase">Date</th>'
+    +'<th style="padding:8px 10px;font-size:10px;color:#888;text-transform:uppercase">Category</th>'
+    +'<th style="padding:8px 10px;font-size:10px;color:#888;text-transform:uppercase">Name</th>'
+    +'<th style="padding:8px 10px;font-size:10px;color:#888;text-transform:uppercase">Details</th>'
+    +'<th style="padding:8px 10px;font-size:10px;color:#888;text-transform:uppercase;text-align:right">Amount</th>'
+    +'</tr></thead>'
+    +'<tbody>'+rows+'</tbody>'
+    +'<tfoot><tr style="background:#1e2a1e;border-top:1px solid #4caf72">'
+    +'<td colspan="5" style="padding:10px;font-weight:700;color:#4caf72;font-size:13px">GRAND TOTAL</td>'
+    +'<td style="padding:10px;font-weight:700;color:#4caf72;font-size:15px;text-align:right">Rs '+fmt(grandTotal)+'</td>'
+    +'</tr></tfoot>'
+    +'</table></div>'
+    +'<div style="text-align:center;margin-top:20px;font-size:10px;color:#333">Life Expense Manager - '+dateStr+'</div>'
+    +'<div class="no-print" style="text-align:center;margin-top:16px">'
+    +'<button onclick="window.print()" style="background:#4caf72;color:#0a1a0a;border:none;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">🖨️ Print / Save as PDF</button>'
+    +'</div>'
+    +'</body></html>';
+
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const w=window.open(url,'_blank');
+  if(!w){
+    // Fallback: direct download
+    const a=document.createElement('a');a.href=url;a.download='expense-report-'+periodLabel.toLowerCase().replace(/ /g,'-')+'-'+today()+'.html';a.click();
+  }
+  URL.revokeObjectURL(url);
+  toast('PDF report opened ✓');
+}
+
+function exportExcel(entries, periodLabel, period){
+  if(!entries.length){toast('No entries for this period');return}
+  const grandTotal=entries.reduce(function(s,e){return s+(e.total||e.amount||0)},0);
+  const modTotals={};
+  entries.forEach(function(e){modTotals[e.mod]=(modTotals[e.mod]||0)+(e.total||e.amount||0)});
+  const safe=function(s){const str=String(s||'');return str.includes(',')?'"'+str+'"':str};
+  const NL='\n';
+  const rows=[];
+  rows.push('Life Expense Manager - '+periodLabel+' Report');
+  rows.push('Generated:,'+new Date().toLocaleString());
+  rows.push('Period:,'+periodLabel);
+  rows.push('Total Entries:,'+entries.length);
+  rows.push('Grand Total:,Rs '+grandTotal);
+  rows.push('');
+  rows.push('CATEGORY SUMMARY');
+  rows.push('Category,Total Amount,Transactions');
+  Object.entries(modTotals).sort(function(a,b){return b[1]-a[1]}).forEach(function(kv){
+    const cnt=entries.filter(function(e){return e.mod===kv[0]}).length;
+    rows.push(kv[0]+','+kv[1]+','+cnt);
+  });
+  rows.push('');
+  rows.push('DETAILED TRANSACTIONS');
+  rows.push('No.,Date,Category,Name,Details,Qty,Rate,Amount');
+  entries.forEach(function(e,i){
+    let name='',detail='',qty='',rate='';
+    const amt=e.total||e.amount||0;
+    if(e.mod==='bike'){name=e.type==='petrol'?'Petrol':(e.name||e.type);detail=e.type==='petrol'?(e.liter+'L @ Rs '+e.rate):(e.notes||'');qty=e.liter||'';rate=e.rate||''}
+    else if(e.mod==='kitchen'){name=e.name;detail=e.unit;qty=e.qty;rate=e.rate}
+    else if(e.mod==='food'){name=e.name;detail=e.cat+(e.place?' | '+e.place:'');qty=e.qty||'';rate=e.rate||''}
+    else if(e.mod==='clothes'){name=e.name;detail=e.season;qty=e.qty;rate=e.price}
+    else if(e.mod==='friends'){name=e.friend||'Friend';detail=(e.type==='spent'?'Spent':'Gave')+(e.desc?' - '+e.desc:'');qty='';rate=''}
+    else if(e.mod==='others'){name=e.name;detail=e.cat+(e.notes?' - '+e.notes:'');qty='';rate=''}
+    rows.push((i+1)+','+safe(e.date)+','+safe(e.mod)+','+safe(name)+','+safe(detail)+','+safe(qty)+','+safe(rate)+','+amt);
+  });
+  rows.push('');
+  rows.push('GRAND TOTAL,,,,,,,'+grandTotal);
+  const BOM='\uFEFF';
+  const csv=BOM+rows.join(NL);
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='expense-report-'+period+'-'+today()+'.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Excel file downloaded ✓');
+}
 function toggleTheme(el){el.classList.toggle('on');document.body.classList.toggle('light',!el.classList.contains('on'));PREF.dark=el.classList.contains('on');save()}
 function savePref(){PREF.currency=document.getElementById('csel').value;save()}
 function doBackup(){
@@ -1518,8 +1763,22 @@ function psk(k){
   updPDots('psd');
   if(psCurr.length===4){
     setTimeout(()=>{
-      if(psPhase===0){psFirst=psCurr;psCurr='';psPhase=1;document.getElementById('psetupsubtext').textContent='Confirm your PIN';updPDots('psd')}
-      else if(psCurr===psFirst){LOCK.type='pin';LOCK.pin=hpin(psCurr);save();psCurr='';unlockApp()}
+      if(psPhase===0){psFirst=psCurr;psCurr='';psPhase=1;document.getElementById('psetupsubtext').textContent='Confirm your PIN';updPDots('psd');document.getElementById('pin-q-section').style.display='block'}
+      else if(psCurr===psFirst){
+        LOCK.type='pin';LOCK.pin=hpin(psCurr);
+        LOCK.recoveryCode=genRecCode();
+        const qSel=document.getElementById('sec-q-sel');
+        if(qSel)LOCK.secQuestion=qSel.value;
+        save();psCurr='';
+        // Show recovery code screen
+        document.getElementById('lpinsetup').style.display='none';
+        document.getElementById('lreccode').style.display='flex';
+        document.getElementById('rec-code-show').textContent=LOCK.recoveryCode;
+        const qShow=document.getElementById('rec-q-setup-show');
+        if(qShow&&LOCK.secQuestion)qShow.textContent=RQ[LOCK.secQuestion]||'-';
+        document.getElementById('pin-q-section').style.display='none';
+        const raEl=document.getElementById('rec-a-setup');if(raEl)raEl.value='';
+      }
       else{psCurr='';psFirst='';psPhase=0;document.getElementById('psetupsubtext').textContent="PINs don't match. Try again.";updPDots('psd')}
     },100);
   }
@@ -1539,7 +1798,12 @@ function pek(k){
   if(peCurr.length===4){
     setTimeout(()=>{
       if(hpin(peCurr)===LOCK.pin){peAttempts=0;peCurr='';const m=document.getElementById('lpinmsg');if(m){m.textContent='';m.className='lmsg err'};unlockApp()}
-      else{peAttempts++;peCurr='';updPDots('ped');const m=document.getElementById('lpinmsg');if(m){m.textContent='Wrong PIN'+(peAttempts>=3?' ('+peAttempts+' attempts)':'');m.className='lmsg err'}}
+      else{
+        peAttempts++;peCurr='';updPDots('ped');
+        const m=document.getElementById('lpinmsg');
+        if(m){m.textContent='Wrong PIN'+(peAttempts>=3?' - '+peAttempts+' attempts':'');m.className='lmsg err'}
+        if(peAttempts>=3){const fb=document.getElementById('forgot-pin-btn');if(fb)fb.style.display='block'}
+      }
     },100);
   }
 }
@@ -1555,6 +1819,81 @@ function buildPGrid(gridId,fn){
     if(k==='del')return '<div class="pkey del" onclick="'+fn+'(\'del\')">⌫</div>';
     return '<div class="pkey" onclick="'+fn+'(\''+k+'\')">'+k+'</div>';
   }).join('');
+}
+
+// ============================================================
+// PIN RECOVERY
+// ============================================================
+const RQ = {
+  pet:"What was your first pet name?",
+  school:"What school did you attend?",
+  city:"What city were you born in?",
+  mother:"What is your mother first name?",
+  friend:"Who is your best childhood friend?",
+  food:"What is your favourite food?"
+};
+
+function genRecCode(){
+  const ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code='';
+  for(let i=0;i<8;i++){
+    if(i===4)code+='-';
+    code+=ch[Math.floor(Math.random()*ch.length)];
+  }
+  return code;
+}
+
+function showForgotPin(){
+  ['lpinentry','lbio','lsetup','lpinsetup'].forEach(function(id){
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  document.getElementById('lrecovery').style.display='flex';
+  const qEl=document.getElementById('rec-q-show');
+  if(qEl)qEl.textContent=LOCK.secQuestion?RQ[LOCK.secQuestion]||'-':'No question set';
+  const raEl=document.getElementById('rec-answer');if(raEl)raEl.value='';
+  const rcEl=document.getElementById('rec-code');if(rcEl)rcEl.value='';
+}
+
+function verifySecAnswer(){
+  const ans=document.getElementById('rec-answer').value.trim().toLowerCase();
+  if(!ans){toast('Enter your answer');return}
+  if(!LOCK.secAnswer){toast('No security question was set');return}
+  if(hpin(ans)===LOCK.secAnswer){toast('Correct! Set new PIN');setTimeout(startNewPin,500)}
+  else{toast('Wrong answer. Try recovery code.');document.getElementById('rec-answer').value=''}
+}
+
+function verifyRecCode(){
+  const code=document.getElementById('rec-code').value.trim().toUpperCase();
+  if(!code){toast('Enter recovery code');return}
+  if(code===LOCK.recoveryCode){toast('Correct! Set new PIN');setTimeout(startNewPin,500)}
+  else{toast('Wrong code. Try emergency reset.');document.getElementById('rec-code').value=''}
+}
+
+function emergencyReset(){
+  if(!confirm('Remove the lock? Your data stays safe.')){return}
+  LOCK.type='none';LOCK.pin=null;LOCK.credential=null;
+  LOCK.secQuestion=null;LOCK.secAnswer=null;LOCK.recoveryCode=null;
+  save();unlockApp();toast('Lock removed. Data safe ✓');
+}
+
+function startNewPin(){
+  ['lrecovery','lbio','lsetup','lpinentry'].forEach(function(id){
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  LOCK.type=null;LOCK.pin=null;
+  document.getElementById('lpinsetup').style.display='flex';
+  document.getElementById('psetupsubtext').textContent='Set a new 4-digit PIN';
+  psPhase=0;psFirst='';psCurr='';updPDots('psd');buildPGrid('psetup-grid','psk');
+}
+
+function saveRecovery(){
+  const ans=document.getElementById('rec-a-setup').value.trim().toLowerCase();
+  if(!ans){toast('Enter your security answer first');return}
+  LOCK.secAnswer=hpin(ans);
+  save();
+  document.getElementById('lreccode').style.display='none';
+  unlockApp();
+  toast('PIN set with recovery ✓');
 }
 
 // ============================================================
