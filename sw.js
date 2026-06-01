@@ -1,47 +1,34 @@
-const CACHE_NAME = 'expense-manager-v2';
+const CACHE = 'expense-v3';
+const FILES = [
+  '/expense-manager/',
+  '/expense-manager/index.html',
+  '/expense-manager/manifest.json',
+  '/expense-manager/icon.png'
+];
 
-self.addEventListener('install', function(e) {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll([
-        '/expense-manager/',
-        '/expense-manager/index.html',
-        '/expense-manager/manifest.json',
-        '/expense-manager/icon.png'
-      ]).catch(function(err) {
-        console.log('Cache addAll error (non-fatal):', err);
-      });
-    })
-  );
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES).catch(()=>{})));
   self.skipWaiting();
 });
 
-self.addEventListener('activate', function(e) {
-  e.waitUntil(
-    caches.keys().then(function(keys) {
-      return Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-      );
-    })
-  );
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(
+    keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+  )));
   self.clients.claim();
 });
 
-self.addEventListener('fetch', function(e) {
-  // Only handle GET requests
-  if (e.request.method !== 'GET') return;
+self.addEventListener('fetch', e => {
+  if(e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      if (cached) return cached;
-      return fetch(e.request).then(function(response) {
-        if (response && response.status === 200 && response.type !== 'opaque') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+    caches.match(e.request).then(cached => {
+      if(cached) return cached;
+      return fetch(e.request).then(res => {
+        if(res && res.status === 200 && res.type !== 'opaque') {
+          caches.open(CACHE).then(c => c.put(e.request, res.clone()));
         }
-        return response;
-      }).catch(function() {
-        return caches.match('/expense-manager/index.html');
-      });
+        return res;
+      }).catch(() => caches.match('/expense-manager/index.html'));
     })
   );
 });

@@ -1,7 +1,7 @@
 {
   "name": "Life Expense Manager",
-  "short_name": "Expense Manager",
-  "description": "Offline personal expense and inventory manager",
+  "short_name": "Expense",
+  "description": "Offline personal expense manager",
   "start_url": "/expense-manager/",
   "display": "standalone",
   "background_color": "#0f0f0f",
