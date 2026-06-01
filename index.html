@@ -31,6 +31,18 @@
   --friends: #d05090;
   --others: #50a0d0;
 }
+body.light-mode {
+  --bg: #f5f5f5;
+  --bg2: #ffffff;
+  --bg3: #f0f0f0;
+  --border: #e0e0e0;
+  --border2: #d0d0d0;
+  --text: #1a1a1a;
+  --text2: #444;
+  --text3: #777;
+  --text4: #999;
+  --text5: #888;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; background: var(--bg); }
 body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; color: var(--text); overscroll-behavior: none; }
@@ -348,7 +360,7 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
   </div>
 
   <div class="slabel">Quick Actions</div>
-  <div class="grid2" style="margin-bottom:0.5rem;">
+  <div class="grid3" style="margin-bottom:0.5rem;">
     <div class="card clickable" style="display:flex;align-items:center;gap:9px;" onclick="goTo('scr-search')">
       <span style="font-size:18px;">🔍</span><span style="font-size:13px;color:var(--text2);">Search</span>
     </div>
@@ -357,9 +369,6 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
     </div>
     <div class="card clickable" style="display:flex;align-items:center;gap:9px;" onclick="goTo('scr-reports')">
       <span style="font-size:18px;">📊</span><span style="font-size:13px;color:var(--text2);">Reports</span>
-    </div>
-    <div class="card clickable" style="display:flex;align-items:center;gap:9px;" onclick="goTo('scr-settings')">
-      <span style="font-size:18px;">⚙️</span><span style="font-size:13px;color:var(--text2);">Settings</span>
     </div>
   </div>
 </div>
@@ -736,22 +745,18 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
     <div class="set-row">
       <div class="set-icon" style="background:#1e1e2a;">🌙</div>
       <div class="set-lbl"><div class="set-title">Dark Mode</div><div class="set-sub">Currently active</div></div>
-      <div class="toggle on" id="tog-dark" onclick="this.classList.toggle('on')"><div class="toggle-k"></div></div>
+      <div class="toggle on" id="tog-dark" onclick="toggleDarkMode(this)"><div class="toggle-k"></div></div>
     </div>
   </div>
 
   <div class="set-group">
-    <div class="set-group-title">Currency & Language</div>
+    <div class="set-group-title">Currency</div>
     <div class="set-row">
       <div class="set-icon" style="background:#1e2a1e;">💰</div>
       <div class="set-lbl"><div class="set-title">Currency</div><div class="set-sub">Select your currency</div></div>
       <select class="cur-sel"><option value="Rs">Rs (NPR)</option><option value="₹">₹ (INR)</option><option value="$">$ (USD)</option><option value="€">€ (EUR)</option></select>
     </div>
-    <div class="set-row">
-      <div class="set-icon" style="background:#2a241a;">🌐</div>
-      <div class="set-lbl"><div class="set-title">Language</div><div class="set-sub">English</div></div>
-      <span style="color:#333;font-size:14px;">›</span>
-    </div>
+
   </div>
 
   <div class="set-group">
@@ -786,11 +791,7 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
       <div class="set-lbl"><div class="set-title">Service Reminders</div><div class="set-sub">Oil, full service</div></div>
       <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-k"></div></div>
     </div>
-    <div class="set-row">
-      <div class="set-icon" style="background:#2a1e1e;">📋</div>
-      <div class="set-lbl"><div class="set-title">Insurance & Tax</div><div class="set-sub">Renewal reminders</div></div>
-      <div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-k"></div></div>
-    </div>
+
   </div>
 
   <div class="set-group">
@@ -1677,6 +1678,22 @@ function showExpMsg(type) {
 }
 
 // ==================== SETTINGS ====================
+function toggleDarkMode(el) {
+  el.classList.toggle('on');
+  const isDark = el.classList.contains('on');
+  document.body.classList.toggle('light-mode', !isDark);
+  try { localStorage.setItem('darkMode', isDark ? '1' : '0'); } catch(e) {}
+}
+function loadTheme() {
+  try {
+    const saved = localStorage.getItem('darkMode');
+    if (saved === '0') {
+      document.body.classList.add('light-mode');
+      const tog = document.getElementById('tog-dark');
+      if (tog) tog.classList.remove('on');
+    }
+  } catch(e) {}
+}
 function doBackup() {
   try {
     const data = { DB, budgets: Object.fromEntries(Object.entries(budgets).map(([k,v])=>[k,v.budget])), exportDate: new Date().toISOString() };
