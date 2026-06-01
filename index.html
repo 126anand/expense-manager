@@ -305,7 +305,7 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
 <div class="screen active" id="scr-dashboard">
   <div class="hdr">
     <div class="hdr-info">
-      <div class="hdr-title">Expense Manager</div>
+      <div class="hdr-title">Expense Manager <span id="save-dot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#4caf72;opacity:0;transition:opacity 0.5s;vertical-align:middle;margin-left:4px;"></span></div>
       <div class="hdr-sub" id="dash-month">May 2026</div>
     </div>
     <div class="hdr-action" onclick="goTo('scr-settings')">⚙️</div>
@@ -812,8 +812,14 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
 <script>
 // ==================== DATA STORE ====================
 // ===== PERSISTENT STORAGE =====
+// Check if localStorage is available
+const canUseStorage = (function() {
+  try { localStorage.setItem('_t','1'); localStorage.removeItem('_t'); return true; } catch(e) { return false; }
+})();
+
 function loadDB() {
   const empty = { bike:[], kitchen:[], food:[], clothes:[], friends:[], others:[] };
+  if (!canUseStorage) { console.log('localStorage not available'); return empty; }
   try {
     const saved = localStorage.getItem('expenseDB');
     if (saved && saved !== 'null' && saved !== 'undefined') {
@@ -836,33 +842,28 @@ function loadDB() {
   // sessionStorage fallback
   try {
     const saved2 = sessionStorage.getItem('expenseDB');
-    if (saved2) {
-      console.log('Loading from sessionStorage fallback');
-      return JSON.parse(saved2);
-    }
+    if (saved2) { console.log('Loading from sessionStorage'); return JSON.parse(saved2); }
   } catch(e) {}
   console.log('Starting with empty DB');
   return empty;
 }
 function saveDB() {
+  if (!canUseStorage) { console.log('Storage not available - data not persisted'); return; }
   try {
     const data = JSON.stringify(DB);
-    // Test write first
-    localStorage.setItem('expenseDB_test', '1');
-    localStorage.removeItem('expenseDB_test');
     // Real save
     localStorage.setItem('expenseDB', data);
-    localStorage.setItem('expenseBudgets', JSON.stringify(
-      Object.fromEntries(Object.entries(budgets).map(([k,v])=>[k,v.budget]))
-    ));
+    if (typeof budgets !== 'undefined') {
+      localStorage.setItem('expenseBudgets', JSON.stringify(
+        Object.fromEntries(Object.entries(budgets).map(([k,v])=>[k,v.budget]))
+      ));
+    }
     localStorage.setItem('expenseLastSave', new Date().toISOString());
     // Update header to confirm save
     const sub = document.getElementById('dash-month');
-    if (sub) {
-      const total = Object.values(DB).reduce((s,a)=>s+a.length,0);
-      const now = new Date();
-      sub.title = 'Saved ' + total + ' entries at ' + now.toLocaleTimeString();
-    }
+    // Flash save indicator
+    const dot = document.getElementById('save-dot');
+    if (dot) { dot.style.opacity='1'; setTimeout(()=>dot.style.opacity='0',1200); }
   } catch(e) {
     console.error('SAVE FAILED:', e);
     // sessionStorage fallback
@@ -891,8 +892,6 @@ function loadBudgets() {
   } catch(e) {}
 }
 
-const DB = loadDB();
-
 const budgets = {
   bike:    { name:'Bike',    emoji:'🏍️', color:'#4caf72', bg:'#1e2a1e', budget:5000 },
   kitchen: { name:'Kitchen', emoji:'🍳', color:'#e07050', bg:'#2a1e1e', budget:10000 },
@@ -901,6 +900,8 @@ const budgets = {
   friends: { name:'Friends', emoji:'👥', color:'#d05090', bg:'#2a1e26', budget:2000 },
   others:  { name:'Others',  emoji:'📦', color:'#50a0d0', bg:'#1e2228', budget:3000 },
 };
+loadBudgets();
+const DB = loadDB();
 
 const modColors = { bike:'#4caf72', kitchen:'#e07050', food:'#e0a030', clothes:'#6070d0', friends:'#d05090', others:'#50a0d0' };
 const catEmoji = { recharge:'📱', electricity:'⚡', internet:'🌐', water:'💧', travel:'🚌', gift:'🎁', health:'💊', stationery:'✏️', personal:'✂️', rent:'🏠', subscription:'📺', other:'📦' };
@@ -918,38 +919,40 @@ function showScreen(scr) {
   document.getElementById(scr).scrollTop = 0;
 }
 
+// Check if history API is available
+const canUseHistory = (function() {
+  try { history.pushState(null, '', location.href); return true; } catch(e) { return false; }
+})();
+
 function goTo(scr) {
   if (navStack[navStack.length-1] === scr) return;
   navStack.push(scr);
-  // Use hash so Android back button fires popstate reliably
-  history.pushState({ scr: scr }, '', '#' + scr);
+  if (canUseHistory) {
+    try { history.pushState({ scr: scr }, '', '#' + scr); } catch(e) {}
+  }
   showScreen(scr);
 }
 
 function goBack() {
-  if (navStack.length > 1) {
-    navStack.pop();
-  }
+  if (navStack.length > 1) navStack.pop();
   const prev = navStack[navStack.length-1] || 'scr-dashboard';
-  history.replaceState({ scr: prev }, '', prev === 'scr-dashboard' ? '#' : '#' + prev);
+  if (canUseHistory) {
+    try { history.replaceState({ scr: prev }, '', prev === 'scr-dashboard' ? location.pathname : '#' + prev); } catch(e) {}
+  }
   showScreen(prev);
   updateDash();
 }
 
-// Handle Android hardware back button — fires when user presses physical back
+// Handle Android hardware back button
 window.addEventListener('popstate', function(e) {
-  // Always prevent app from closing — handle navigation ourselves
-  const state = e.state;
   if (navStack.length > 1) {
     navStack.pop();
     const prev = navStack[navStack.length-1] || 'scr-dashboard';
     showScreen(prev);
     updateDash();
   } else {
-    // On dashboard - push a dummy state so next back press fires popstate again
-    // This prevents app from closing
     showScreen('scr-dashboard');
-    history.pushState({ scr: 'scr-dashboard' }, '', '#home');
+    if (canUseHistory) { try { history.pushState({ scr: 'scr-dashboard' }, '', '#home'); } catch(e) {} }
     updateDash();
   }
 });
@@ -1208,7 +1211,6 @@ function openKForm(type) {
   document.getElementById('ktile-'+type).style.borderColor='#e07050';
   document.getElementById('ktile-'+type).style.background='#221a18';
   const prefix={solid:'ks',liquid:'kl',packet:'kp'}[type];
-  document.getElementById(prefix+'-date').value=new Date().toISOString().split('T')[0];
 }
 function closeKForm(type) {
   document.getElementById('kform-'+type).style.display='none';
@@ -1328,7 +1330,6 @@ function openFoodForm(cat) {
   document.getElementById('fform-'+cat).style.display='block';
   document.getElementById('ftile-'+cat).style.borderColor=foodCatColor[cat];
   document.getElementById('ftile-'+cat).style.background=foodCatBg[cat];
-  // date auto
 }
 function closeFoodForm(cat) {
   document.getElementById('fform-'+cat).style.display='none';
@@ -1421,7 +1422,7 @@ function saveClothes() {
   const total=parseFloat(document.getElementById('c-total').value)||0;
   const season=document.getElementById('c-season').value;
   const shop=document.getElementById('c-shop').value;
-  const date=document.getElementById('c-date').value||new Date().toISOString().split('T')[0];
+  const date=new Date().toISOString().split('T')[0];
   const notes=document.getElementById('c-notes').value;
   DB.clothes.unshift({id:Date.now(),name,qty,price,total,season,shop,date,notes});
   saveDB();
@@ -1469,7 +1470,6 @@ function openFrForm(type) {
   document.getElementById('frform-'+type).style.display='block';
   document.getElementById('frtile-'+type).style.borderColor='#d05090';
   document.getElementById('frtile-'+type).style.background='#220f1a';
-  document.getElementById('fr'+type[0]+'-date').value=new Date().toISOString().split('T')[0];
 }
 function closeFrForm(type) { document.getElementById('frform-'+type).style.display='none'; document.getElementById('frtile-'+type).style.borderColor=''; document.getElementById('frtile-'+type).style.background=''; }
 function fillFr(type,name) { openFrForm(type); document.getElementById('fr'+(type==='spent'?'s':'g')+'-name').value=name; }
@@ -1535,7 +1535,7 @@ function saveOther() {
   const amount=parseFloat(document.getElementById('o-amount').value)||0;
   if(!name||amount===0){document.getElementById('err-o').classList.add('show');return;}
   document.getElementById('err-o').classList.remove('show');
-  const date=document.getElementById('o-date').value||new Date().toISOString().split('T')[0];
+  const date=new Date().toISOString().split('T')[0];
   const notes=document.getElementById('o-notes').value;
   DB.others.unshift({id:Date.now(),name,cat,amount,date,notes,total:amount});
   saveDB();
@@ -1782,9 +1782,11 @@ function editEntry(id,mod) {
 function init() {
   loadBudgets();
   // Push initial history state so Android back button works
-  // Set initial history state for back button support
-  history.replaceState({ scr: 'scr-dashboard' }, '', '#home');
-  history.pushState({ scr: 'scr-dashboard' }, '', '#home');
+  // Set initial history state for back button support (only if supported)
+  if (canUseHistory) {
+    try { history.replaceState({ scr: 'scr-dashboard' }, '', location.pathname + location.search); } catch(e) {}
+    try { history.pushState({ scr: 'scr-dashboard' }, '', location.pathname + location.search + '#home'); } catch(e) {}
+  }
   initFoodForms();
   initKChips();
   updateFrChips();
