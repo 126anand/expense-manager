@@ -381,7 +381,6 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
   <!-- Petrol Form -->
   <div class="form-wrap" id="bform-petrol" style="display:none;">
     <div class="form-title">Add Petrol <span style="cursor:pointer;color:var(--text4);" onclick="closeBikeForm('petrol')">✕</span></div>
-    <div class="field"><label>Date</label><input type="date" id="p-date"></div>
     <div class="row2">
       <div class="field"><label>Prev Meter <span class="auto-tag">AUTO</span></label><input type="number" id="p-prev" readonly></div>
       <div class="field"><label>Current Meter</label><input type="number" id="p-curr" placeholder="e.g. 12700" oninput="calcPetrol()"><div class="err" id="err-pmeter">Meter too low!</div></div>
@@ -392,20 +391,20 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
       <div class="field"><label>Rate / L</label><input type="number" id="p-rate" placeholder="e.g. 170" oninput="calcPetrol()"></div>
     </div>
     <div class="field"><label>Total <span class="auto-tag">AUTO</span></label><input type="number" id="p-total" placeholder="e.g. 850" oninput="calcPetrol()"><div class="hint" id="hint-p">Auto calculated</div></div>
-    <div class="mil-grid">
+    <button class="save-btn" style="background:#4caf72;color:#0a1a0a;" onclick="savePetrol()">Save Entry</button>
+    <div class="mil-grid" style="margin-top:11px;margin-bottom:0;">
       <div class="mil-stat"><div class="mil-lbl">Current</div><div class="mil-val" id="mil-cur">—</div></div>
       <div class="mil-stat"><div class="mil-lbl">Average</div><div class="mil-val" id="mil-avg">—</div></div>
       <div class="mil-stat"><div class="mil-lbl">Best</div><div class="mil-val" id="mil-best">—</div></div>
       <div class="mil-stat"><div class="mil-lbl">Worst</div><div class="mil-val" id="mil-worst">—</div></div>
     </div>
-    <button class="save-btn" style="background:#4caf72;color:#0a1a0a;" onclick="savePetrol()">Save Entry</button>
   </div>
 
   <!-- Service Form -->
   <div class="form-wrap" id="bform-service" style="display:none;">
     <div class="form-title">Add Service <span style="cursor:pointer;color:var(--text4);" onclick="closeBikeForm('service')">✕</span></div>
     <div class="opt-toggle"><button class="opt-btn on" id="svc-b-items" onclick="svcMode('items')">Item-wise</button><button class="opt-btn" id="svc-b-total" onclick="svcMode('total')">Direct Total</button></div>
-    <div class="row2"><div class="field"><label>Date</label><input type="date" id="s-date"></div><div class="field"><label>Meter</label><input type="number" id="s-meter" placeholder="e.g. 12700"></div></div>
+    <div class="field"><label>Meter Reading (Optional)</label><input type="number" id="s-meter" placeholder="e.g. 12700"></div>
     <div id="svc-items-sec">
       <div class="items-list" id="svc-items-list"><div class="item-row"><input placeholder="Item name"><input type="number" placeholder="Rate" style="width:65px;flex:none;" oninput="calcSvcTotal()"><input type="number" placeholder="Qty" style="width:45px;flex:none;" oninput="calcSvcTotal()"><div class="rm-btn" onclick="rmRow(this,'svc')">✕</div></div></div>
       <button class="add-row-btn" onclick="addRow('svc')">+ Add Item</button>
@@ -419,7 +418,6 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
   <!-- Accessories Form -->
   <div class="form-wrap" id="bform-accessories" style="display:none;">
     <div class="form-title">Add Accessory <span style="cursor:pointer;color:var(--text4);" onclick="closeBikeForm('accessories')">✕</span></div>
-    <div class="field"><label>Date</label><input type="date" id="a-date"></div>
     <div class="field"><label>Item Name</label><input type="text" id="a-name" placeholder="e.g. Tyre, Light, Chain..." list="acc-dl"><datalist id="acc-dl"><option value="Engine Oil"><option value="Tyre (Front)"><option value="Tyre (Rear)"><option value="Chain"><option value="Brake Pad"><option value="Light Bulb"><option value="Mirror"><option value="Air Filter"></datalist></div>
     <div class="row2"><div class="field"><label>Price / Item</label><input type="number" id="a-price" placeholder="e.g. 500" oninput="calcAcc()"></div><div class="field"><label>Qty</label><input type="number" id="a-qty" placeholder="e.g. 1" oninput="calcAcc()"></div></div>
     <div class="field"><label>Total <span class="auto-tag">AUTO</span></label><input type="number" id="a-total" readonly placeholder="Auto"></div>
@@ -431,7 +429,7 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
   <div class="form-wrap" id="bform-repairs" style="display:none;">
     <div class="form-title">Add Repair <span style="cursor:pointer;color:var(--text4);" onclick="closeBikeForm('repairs')">✕</span></div>
     <div class="opt-toggle"><button class="opt-btn on" id="rep-b-items" onclick="repMode('items')">Item-wise</button><button class="opt-btn" id="rep-b-total" onclick="repMode('total')">Direct Total</button></div>
-    <div class="row2"><div class="field"><label>Date</label><input type="date" id="r-date"></div><div class="field"><label>Meter</label><input type="number" id="r-meter" placeholder="e.g. 12700"></div></div>
+    <div class="field"><label>Meter Reading (Optional)</label><input type="number" id="r-meter" placeholder="e.g. 12700"></div>
     <div class="field"><label>Problem</label><textarea id="r-problem" rows="2" placeholder="What was wrong?" style="resize:none;"></textarea></div>
     <div id="rep-items-sec">
       <div class="items-list" id="rep-items-list"><div class="item-row"><input placeholder="Work / Part"><input type="number" placeholder="Labour" style="width:62px;flex:none;" oninput="calcRepTotal()"><input type="number" placeholder="Parts" style="width:55px;flex:none;" oninput="calcRepTotal()"><div class="rm-btn" onclick="rmRow(this,'rep')">✕</div></div></div>
@@ -477,7 +475,6 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
     <div class="row2"><div class="field"><label>Quantity</label><input type="number" id="ks-qty" placeholder="e.g. 5" oninput="calcK('solid')"><div class="err" id="err-ks">Qty must be > 0</div></div><div class="field"><label>Rate / Unit</label><input type="number" id="ks-rate" placeholder="e.g. 80" oninput="calcK('solid')"></div></div>
     <div class="field"><label>Total <span class="auto-tag">AUTO</span></label><input type="number" id="ks-total" placeholder="e.g. 400" oninput="calcK('solid')"><div class="hint" id="hint-ks">Auto calculated</div></div>
     <div class="avg-row" id="avg-solid" style="display:none;"><span class="avg-lbl">Avg price</span><span class="avg-val" id="avg-solid-val">—</span></div>
-    <div class="field"><label>Date</label><input type="date" id="ks-date"></div>
     <button class="save-btn" style="background:#e07050;color:#1a0800;" onclick="saveK('solid')">Save Item</button>
   </div>
 
@@ -489,7 +486,6 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
     <div class="row2"><div class="field"><label>Quantity</label><input type="number" id="kl-qty" placeholder="e.g. 2" oninput="calcK('liquid')"><div class="err" id="err-kl">Qty must be > 0</div></div><div class="field"><label>Rate / Unit</label><input type="number" id="kl-rate" placeholder="e.g. 250" oninput="calcK('liquid')"></div></div>
     <div class="field"><label>Total <span class="auto-tag">AUTO</span></label><input type="number" id="kl-total" placeholder="e.g. 500" oninput="calcK('liquid')"><div class="hint" id="hint-kl">Auto calculated</div></div>
     <div class="avg-row" id="avg-liquid" style="display:none;"><span class="avg-lbl">Avg price</span><span class="avg-val" id="avg-liquid-val">—</span></div>
-    <div class="field"><label>Date</label><input type="date" id="kl-date"></div>
     <button class="save-btn" style="background:#e07050;color:#1a0800;" onclick="saveK('liquid')">Save Item</button>
   </div>
 
@@ -500,7 +496,6 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
     <div class="field"><label>Unit</label><select id="kp-unit"><option value="packet">Packet</option><option value="box">Box</option><option value="piece">Piece</option></select></div>
     <div class="row2"><div class="field"><label>Quantity</label><input type="number" id="kp-qty" placeholder="e.g. 5" oninput="calcK('packet')"><div class="err" id="err-kp">Qty must be > 0</div></div><div class="field"><label>Rate / Unit</label><input type="number" id="kp-rate" placeholder="e.g. 25" oninput="calcK('packet')"></div></div>
     <div class="field"><label>Total <span class="auto-tag">AUTO</span></label><input type="number" id="kp-total" placeholder="e.g. 125" oninput="calcK('packet')"><div class="hint" id="hint-kp">Auto calculated</div></div>
-    <div class="field"><label>Date</label><input type="date" id="kp-date"></div>
     <button class="save-btn" style="background:#e07050;color:#1a0800;" onclick="saveK('packet')">Save Item</button>
   </div>
 
@@ -570,7 +565,7 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
     <div class="field"><label>Season</label><select id="c-season"><option value="general">General</option><option value="summer">Summer</option><option value="winter">Winter</option><option value="rainy">Rainy</option><option value="festival">Festival</option></select></div>
     <div class="row2"><div class="field"><label>Quantity</label><input type="number" id="c-qty" placeholder="e.g. 2" oninput="calcClothes()"><div class="err" id="err-c">Qty must be > 0</div></div><div class="field"><label>Price / Item</label><input type="number" id="c-price" placeholder="e.g. 800" oninput="calcClothes()"></div></div>
     <div class="field"><label>Total <span class="auto-tag">AUTO</span></label><input type="number" id="c-total" placeholder="e.g. 1600" oninput="calcClothes()"><div class="hint" id="hint-c">Auto calculated</div></div>
-    <div class="row2"><div class="field"><label>Shop (Optional)</label><input type="text" id="c-shop" placeholder="e.g. New Road"></div><div class="field"><label>Date</label><input type="date" id="c-date"></div></div>
+    <div class="field"><label>Shop (Optional)</label><input type="text" id="c-shop" placeholder="e.g. New Road"></div>
     <div class="field"><label>Notes (Optional)</label><input type="text" id="c-notes" placeholder="e.g. Sale item"></div>
     <button class="save-btn" style="background:#6070d0;color:#080a1a;" onclick="saveClothes()">Save Item</button>
   </div>
@@ -605,7 +600,7 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
     <div class="field"><label>Friend Name</label><input type="text" id="frs-name" placeholder="e.g. Aman, Priya..." list="fr-dl"><datalist id="fr-dl"></datalist></div>
     <div class="field"><label>What for?</label><input type="text" id="frs-desc" placeholder="e.g. Lunch, Gift, Movie..."></div>
     <div class="field"><label>Amount (Rs)</label><input type="number" id="frs-amount" placeholder="e.g. 500"><div class="err" id="err-frs">Amount must be > 0</div></div>
-    <div class="row2"><div class="field"><label>Date</label><input type="date" id="frs-date"></div><div class="field"><label>Notes (Optional)</label><input type="text" id="frs-notes" placeholder="e.g. Dashain treat"></div></div>
+    <div class="field"><label>Notes (Optional)</label><input type="text" id="frs-notes" placeholder="e.g. Dashain treat"></div>
     <button class="save-btn" style="background:#e07090;color:#150008;" onclick="saveFr('spent')">Save Entry</button>
   </div>
 
@@ -615,7 +610,7 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
     <div class="field"><label>Friend Name</label><input type="text" id="frg-name" placeholder="e.g. Aman, Priya..." list="fr-dl2"><datalist id="fr-dl2"></datalist></div>
     <div class="field"><label>Reason (Optional)</label><input type="text" id="frg-desc" placeholder="e.g. Emergency, Loan..."></div>
     <div class="field"><label>Amount (Rs)</label><input type="number" id="frg-amount" placeholder="e.g. 1000"><div class="err" id="err-frg">Amount must be > 0</div></div>
-    <div class="row2"><div class="field"><label>Date</label><input type="date" id="frg-date"></div><div class="field"><label>Notes (Optional)</label><input type="text" id="frg-notes" placeholder="e.g. Will return"></div></div>
+    <div class="field"><label>Notes (Optional)</label><input type="text" id="frg-notes" placeholder="e.g. Will return"></div>
     <button class="save-btn" style="background:#50c080;color:#001508;" onclick="saveFr('gave')">Save Entry</button>
   </div>
 
@@ -657,7 +652,7 @@ body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; col
     <div class="field"><label>Description</label><input type="text" id="o-name" placeholder="e.g. Mobile Recharge..." list="o-dl"><datalist id="o-dl"><option value="Mobile Recharge"><option value="Electricity Bill"><option value="Internet Bill"><option value="Water Bill"><option value="Travel"><option value="Gift"><option value="Medicine"><option value="Haircut"><option value="Gym"><option value="Rent"></datalist></div>
     <div class="field"><label>Category</label><select id="o-cat"><option value="recharge">📱 Mobile Recharge</option><option value="electricity">⚡ Electricity</option><option value="internet">🌐 Internet</option><option value="water">💧 Water</option><option value="travel">🚌 Travel</option><option value="gift">🎁 Gift</option><option value="health">💊 Health</option><option value="personal">✂️ Personal Care</option><option value="rent">🏠 Rent</option><option value="other">📦 Other</option></select></div>
     <div class="field"><label>Amount (Rs)</label><input type="number" id="o-amount" placeholder="e.g. 800"><div class="err" id="err-o">Amount must be > 0</div></div>
-    <div class="row2"><div class="field"><label>Date</label><input type="date" id="o-date"></div><div class="field"><label>Notes (Optional)</label><input type="text" id="o-notes" placeholder="e.g. Monthly bill"></div></div>
+    <div class="field"><label>Notes (Optional)</label><input type="text" id="o-notes" placeholder="e.g. Monthly bill"></div>
     <button class="save-btn" style="background:#50a0d0;color:#020d18;" onclick="saveOther()">Save Expense</button>
   </div>
 
@@ -1041,9 +1036,7 @@ function openBikeForm(type) {
   document.getElementById('bform-'+type).style.display = 'block';
   document.getElementById('btile-'+type).style.borderColor = '#4caf72';
   document.getElementById('btile-'+type).style.background = '#1a221a';
-  const today = new Date().toISOString().split('T')[0];
-  const dateEl = document.getElementById(type==='petrol'?'p-date':type==='service'?'s-date':type==='accessories'?'a-date':'r-date');
-  if (dateEl) dateEl.value = today;
+  // date is auto-captured on save
   if (type==='petrol') {
     const petrolEntries = DB.bike.filter(e=>e.type==='petrol');
     const lastMeter = petrolEntries.length>0 ? petrolEntries[0].currMeter : 0;
@@ -1132,7 +1125,7 @@ function savePetrol() {
   if(curr<=prev){document.getElementById('err-pmeter').classList.add('show');return;}
   if(l===0){document.getElementById('err-pliter').classList.add('show');return;}
   const dist=curr-prev; const mil=parseFloat((dist/l).toFixed(1));
-  DB.bike.unshift({id:Date.now(),type:'petrol',date:document.getElementById('p-date').value,liter:l,rate:r,total:t||l*r,dist,mileage:mil,prevMeter:prev,currMeter:curr});
+  DB.bike.unshift({id:Date.now(),type:'petrol',date:new Date().toISOString().split('T')[0],liter:l,rate:r,total:t||l*r,dist,mileage:mil,prevMeter:prev,currMeter:curr});
   saveDB();
   ['p-curr','p-dist','p-liter','p-rate','p-total'].forEach(id=>document.getElementById(id).value='');
   closeBikeForm('petrol'); renderBikeHist(); updateBikeSummary(); updateDash(); showToast('Petrol entry saved ✓');
@@ -1141,20 +1134,20 @@ function saveBikeOther(type) {
   let entry={id:Date.now(),type};
   const today=new Date().toISOString().split('T')[0];
   if(type==='service'){
-    entry.date=document.getElementById('s-date').value||today;
+    entry.date=today;
     entry.meter=document.getElementById('s-meter').value;
     entry.notes=document.getElementById('s-notes').value;
     const isItems=document.getElementById('svc-b-items').classList.contains('on');
     entry.total=isItems?parseInt(document.getElementById('svc-grand').textContent.replace(/[^0-9]/g,''))||0:parseFloat(document.getElementById('s-direct').value)||0;
   } else if(type==='accessories'){
-    entry.date=document.getElementById('a-date').value||today;
+    entry.date=today;
     entry.name=document.getElementById('a-name').value;
     entry.price=parseFloat(document.getElementById('a-price').value)||0;
     entry.qty=parseFloat(document.getElementById('a-qty').value)||0;
     entry.total=parseFloat(document.getElementById('a-total').value)||0;
     entry.notes=document.getElementById('a-notes').value;
   } else if(type==='repairs'){
-    entry.date=document.getElementById('r-date').value||today;
+    entry.date=today;
     entry.meter=document.getElementById('r-meter').value;
     entry.problem=document.getElementById('r-problem').value;
     entry.shop=document.getElementById('r-shop').value;
@@ -1170,12 +1163,12 @@ function renderBikeHist() {
   if(DB.bike.length===0){wrap.innerHTML='<div style="text-align:center;padding:1.5rem;color:#333;font-size:12px;">No entries yet</div>';return;}
   const typeColor={petrol:'#4caf72',service:'#e0a030',accessories:'#6070d0',repairs:'#e07050'};
   wrap.innerHTML=DB.bike.slice(0,8).map(e=>{
-    let main='',sub='';
-    if(e.type==='petrol'){main=e.liter+'L @ Rs '+e.rate+'/L';sub='Dist: '+e.dist+' km | '+e.mileage+' km/L';}
-    else if(e.type==='service'){main='Servicing';sub=e.notes||'Service record';}
-    else if(e.type==='accessories'){main=e.name||'Accessory';sub=(e.qty||1)+' pc @ Rs '+(e.price||0);}
-    else if(e.type==='repairs'){main='Repair'+(e.problem?': '+e.problem.substring(0,18):'');sub=e.shop||'Repair';}
-    return histItem(e,main,sub,typeColor[e.type]||'#4caf72','bike');
+    let main='',sub='',badge=e.type,bst='background:#1e2a1e;color:#4caf72';
+    if(e.type==='petrol'){main=e.liter+'L @ Rs '+e.rate+'/L';sub='Dist: '+(e.dist||0)+' km | '+(e.mileage||0)+' km/L';bst='background:#1e2a1e;color:#4caf72';}
+    else if(e.type==='service'){main='Servicing';sub=e.notes||'Service record';bst='background:#2a241a;color:#e0a030';}
+    else if(e.type==='accessories'){main=e.name||'Accessory';sub=(e.qty||1)+' pc @ Rs '+(e.price||0);bst='background:#1e1e2a;color:#6070d0';}
+    else if(e.type==='repairs'){main='Repair'+(e.problem?': '+e.problem.substring(0,18):'');sub=e.shop||'Repair';bst='background:#2a1e1e;color:#e07050';}
+    return histItem(e,main,sub,typeColor[e.type]||'#4caf72','bike',badge,bst);
   }).join('');
 }
 function updateBikeSummary() {
@@ -1265,7 +1258,7 @@ function saveK(type) {
   const qty=parseFloat(document.getElementById(p+'-qty').value)||0;
   const rate=parseFloat(document.getElementById(p+'-rate').value)||0;
   const total=parseFloat(document.getElementById(p+'-total').value)||0;
-  const date=document.getElementById(p+'-date').value;
+  const date=new Date().toISOString().split('T')[0];
   if(!name||qty===0){document.getElementById('err-'+p).classList.add('show');return;}
   DB.kitchen.unshift({id:Date.now(),type,name,unit,qty,rate,total,date});
   saveDB();
@@ -1283,9 +1276,8 @@ function renderKHist() {
   if(DB.kitchen.length===0){wrap.innerHTML='<div style="text-align:center;padding:1.5rem;color:#333;font-size:12px;">No entries yet</div>';return;}
   const tbadge={solid:'background:#1e2a1e;color:#4caf72',liquid:'background:#1e1e2a;color:#6070d0',packet:'background:#2a241a;color:#e0a030'};
   wrap.innerHTML=DB.kitchen.slice(0,8).map(e=>{
-    const main=e.name+` <span class="badge" style="${tbadge[e.type]||''}">${e.type}</span>`;
     const sub=e.qty+' '+e.unit+' @ Rs '+e.rate+'/'+e.unit;
-    return histItem(e,main,sub,'#e07050','kitchen',true);
+    return histItem(e,e.name,sub,'#e07050','kitchen',e.type,tbadge[e.type]||'');
   }).join('');
 }
 function updateKSummary() {
@@ -1322,7 +1314,7 @@ function initFoodForms() {
       <div class="row2"><div class="field"><label>Quantity</label><input type="number" id="f-${cat}-qty" placeholder="e.g. 2" oninput="calcFood('${cat}')"></div><div class="field"><label>Rate / Item</label><input type="number" id="f-${cat}-rate" placeholder="e.g. 150" oninput="calcFood('${cat}')"></div></div>
       <div class="field"><label>Total <span class="auto-tag">AUTO</span></label><input type="number" id="f-${cat}-total" placeholder="e.g. 300" oninput="calcFood('${cat}')"><div class="hint" id="hint-f${cat}">Auto calculated</div></div>
       ${placeField}
-      <div class="row2"><div class="field"><label>Date</label><input type="date" id="f-${cat}-date"></div><div class="field"><label>Notes (Optional)</label><input type="text" id="f-${cat}-notes" placeholder="e.g. Lunch"></div></div>
+      <div class="field"><label>Notes (Optional)</label><input type="text" id="f-${cat}-notes" placeholder="e.g. Lunch"></div>
       <button class="save-btn" style="background:${foodCatColor[cat]};color:#0a0a0a;" onclick="saveFood('${cat}')">Save Entry</button>
     </div>`;
   });
@@ -1336,7 +1328,7 @@ function openFoodForm(cat) {
   document.getElementById('fform-'+cat).style.display='block';
   document.getElementById('ftile-'+cat).style.borderColor=foodCatColor[cat];
   document.getElementById('ftile-'+cat).style.background=foodCatBg[cat];
-  document.getElementById('f-'+cat+'-date').value=new Date().toISOString().split('T')[0];
+  // date auto
 }
 function closeFoodForm(cat) {
   document.getElementById('fform-'+cat).style.display='none';
@@ -1365,7 +1357,7 @@ function saveFood(cat) {
   const qty=parseFloat(document.getElementById('f-'+cat+'-qty').value)||0;
   const rate=parseFloat(document.getElementById('f-'+cat+'-rate').value)||0;
   const total=parseFloat(document.getElementById('f-'+cat+'-total').value)||0;
-  const date=document.getElementById('f-'+cat+'-date').value;
+  const date=new Date().toISOString().split('T')[0];
   const notes=document.getElementById('f-'+cat+'-notes').value;
   const place=cat==='restaurant'?(document.getElementById('f-restaurant-place')?document.getElementById('f-restaurant-place').value:''):'';
   DB.food.unshift({id:Date.now(),cat,name,qty,rate,total,date,notes,place});
@@ -1379,9 +1371,8 @@ function renderFoodHist() {
   if(DB.food.length===0){wrap.innerHTML='<div style="text-align:center;padding:1.5rem;color:#333;font-size:12px;">No entries yet</div>';return;}
   const badgeSt={home:'background:#1e2a1e;color:#4caf72',restaurant:'background:#2a1e1e;color:#e07050',snacks:'background:#22200f;color:#e0a030',drinks:'background:#1e1e2a;color:#6070d0'};
   wrap.innerHTML=DB.food.slice(0,8).map(e=>{
-    const main=e.name+` <span class="badge" style="${badgeSt[e.cat]||''}">${e.cat}</span>`;
     const sub=(e.qty>0?e.qty+' × Rs '+e.rate:'—')+(e.place?' | '+e.place:'');
-    return histItem(e,main,sub,foodCatColor[e.cat]||'#e0a030','food',true);
+    return histItem(e,e.name,sub,foodCatColor[e.cat]||'#e0a030','food',e.cat,badgeSt[e.cat]||'');
   }).join('');
 }
 function updateFoodSummary() {
@@ -1443,9 +1434,8 @@ function renderClothesHist() {
   if(DB.clothes.length===0){wrap.innerHTML='<div style="text-align:center;padding:1.5rem;color:#333;font-size:12px;">No entries yet</div>';return;}
   const sb={general:'background:#1e1e1e;color:#888',summer:'background:#2a200f;color:#e0a030',winter:'background:#1e1e2a;color:#6070d0',rainy:'background:#1e2a2a;color:#50c0c0',festival:'background:#2a1a2a;color:#c070d0'};
   wrap.innerHTML=DB.clothes.slice(0,8).map(e=>{
-    const main=e.name+` <span class="badge" style="${sb[e.season]||sb.general}">${e.season}</span>`;
     const sub=e.qty+' pc × Rs '+e.price+(e.shop?' | '+e.shop:'');
-    return histItem(e,main,sub,'#6070d0','clothes');
+    return histItem(e,e.name,sub,'#6070d0','clothes',e.season,sb[e.season]||sb.general);
   }).join('');
 }
 function updateClothesSummary() {
@@ -1485,13 +1475,12 @@ function closeFrForm(type) { document.getElementById('frform-'+type).style.displ
 function fillFr(type,name) { openFrForm(type); document.getElementById('fr'+(type==='spent'?'s':'g')+'-name').value=name; }
 function saveFr(type) {
   const pref=type==='spent'?'frs':'frg';
-  const friend=document.getElementById(pref+'-name').value.trim();
+  const friend=document.getElementById(pref+'-name').value.trim()||'Friend';
   const amount=parseFloat(document.getElementById(pref+'-amount').value)||0;
-  if(!friend) return;
   if(amount===0){document.getElementById('err-'+pref).classList.add('show');return;}
   document.getElementById('err-'+pref).classList.remove('show');
   const desc=document.getElementById(pref+'-desc').value;
-  const date=document.getElementById(pref+'-date').value;
+  const date=new Date().toISOString().split('T')[0];
   const notes=document.getElementById(pref+'-notes').value;
   DB.friends.unshift({id:Date.now(),type,friend,desc,amount,date,notes});
   saveDB();
@@ -1504,9 +1493,8 @@ function renderFrHist() {
   wrap.innerHTML=DB.friends.slice(0,8).map(e=>{
     const clr=e.type==='spent'?'#e07090':'#50c080';
     const bst=e.type==='spent'?'background:#2a1a1e;color:#e07090':'background:#1a2a1e;color:#50c080';
-    const main=e.friend+` <span class="badge" style="${bst}">${e.type}</span>`;
-    const sub=e.desc||'—';
-    return histItem(e,main,sub,clr,'friends');
+    const name=e.friend||(e.type==='spent'?'(Friend)':'(Friend)');
+    return histItem(e,name,e.desc||'—',clr,'friends',e.type,bst);
   }).join('');
 }
 function updateFrSummary() {
@@ -1558,9 +1546,8 @@ function renderOthersHist() {
   const wrap=document.getElementById('others-hist');
   if(DB.others.length===0){wrap.innerHTML='<div style="text-align:center;padding:1.5rem;color:#333;font-size:12px;">No entries yet</div>';return;}
   wrap.innerHTML=DB.others.slice(0,8).map(e=>{
-    const main=(catEmoji[e.cat]||'📦')+' '+e.name+` <span class="badge" style="background:#1a2028;color:#50a0d0;">${e.cat}</span>`;
-    const sub=e.notes||'—';
-    return histItem(e,main,sub,'#50a0d0','others',true);
+    const mainTxt=(catEmoji[e.cat]||'📦')+' '+e.name;
+    return histItem(e,mainTxt,e.notes||'—','#50a0d0','others',e.cat,'background:#1a2028;color:#50a0d0');
   }).join('');
 }
 function updateOthersSummary() {
@@ -1741,13 +1728,18 @@ function confirmClearAll() {
 }
 
 // ==================== SHARED HISTORY ITEM ====================
-function histItem(e,main,sub,color,mod,allowHTML=false) {
+function histItem(e, mainText, sub, color, mod, badge, badgeStyle) {
   const amt=(e.total||e.amount||0).toLocaleString();
+  // Safe text only - no innerHTML injection
+  const badgeHtml = badge ? `<span class="badge" style="${badgeStyle||''}">${badge}</span>` : '';
+  const safeMain = String(mainText).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const safeSub = String(sub).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const safeDate = String(e.date||'—').replace(/</g,'&lt;');
   return `<div class="hist-item">
     <div class="hi-left">
-      <div class="hi-date">${e.date||'—'}</div>
-      <div class="hi-main">${allowHTML?main:main.replace(/</g,'&lt;')}</div>
-      <div class="hi-sub">${sub}</div>
+      <div class="hi-date">${safeDate}</div>
+      <div class="hi-main">${safeMain} ${badgeHtml}</div>
+      <div class="hi-sub">${safeSub}</div>
     </div>
     <div class="hi-right">
       <div class="hi-amt" style="color:${color};">Rs ${amt}</div>
@@ -1765,8 +1757,8 @@ function editEntry(id,mod) {
   saveDB();
   if(mod==='bike'){
     openBikeForm(e.type);
-    if(e.type==='petrol'){document.getElementById('p-date').value=e.date||'';document.getElementById('p-curr').value=e.currMeter||'';document.getElementById('p-liter').value=e.liter||'';document.getElementById('p-rate').value=e.rate||'';document.getElementById('p-total').value=e.total||'';}
-    else if(e.type==='accessories'){document.getElementById('a-date').value=e.date||'';document.getElementById('a-name').value=e.name||'';document.getElementById('a-price').value=e.price||'';document.getElementById('a-qty').value=e.qty||'';document.getElementById('a-total').value=e.total||'';}
+    if(e.type==='petrol'){document.getElementById('p-curr').value=e.currMeter||'';document.getElementById('p-liter').value=e.liter||'';document.getElementById('p-rate').value=e.rate||'';document.getElementById('p-total').value=e.total||'';}
+    else if(e.type==='accessories'){document.getElementById('a-name').value=e.name||'';document.getElementById('a-price').value=e.price||'';document.getElementById('a-qty').value=e.qty||'';document.getElementById('a-total').value=e.total||'';}
   } else if(mod==='kitchen'){
     openKForm(e.type);
     const p={solid:'ks',liquid:'kl',packet:'kp'}[e.type];
@@ -1796,17 +1788,11 @@ function init() {
   initFoodForms();
   initKChips();
   updateFrChips();
-  document.getElementById('o-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('c-date').value=new Date().toISOString().split('T')[0];
   updateDash();
   renderReports();
   // Set default daily report
   switchRpt('daily', document.querySelector('.rpt-tab.on'));
-  // Show data loaded confirmation
-  const totalEntries = Object.values(DB).reduce((s,arr)=>s+arr.length,0);
-  if (totalEntries > 0) {
-    setTimeout(() => showToast('Data loaded: ' + totalEntries + ' entries ✓'), 500);
-  }
+  // Data loaded silently
   // Refresh all module histories
   renderBikeHist(); updateBikeSummary();
   renderKHist(); updateKSummary();
