@@ -37,8 +37,8 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;padding:0 1rem;margin-bottom:.9rem}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 1rem;margin-bottom:.9rem}
 /* TILES */
-.tile{background:var(--bg2);border-radius:14px;border:.5px solid var(--bd);padding:13px;cursor:pointer;transition:background .1s}
-.tile:active{background:var(--bg3)}
+.tile{background:var(--bg2);border-radius:14px;border:.5px solid var(--bd);padding:13px;cursor:pointer;transition:all .15s}
+.tile:active{background:var(--bg3);transform:scale(.97)}
 .tile.sel{border-color:#4caf72;background:#1a221a}
 .tile-top{display:flex;align-items:center;gap:9px}
 .tile-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
@@ -57,8 +57,9 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 .fclose{font-size:16px;color:var(--t4);cursor:pointer;width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:7px}
 .fl{margin-bottom:10px}
 .fl label{font-size:10px;color:var(--t5);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;font-weight:700}
-.fl input,.fl select,.fl textarea{width:100%;background:var(--bg3);border:.5px solid var(--bd2);border-radius:9px;padding:9px 11px;font-size:14px;color:var(--t);outline:none;font-family:inherit;transition:border-color .1s}
-.fl input:focus,.fl select:focus{border-color:#4caf72}
+.fl input,.fl select,.fl textarea{width:100%;background:var(--bg3);border:.5px solid var(--bd2);border-radius:9px;padding:10px 12px;font-size:14px;color:var(--t);outline:none;font-family:inherit;transition:all .15s}
+.fl input:focus,.fl select:focus,.fl textarea:focus{border-color:#4caf72;background:#0f1a10;box-shadow:0 0 0 3px rgba(76,175,114,.08)}
+.fl input:not(:placeholder-shown){border-color:#2a3a2a}
 .fl input[readonly]{color:var(--t4);background:#0d0d0d}
 .r2{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
 .atag{font-size:9px;color:#4caf72;margin-left:4px;font-weight:700}
@@ -66,15 +67,19 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 .hint.on{display:block}
 .err{font-size:10px;color:#e05050;margin-top:3px;display:none}
 .err.on{display:block}
-.sbtn{width:100%;border:none;border-radius:11px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;margin-top:3px;transition:opacity .1s;font-family:inherit}
+.sbtn{width:100%;border:none;border-radius:11px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;transition:all .15s;font-family:inherit;letter-spacing:.3px}
+.sbtn:active{transform:scale(.97);opacity:.9}
+.sbtn:hover{filter:brightness(1.08)}
 .sbtn:active{opacity:.8}
 /* CHIPS */
 .chips-wrap{margin-bottom:12px}
 .chips-lbl{font-size:10px;color:var(--t5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;font-weight:700}
-.chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{padding:5px 11px;border-radius:20px;border:.5px solid var(--bd2);background:var(--bg3);font-size:12px;color:var(--t2);cursor:pointer;transition:all .1s;font-family:inherit}
-.chip:active{opacity:.7}
-.chip.hi{border-color:#3a2a18;color:#e0a030}
+.chips{display:flex;flex-wrap:nowrap;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:6px 13px;border-radius:20px;border:.5px solid var(--bd2);background:var(--bg3);font-size:12px;color:var(--t2);cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.chip:active{transform:scale(.94);opacity:.8}
+.chip.hi{border-color:#3a2a18;color:#e0a030;background:#1a1208}
+.chip.hi:active{background:#2a1e0a}
 /* TOGGLE BUTTONS */
 .otog{display:flex;gap:5px;margin-bottom:12px}
 .obtn{flex:1;padding:7px;border-radius:9px;border:.5px solid var(--bd2);background:transparent;color:var(--t3);font-size:11px;cursor:pointer;font-family:inherit}
@@ -99,7 +104,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 .avgr-val{font-size:11px;color:#e07050;font-weight:700}
 /* HISTORY */
 .hwrap{padding:0 1rem}
-.hi{background:var(--bg2);border-radius:11px;padding:11px 13px;border:.5px solid var(--bd);margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hi{background:var(--bg2);border-radius:11px;padding:11px 13px;border:.5px solid var(--bd);margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:10px;transition:all .25s ease}
 .hi-l{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
 .hi-date{font-size:10px;color:var(--t5)}
 .hi-main{font-size:13px;color:var(--t);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -107,7 +112,11 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 .hi-r{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
 .hi-amt{font-size:13px;font-weight:700}
 .hi-acts{display:flex;gap:6px}
-.abt{width:26px;height:26px;border-radius:7px;border:.5px solid var(--bd2);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--t3)}
+.abt{width:30px;height:30px;border-radius:8px;border:.5px solid var(--bd2);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .15s}
+.edit-btn{color:#50a0d0;border-color:#1a2a3a}
+.edit-btn:active{background:#1a2028;border-color:#50a0d0;transform:scale(.92)}
+.del-btn{color:#e05050;border-color:#3a1a1a;background:#1e0f0f}
+.del-btn:active{background:#2a1010;border-color:#e05050;transform:scale(.92)}
 .badge{font-size:9px;padding:2px 6px;border-radius:7px;font-weight:700;margin-left:3px;display:inline-block}
 .empty{text-align:center;padding:1.5rem;color:#333;font-size:12px}
 /* BUDGET */
@@ -211,7 +220,8 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 .ovt{font-size:14px;color:var(--t);font-weight:700;margin-bottom:5px}
 .ovs{font-size:11px;color:var(--t3);margin-bottom:16px}
 .ovbtns{display:flex;gap:7px}
-.cdel{flex:1;padding:9px;border-radius:10px;background:#2a1a1a;border:.5px solid #e05050;color:#e05050;font-size:12px;cursor:pointer;font-family:inherit}
+.cdel{flex:1;padding:11px;border-radius:10px;background:#e05050;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.cdel:active{background:#c03030;transform:scale(.97)}
 .cno{flex:1;padding:9px;border-radius:10px;background:#1e1e1e;border:.5px solid #333;color:#888;font-size:12px;cursor:pointer;font-family:inherit}
 /* TOAST */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e2a1e;border:.5px solid #4caf72;color:#4caf72;padding:9px 16px;border-radius:10px;font-size:12px;z-index:300;display:none;white-space:nowrap}
@@ -221,8 +231,8 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 ::-webkit-scrollbar{width:0}
 
 /* LOCK SCREEN */
-.lock-scr{position:fixed;inset:0;background:#0f0f0f;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
-.lock-logo{font-size:56px;margin-bottom:16px}
+.lock-scr{position:fixed;inset:0;background:#0a1628;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.lock-logo{font-size:48px;width:90px;height:90px;background:linear-gradient(135deg,#1565c0,#1e88e5);border-radius:22px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;box-shadow:0 8px 32px rgba(30,136,229,.4)}
 .lock-title{font-size:22px;font-weight:700;color:var(--t);margin-bottom:6px}
 .lock-sub{font-size:13px;color:var(--t5);margin-bottom:48px;text-align:center}
 .lock-fp{width:80px;height:80px;border-radius:50%;background:#1a1a1a;border:2px solid #333;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;transition:all .2s;margin-bottom:20px}
@@ -258,10 +268,11 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 <!-- CONFIRM -->
 <div class="ov" id="ov">
   <div class="ovbox">
+    <div style="font-size:36px;margin-bottom:10px">🗑</div>
     <div class="ovt">Delete Entry?</div>
-    <div class="ovs">This cannot be undone.</div>
+    <div class="ovs">This entry will be permanently removed.</div>
     <div class="ovbtns">
-      <button class="cdel" onclick="confirmDel()">Delete</button>
+      <button class="cdel" onclick="confirmDel()">🗑 Delete</button>
       <button class="cno" onclick="closeOv()">Cancel</button>
     </div>
   </div>
@@ -845,8 +856,26 @@ function askDel(id,mod){delId=id;delMod=mod;document.getElementById('ov').classL
 function closeOv(){document.getElementById('ov').classList.remove('on');delId=null;delMod=null}
 function confirmDel(){
   if(delId&&delMod){
+    // Instantly animate out the item in DOM
+    const el=document.getElementById('hi-'+delId);
+    if(el){
+      el.style.transform='translateX(100%)';
+      el.style.opacity='0';
+      el.style.maxHeight=el.offsetHeight+'px';
+      setTimeout(()=>{
+        el.style.maxHeight='0';
+        el.style.padding='0';
+        el.style.marginBottom='0';
+        el.style.overflow='hidden';
+      },150);
+    }
+    // Remove from DB and save
     DB[delMod]=DB[delMod].filter(e=>e.id!==delId);
-    save();closeOv();refresh(delMod);updateDash();toast('Deleted ✓');
+    save();
+    closeOv();
+    // Re-render after animation completes
+    setTimeout(()=>{refresh(delMod);updateDash();},350);
+    toast('Deleted ✓');
   }
 }
 function refresh(mod){
@@ -865,7 +894,7 @@ function hiItem(e,name,sub,color,mod,badge,bst){
   const safeSub=esc(sub);
   const safeDate=esc(e.date||today());
   const bdg=badge?`<span class="badge" style="${bst||''}">${esc(badge)}</span>`:'';
-  return `<div class="hi">
+  return `<div class="hi" id="hi-${e.id}" style="transition:all .25s ease">
     <div class="hi-l">
       <div class="hi-date">${safeDate}</div>
       <div class="hi-main">${safeName}${bdg}</div>
@@ -874,8 +903,8 @@ function hiItem(e,name,sub,color,mod,badge,bst){
     <div class="hi-r">
       <div class="hi-amt" style="color:${color}">Rs ${amt}</div>
       <div class="hi-acts">
-        <div class="abt" onclick="editEntry(${e.id},'${mod}')">✏️</div>
-        <div class="abt" onclick="askDel(${e.id},'${mod}')">🗑️</div>
+        <div class="abt edit-btn" onclick="editEntry(${e.id},'${mod}')" title="Edit">✏️</div>
+        <div class="abt del-btn" onclick="askDel(${e.id},'${mod}')" title="Delete">🗑</div>
       </div>
     </div>
   </div>`;
@@ -896,7 +925,10 @@ function updateDash(){
     document.getElementById('b-'+m).style.width=pct+'%';
   });
   document.getElementById('d-month').textContent='Rs '+fmt(grand);
-  document.getElementById('d-year').textContent='Rs '+fmt(Math.round(grand*1.2));
+  // Year total = actual sum of all entries (same DB, real data)
+  const yearTotal = ['bike','kitchen','food','clothes','friends','others']
+    .reduce((s,m)=>s+DB[m].reduce((a,e)=>a+(e.total||e.amount||0),0),0);
+  document.getElementById('d-year').textContent='Rs '+fmt(yearTotal);
   const topM=Object.entries(tots).sort((a,b)=>b[1]-a[1])[0];
   if(topM&&topM[1]>0){document.getElementById('d-topcat').textContent=topM[0];document.getElementById('d-topcat-s').textContent='Rs '+fmt(topM[1])}
   const topU=Object.entries(cnts).sort((a,b)=>b[1]-a[1])[0];
@@ -968,9 +1000,14 @@ function savePetrol(){
   const r=parseFloat(document.getElementById('p-rate').value)||0;
   const t=parseFloat(document.getElementById('p-total').value)||0;
   if(curr<=prev){document.getElementById('e-pm').classList.add('on');return}
-  if(l===0){document.getElementById('e-pl').classList.add('on');return}
+  if(l===0&&r===0&&t===0){document.getElementById('e-pl').classList.add('on');return}
+  // Auto-calc missing petrol field
+  let lf=l,rf=r,tf=t;
+  if(lf>0&&rf>0&&!tf) tf=parseFloat((lf*rf).toFixed(2));
+  else if(tf>0&&rf>0&&!lf) lf=parseFloat((tf/rf).toFixed(2));
+  else if(lf>0&&tf>0&&!rf) rf=parseFloat((tf/lf).toFixed(2));
   const dist=curr-prev,mil=parseFloat((dist/l).toFixed(1));
-  DB.bike.unshift({id:Date.now(),type:'petrol',date:today(),liter:l,rate:r,total:t||l*r,dist,mileage:mil,prevMeter:prev,currMeter:curr});
+  DB.bike.unshift({id:Date.now(),type:'petrol',date:today(),liter:lf||l,rate:rf||r,total:tf||t||l*r,dist,mileage:mil,prevMeter:prev,currMeter:curr});
   save();
   ['p-curr','p-dist','p-liter','p-rate','p-total'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('m-cur').textContent=mil+' km/L';
@@ -1155,10 +1192,17 @@ function saveK(type){
   const p={solid:'ks',liquid:'kl',packet:'kp'}[type];
   const name=document.getElementById(p+'-name').value.trim();
   const unit=document.getElementById(p+'-unit').value;
-  const qty=parseFloat(document.getElementById(p+'-qty').value)||0;
-  const rate=parseFloat(document.getElementById(p+'-rate').value)||0;
-  const total=parseFloat(document.getElementById(p+'-total').value)||0;
-  if(!name||qty===0){document.getElementById('e-'+p).classList.add('on');return}
+  let qty=parseFloat(document.getElementById(p+'-qty').value)||0;
+  let rate=parseFloat(document.getElementById(p+'-rate').value)||0;
+  let total=parseFloat(document.getElementById(p+'-total').value)||0;
+  if(!name){return}
+  // Auto-calc missing field if 2 are filled
+  const filled=[qty>0,rate>0,total>0].filter(Boolean).length;
+  if(filled<1){document.getElementById('e-'+p).classList.add('on');return}
+  if(qty>0&&rate>0&&!total) total=parseFloat((qty*rate).toFixed(2));
+  else if(total>0&&rate>0&&!qty) qty=parseFloat((total/rate).toFixed(2));
+  else if(qty>0&&total>0&&!rate) rate=parseFloat((total/qty).toFixed(2));
+  if(!total&&qty&&rate) total=qty*rate;
   DB.kitchen.unshift({id:Date.now(),type,name,unit,qty,rate,total,date:today()});
   save();
   document.getElementById(p+'-name').value='';document.getElementById(p+'-qty').value='';document.getElementById(p+'-rate').value='';document.getElementById(p+'-total').value='';
@@ -1256,9 +1300,14 @@ function calcF(cat,changed){
 }
 function saveF(cat){
   const name=document.getElementById('f-'+cat+'-name').value.trim();if(!name)return;
-  const qty=parseFloat(document.getElementById('f-'+cat+'-qty').value)||0;
-  const rate=parseFloat(document.getElementById('f-'+cat+'-rate').value)||0;
-  const total=parseFloat(document.getElementById('f-'+cat+'-total').value)||0;
+  let qty=parseFloat(document.getElementById('f-'+cat+'-qty').value)||0;
+  let rate=parseFloat(document.getElementById('f-'+cat+'-rate').value)||0;
+  let total=parseFloat(document.getElementById('f-'+cat+'-total').value)||0;
+  // Auto-calc missing field
+  if(qty>0&&rate>0&&!total) total=parseFloat((qty*rate).toFixed(2));
+  else if(total>0&&rate>0&&!qty) qty=parseFloat((total/rate).toFixed(2));
+  else if(qty>0&&total>0&&!rate) rate=parseFloat((total/qty).toFixed(2));
+  if(!total&&qty&&rate) total=qty*rate;
   const notes=document.getElementById('f-'+cat+'-notes').value;
   const place=cat==='restaurant'&&document.getElementById('f-restaurant-place')?document.getElementById('f-restaurant-place').value:'';
   DB.food.unshift({id:Date.now(),cat,name,qty,rate,total,date:today(),notes,place});
@@ -1323,10 +1372,16 @@ function calcC(changed){
 }
 function saveC(){
   const name=document.getElementById('c-name').value.trim();
-  const qty=parseFloat(document.getElementById('c-qty').value)||0;
-  if(!name||qty===0){document.getElementById('e-c').classList.add('on');return}
-  const price=parseFloat(document.getElementById('c-price').value)||0;
-  const total=parseFloat(document.getElementById('c-total').value)||0;
+  if(!name)return;
+  let qty=parseFloat(document.getElementById('c-qty').value)||0;
+  let price=parseFloat(document.getElementById('c-price').value)||0;
+  let total=parseFloat(document.getElementById('c-total').value)||0;
+  // Auto-calc missing field
+  if(qty>0&&price>0&&!total) total=parseFloat((qty*price).toFixed(2));
+  else if(total>0&&price>0&&!qty) qty=parseFloat((total/price).toFixed(0));
+  else if(qty>0&&total>0&&!price) price=parseFloat((total/qty).toFixed(2));
+  if(!total&&qty&&price) total=qty*price;
+  if(qty===0&&total===0){document.getElementById('e-c').classList.add('on');return}
   const season=document.getElementById('c-season').value;
   const shop=document.getElementById('c-shop').value;
   DB.clothes.unshift({id:Date.now(),name,qty,price,total,season,shop,date:today()});
