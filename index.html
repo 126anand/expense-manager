@@ -343,17 +343,17 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
   <!-- Petrol Form -->
   <div class="fwrap" id="bf-petrol" style="display:none">
     <div class="ftitle">⛽ Add Petrol <span class="fclose" onclick="closeBF('petrol')">✕</span></div>
-    <div class="r2">
-      <div class="fl"><label>Prev Meter <span class="atag">AUTO</span></label><input type="number" id="p-prev" readonly></div>
-      <div class="fl"><label>Current Meter</label><input type="number" id="p-curr" placeholder="e.g. 12700" oninput="calcP()"><div class="err" id="e-pm">Meter too low!</div></div>
-    </div>
-    <div class="fl"><label>Distance <span class="atag">AUTO</span></label><input type="number" id="p-dist" readonly placeholder="Auto"></div>
+    <div class="fl"><label>Current Meter</label><input type="number" id="p-curr" placeholder="e.g. 12700" oninput="calcP()"><div class="err" id="e-pm">Meter too low!</div></div>
     <div class="r2">
       <div class="fl"><label>Liter (L)</label><input type="number" id="p-liter" placeholder="e.g. 5" oninput="calcP('liter')"><div class="err" id="e-pl">Cannot be zero!</div></div>
       <div class="fl"><label>Rate / L</label><input type="number" id="p-rate" placeholder="e.g. 170" oninput="calcP('rate')"></div>
     </div>
-    <div class="fl"><label>Total <span class="atag">AUTO</span></label><input type="number" id="p-total" placeholder="e.g. 850" oninput="calcP('total')"><div class="hint" id="h-p">Auto calculated</div></div>
+    <div class="fl"><label>Total</label><input type="number" id="p-total" placeholder="e.g. 850" oninput="calcP('total')"><div class="hint" id="h-p">Auto calculated</div></div>
     <button class="sbtn" style="background:#4caf72;color:#0a1a0a" onclick="savePetrol()">Save Entry</button>
+    <div class="r2" style="margin-top:10px">
+      <div class="fl"><label>Prev Meter</label><input type="number" id="p-prev" readonly style="color:var(--t4);background:#0d0d0d"></div>
+      <div class="fl"><label>Distance (km)</label><input type="number" id="p-dist" readonly placeholder="Auto" style="color:var(--t4);background:#0d0d0d"></div>
+    </div>
     <div class="mg">
       <div class="ms"><div class="ms-lbl">Current</div><div class="ms-val" id="m-cur">—</div></div>
       <div class="ms"><div class="ms-lbl">Average</div><div class="ms-val" id="m-avg">—</div></div>
@@ -380,7 +380,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
     <div class="ftitle">🛠️ Add Accessory <span class="fclose" onclick="closeBF('accessories')">✕</span></div>
     <div class="fl"><label>Item Name</label><input type="text" id="a-name" placeholder="e.g. Tyre, Light, Chain..." list="a-dl"><datalist id="a-dl"><option value="Engine Oil"><option value="Tyre (Front)"><option value="Tyre (Rear)"><option value="Chain"><option value="Brake Pad"><option value="Light Bulb"><option value="Mirror"><option value="Air Filter"></datalist></div>
     <div class="r2"><div class="fl"><label>Price / Item</label><input type="number" id="a-price" placeholder="e.g. 500" oninput="calcAcc()"></div><div class="fl"><label>Qty</label><input type="number" id="a-qty" placeholder="1" oninput="calcAcc()"></div></div>
-    <div class="fl"><label>Total <span class="atag">AUTO</span></label><input type="number" id="a-total" readonly placeholder="Auto"></div>
+    <div class="fl"><label>Total</label><input type="number" id="a-total" readonly placeholder="Auto"></div>
     <button class="sbtn" style="background:#6070d0;color:#080a1a" onclick="saveBikeOther('accessories')">Save Accessory</button>
   </div>
   <!-- Repairs Form -->
@@ -424,7 +424,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
     <div class="fl"><label>Item Name</label><input type="text" id="ks-name" placeholder="e.g. Rice, Sugar..." list="ks-dl" oninput="kAvg('solid')"><datalist id="ks-dl"><option value="Rice"><option value="Sugar"><option value="Flour"><option value="Lentils"><option value="Salt"><option value="Onion"><option value="Potato"><option value="Tomato"></datalist></div>
     <div class="fl"><label>Unit</label><select id="ks-unit"><option value="kg">Kilogram (kg)</option><option value="gram">Gram (g)</option></select></div>
     <div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="ks-qty" placeholder="e.g. 5" oninput="calcK('solid','qty')"><div class="err" id="e-ks">Qty must be > 0</div></div><div class="fl"><label>Rate / Unit</label><input type="number" id="ks-rate" placeholder="e.g. 80" oninput="calcK('solid','rate')"></div></div>
-    <div class="fl"><label>Total <span class="atag">AUTO</span></label><input type="number" id="ks-total" placeholder="e.g. 400" oninput="calcK('solid','total')"><div class="hint" id="h-ks">Auto</div></div>
+    <div class="fl"><label>Total</label><input type="number" id="ks-total" placeholder="e.g. 400" oninput="calcK('solid','total')"><div class="hint" id="h-ks">Auto</div></div>
     <div class="avgr" id="avg-solid" style="display:none"><span class="avgr-lbl">Avg price</span><span class="avgr-val" id="avg-solid-v">—</span></div>
     <button class="sbtn" style="background:#e07050;color:#1a0800" onclick="saveK('solid')">Save Item</button>
   </div>
@@ -434,7 +434,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
     <div class="fl"><label>Item Name</label><input type="text" id="kl-name" placeholder="e.g. Oil, Milk..." list="kl-dl" oninput="kAvg('liquid')"><datalist id="kl-dl"><option value="Oil"><option value="Milk"><option value="Ghee"><option value="Juice"></datalist></div>
     <div class="fl"><label>Unit</label><select id="kl-unit"><option value="liter">Liter (L)</option><option value="ml">Milliliter (mL)</option></select></div>
     <div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="kl-qty" placeholder="e.g. 2" oninput="calcK('liquid','qty')"><div class="err" id="e-kl">Qty must be > 0</div></div><div class="fl"><label>Rate / Unit</label><input type="number" id="kl-rate" placeholder="e.g. 250" oninput="calcK('liquid','rate')"></div></div>
-    <div class="fl"><label>Total <span class="atag">AUTO</span></label><input type="number" id="kl-total" placeholder="e.g. 500" oninput="calcK('liquid','total')"><div class="hint" id="h-kl">Auto</div></div>
+    <div class="fl"><label>Total</label><input type="number" id="kl-total" placeholder="e.g. 500" oninput="calcK('liquid','total')"><div class="hint" id="h-kl">Auto</div></div>
     <div class="avgr" id="avg-liquid" style="display:none"><span class="avgr-lbl">Avg price</span><span class="avgr-val" id="avg-liquid-v">—</span></div>
     <button class="sbtn" style="background:#e07050;color:#1a0800" onclick="saveK('liquid')">Save Item</button>
   </div>
@@ -444,7 +444,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
     <div class="fl"><label>Item Name</label><input type="text" id="kp-name" placeholder="e.g. Noodles, Tea..." list="kp-dl"><datalist id="kp-dl"><option value="Noodles"><option value="Tea"><option value="Biscuits"><option value="Coffee"></datalist></div>
     <div class="fl"><label>Unit</label><select id="kp-unit"><option value="packet">Packet</option><option value="box">Box</option><option value="piece">Piece</option></select></div>
     <div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="kp-qty" placeholder="e.g. 5" oninput="calcK('packet','qty')"><div class="err" id="e-kp">Qty must be > 0</div></div><div class="fl"><label>Rate / Unit</label><input type="number" id="kp-rate" placeholder="e.g. 25" oninput="calcK('packet','rate')"></div></div>
-    <div class="fl"><label>Total <span class="atag">AUTO</span></label><input type="number" id="kp-total" placeholder="e.g. 125" oninput="calcK('packet','total')"><div class="hint" id="h-kp">Auto</div></div>
+    <div class="fl"><label>Total</label><input type="number" id="kp-total" placeholder="e.g. 125" oninput="calcK('packet','total')"><div class="hint" id="h-kp">Auto</div></div>
     <button class="sbtn" style="background:#e07050;color:#1a0800" onclick="saveK('packet')">Save Item</button>
   </div>
   <div class="lbl">Summary</div>
@@ -500,7 +500,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
     <div class="fl"><label>Item Name</label><input type="text" id="c-name" placeholder="e.g. T-Shirt, Jeans..." list="c-dl"><datalist id="c-dl"><option value="T-Shirt"><option value="Shirt"><option value="Jeans"><option value="Pant"><option value="Jacket"><option value="Shoes"><option value="Socks"><option value="Kurta"><option value="Cap"><option value="Sweater"></datalist></div>
     <div class="fl"><label>Season</label><select id="c-season"><option value="general">General</option><option value="summer">Summer</option><option value="winter">Winter</option><option value="rainy">Rainy</option><option value="festival">Festival</option></select></div>
     <div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="c-qty" placeholder="e.g. 2" oninput="calcC('qty')"><div class="err" id="e-c">Qty > 0</div></div><div class="fl"><label>Price / Item</label><input type="number" id="c-price" placeholder="e.g. 800" oninput="calcC('price')"></div></div>
-    <div class="fl"><label>Total <span class="atag">AUTO</span></label><input type="number" id="c-total" placeholder="e.g. 1600" oninput="calcC('total')"><div class="hint" id="h-c">Auto</div></div>
+    <div class="fl"><label>Total</label><input type="number" id="c-total" placeholder="e.g. 1600" oninput="calcC('total')"><div class="hint" id="h-c">Auto</div></div>
     <div class="fl"><label>Shop (Optional)</label><input type="text" id="c-shop" placeholder="e.g. New Road Shop"></div>
     <button class="sbtn" style="background:#6070d0;color:#080a1a" onclick="saveC()">Save Item</button>
   </div>
@@ -1254,7 +1254,7 @@ function initFoodForms(){
       <div class="chips-wrap"><div class="chips-lbl">Quick Select ⭐</div><div class="chips">${chips}</div></div>
       <div class="fl"><label>Item Name</label><input type="text" id="f-${cat}-name" placeholder="e.g. ..."></div>
       <div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="f-${cat}-qty" placeholder="e.g. 2" oninput="calcF('${cat}','qty')"></div><div class="fl"><label>Rate / Item</label><input type="number" id="f-${cat}-rate" placeholder="e.g. 150" oninput="calcF('${cat}','qty')"></div></div>
-      <div class="fl"><label>Total <span class="atag">AUTO</span></label><input type="number" id="f-${cat}-total" placeholder="e.g. 300" oninput="calcF('${cat}','qty')"><div class="hint" id="h-f${cat}">Auto</div></div>
+      <div class="fl"><label>Total</label><input type="number" id="f-${cat}-total" placeholder="e.g. 300" oninput="calcF('${cat}','qty')"><div class="hint" id="h-f${cat}">Auto</div></div>
       ${placeF}
       <div class="fl"><label>Notes (Optional)</label><input type="text" id="f-${cat}-notes" placeholder="e.g. Lunch"></div>
       <button class="sbtn" style="background:${FOODCC[cat]};color:#0a0a0a" onclick="saveF('${cat}')">Save Entry</button>
