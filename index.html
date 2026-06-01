@@ -232,7 +232,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 ::-webkit-scrollbar{width:0}
 
 /* LOCK SCREEN */
-.lock-scr{position:fixed;inset:0;background:#0a1628;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.lock-scr{position:fixed;inset:0;background:#0a1628;z-index:999;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
 .lock-logo{font-size:48px;width:90px;height:90px;background:linear-gradient(135deg,#1565c0,#1e88e5);border-radius:22px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;box-shadow:0 8px 32px rgba(30,136,229,.4)}
 .lock-title{font-size:22px;font-weight:700;color:var(--t);margin-bottom:6px}
 .lock-sub{font-size:13px;color:var(--t5);margin-bottom:48px;text-align:center}
@@ -709,10 +709,10 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
     <div class="lock-logo">🔒</div>
     <div class="lock-title">Secure Your App</div>
     <div class="lock-sub">Protect your expense data with biometric or PIN</div>
-    <div class="lock-setup" style="max-width:280px">
-      <div class="lock-setup-title">Choose security method:</div>
+    <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">
+      <div style="font-size:13px;color:var(--t2);text-align:center">Choose security method:</div>
       <button class="lock-btn lock-btn-bio" onclick="setupBiometric()">👆 Use Fingerprint / Face ID</button>
-      <button class="lock-btn" style="background:#1e1e2a;color:#6070d0;border:.5px solid #6070d0;margin-top:4px" onclick="showPinSetup()">🔢 Use PIN instead</button>
+      <button class="lock-btn" style="background:#1e1e2a;color:#6070d0;border:.5px solid #6070d0" onclick="showPinSetup()">🔢 Use PIN instead</button>
       <button class="lock-btn lock-btn-skip" onclick="skipLock()">Skip (No Lock)</button>
     </div>
   </div>
@@ -1721,23 +1721,17 @@ function editEntry(id,mod){
 // ===================== SERVICE WORKER =====================
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
-    const host=window.location.hostname;
-    if(host.includes('github.io')){
-      navigator.serviceWorker.register('sw.js?v=1780302754').then(reg=>{
-        console.log('SW registered v1780302754');
-        // Force check for updates
-        reg.update();
-        // When new SW is waiting, activate it immediately
-        reg.addEventListener('updatefound',()=>{
-          const newSW=reg.installing;
-          newSW.addEventListener('statechange',()=>{
-            if(newSW.state==='installed'&&navigator.serviceWorker.controller){
-              console.log('New SW ready - reloading');
-              window.location.reload();
-            }
-          });
-        });
-      }).catch(e=>console.log('SW skip:',e.message));
+    if(window.location.hostname.includes('github.io')){
+      navigator.serviceWorker.register('sw.js?v=1780303212')
+        .then(reg=>{
+          console.log('SW ok v1780303212');
+          // Check for updates silently - no reload loop
+          reg.update().catch(()=>{});
+        })
+        .catch(e=>console.log('SW skip:',e.message));
+    }
+  });
+});
       // Force reload if controlled by old SW
       navigator.serviceWorker.addEventListener('controllerchange',()=>{
         console.log('Controller changed - reloading for new version');
@@ -1773,24 +1767,30 @@ function hashPin(pin){
 }
 
 function initLock(){
-  loadLock();
+  try{
+    loadLock();
+  }catch(e){console.log('loadLock error:',e)}
   const ls = document.getElementById('lock-scr');
+  if(!ls) return; // safety check
+  // Always start hidden
+  ls.style.display='none';
   if(!CAN_STORE || LOCK.type==='none'){
-    // No lock or can't store - just show app
-    ls.style.display='none';
+    // No lock - keep hidden, show app
     return;
   }
   if(!LOCK.type){
-    // First time - show setup
+    // First time - show setup screen
     ls.style.display='flex';
-    document.getElementById('lock-setup').style.display='flex';
+    const su = document.getElementById('lock-setup');
+    if(su) su.style.display='flex';
     return;
   }
   if(LOCK.type==='biometric'){
     ls.style.display='flex';
-    document.getElementById('lock-bio').style.display='flex';
+    const bio = document.getElementById('lock-bio');
+    if(bio) bio.style.display='flex';
     // Auto-trigger biometric after short delay
-    setTimeout(doBiometric, 500);
+    setTimeout(()=>{try{doBiometric()}catch(e){}}, 600);
     return;
   }
   if(LOCK.type==='pin'){
@@ -2005,19 +2005,20 @@ function changeLock(){
 
 // ===================== INIT =====================
 function init(){
-  loadSaved();
-  initLock();
+  try{ loadSaved(); }catch(e){ console.error('loadSaved error:',e); }
+  try{ initLock(); }catch(e){ console.error('initLock error:',e); }
   // Apply saved theme
-  if(!PREF.dark)document.body.classList.add('light');
-  const togDark=document.getElementById('tog-dark');
-  if(togDark&&!PREF.dark)togDark.classList.remove('on');
-  // Apply saved currency
-  const csel=document.getElementById('csel');
-  if(csel&&PREF.currency)csel.value=PREF.currency;
+  try{
+    if(!PREF.dark)document.body.classList.add('light');
+    const togDark=document.getElementById('tog-dark');
+    if(togDark&&!PREF.dark)togDark.classList.remove('on');
+    const csel=document.getElementById('csel');
+    if(csel&&PREF.currency)csel.value=PREF.currency;
+  }catch(e){ console.error('theme error:',e); }
   // Init forms
-  initFoodForms();
-  buildKChips();
-  buildFrChips();
+  try{ initFoodForms(); }catch(e){ console.error('initFoodForms error:',e); }
+  try{ buildKChips(); }catch(e){ console.error('buildKChips error:',e); }
+  try{ buildFrChips(); }catch(e){ console.error('buildFrChips error:',e); }
   // Init history
   if(CAN_NAV)try{history.replaceState({s:'s-dash'},'',location.pathname+location.search)}catch(e){}
   // Render all
