@@ -219,6 +219,37 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
 /* SAVE DOT */
 .sdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4caf72;opacity:0;transition:opacity .5s;vertical-align:middle;margin-left:4px}
 ::-webkit-scrollbar{width:0}
+
+/* LOCK SCREEN */
+.lock-scr{position:fixed;inset:0;background:#0f0f0f;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.lock-logo{font-size:56px;margin-bottom:16px}
+.lock-title{font-size:22px;font-weight:700;color:var(--t);margin-bottom:6px}
+.lock-sub{font-size:13px;color:var(--t5);margin-bottom:48px;text-align:center}
+.lock-fp{width:80px;height:80px;border-radius:50%;background:#1a1a1a;border:2px solid #333;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;transition:all .2s;margin-bottom:20px}
+.lock-fp:active{transform:scale(.95)}
+.lock-fp.scanning{border-color:#4caf72;box-shadow:0 0 0 8px rgba(76,175,114,.15);animation:pulse 1s infinite}
+.lock-fp.success{border-color:#4caf72;background:#1e2a1e}
+.lock-fp.fail{border-color:#e05050;background:#2a1a1a;animation:shake .3s}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 8px rgba(76,175,114,.15)}50%{box-shadow:0 0 0 16px rgba(76,175,114,.05)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.lock-msg{font-size:13px;color:var(--t5);margin-bottom:32px;min-height:20px;text-align:center}
+.lock-msg.ok{color:#4caf72}
+.lock-msg.err{color:#e05050}
+.lock-pin-btn{font-size:12px;color:#50a0d0;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px}
+.lock-setup{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:280px}
+.lock-setup-title{font-size:14px;color:var(--t2);text-align:center}
+.lock-btn{width:100%;padding:13px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.lock-btn-bio{background:#4caf72;color:#0a1a0a}
+.lock-btn-skip{background:#1a1a1a;color:#666;border:.5px solid #333;margin-top:4px}
+.lock-pin-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:280px}
+.pin-dots{display:flex;gap:12px;margin-bottom:8px}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:#333;transition:background .15s}
+.pin-dot.filled{background:#4caf72}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.pin-key{background:#1a1a1a;border:.5px solid #2a2a2a;border-radius:12px;padding:16px;font-size:20px;font-weight:600;color:var(--t);cursor:pointer;text-align:center;transition:background .1s;font-family:inherit}
+.pin-key:active{background:#252525}
+.pin-key.del{font-size:16px;color:var(--t3)}
+.pin-key.empty{background:transparent;border-color:transparent;cursor:default}
 </style>
 </head>
 <body>
@@ -641,6 +672,11 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
   </div>
   <div class="sg">
     <div class="sg-title">About</div>
+    <div class="sr2" onclick="changeLock()">
+      <div class="sic" style="background:#1e2a1e">🔒</div>
+      <div class="slb"><div class="st">Change Lock</div><div class="ss">Fingerprint, Face ID or PIN</div></div>
+      <span style="color:#333;font-size:14px">›</span>
+    </div>
     <div class="sr2">
       <div class="sic" style="background:#1e1e1e">ℹ️</div>
       <div class="slb"><div class="st">Version</div><div class="ss">Life Expense Manager v1.0</div></div>
@@ -653,6 +689,58 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro',sa
   </div>
 </div>
 
+
+<!-- LOCK SCREEN -->
+<div class="lock-scr" id="lock-scr">
+  <!-- Setup screen (first time) -->
+  <div id="lock-setup" style="display:none;flex-direction:column;align-items:center;width:100%">
+    <div class="lock-logo">🔒</div>
+    <div class="lock-title">Secure Your App</div>
+    <div class="lock-sub">Protect your expense data with biometric or PIN</div>
+    <div class="lock-setup" style="max-width:280px">
+      <div class="lock-setup-title">Choose security method:</div>
+      <button class="lock-btn lock-btn-bio" onclick="setupBiometric()">👆 Use Fingerprint / Face ID</button>
+      <button class="lock-btn" style="background:#1e1e2a;color:#6070d0;border:.5px solid #6070d0;margin-top:4px" onclick="showPinSetup()">🔢 Use PIN instead</button>
+      <button class="lock-btn lock-btn-skip" onclick="skipLock()">Skip (No Lock)</button>
+    </div>
+  </div>
+  <!-- Biometric screen -->
+  <div id="lock-bio" style="display:none;flex-direction:column;align-items:center">
+    <div class="lock-logo">💰</div>
+    <div class="lock-title">Expense Manager</div>
+    <div class="lock-sub">Verify your identity to continue</div>
+    <div class="lock-fp" id="lock-fp" onclick="doBiometric()">👆</div>
+    <div class="lock-msg" id="lock-bio-msg">Tap to unlock</div>
+    <button class="lock-pin-btn" onclick="showPinEntry()" id="pin-fallback-btn">Use PIN instead</button>
+  </div>
+  <!-- PIN setup -->
+  <div id="lock-pin-setup" style="display:none;flex-direction:column;align-items:center;width:100%">
+    <div class="lock-logo">🔢</div>
+    <div class="lock-title">Set PIN</div>
+    <div class="lock-sub" id="pin-setup-sub">Enter a 4-digit PIN</div>
+    <div class="lock-pin-wrap">
+      <div class="pin-dots">
+        <div class="pin-dot" id="sd0"></div><div class="pin-dot" id="sd1"></div>
+        <div class="pin-dot" id="sd2"></div><div class="pin-dot" id="sd3"></div>
+      </div>
+      <div class="pin-grid" id="pin-setup-grid"></div>
+    </div>
+  </div>
+  <!-- PIN entry -->
+  <div id="lock-pin-entry" style="display:none;flex-direction:column;align-items:center;width:100%">
+    <div class="lock-logo">💰</div>
+    <div class="lock-title">Enter PIN</div>
+    <div class="lock-sub">Enter your 4-digit PIN</div>
+    <div class="lock-pin-wrap">
+      <div class="pin-dots">
+        <div class="pin-dot" id="ed0"></div><div class="pin-dot" id="ed1"></div>
+        <div class="pin-dot" id="ed2"></div><div class="pin-dot" id="ed3"></div>
+      </div>
+      <div class="lock-msg" id="lock-pin-msg"></div>
+      <div class="pin-grid" id="pin-entry-grid"></div>
+    </div>
+  </div>
+</div>
 </div><!-- end .app -->
 <script>
 // ===================== STORAGE =====================
@@ -1538,9 +1626,266 @@ if('serviceWorker' in navigator){
   });
 }
 
+
+// ===================== BIOMETRIC / PIN LOCK =====================
+const LOCK = {
+  type: null,      // 'biometric', 'pin', 'none'
+  pin: null,       // stored hashed pin
+  credential: null // biometric credential id
+};
+
+function loadLock(){
+  try{
+    const s = localStorage.getItem('lem_lock');
+    if(s) Object.assign(LOCK, JSON.parse(s));
+  }catch(e){}
+}
+function saveLock(){
+  try{ localStorage.setItem('lem_lock', JSON.stringify(LOCK)); }catch(e){}
+}
+
+// Simple hash for PIN (not cryptographic but good enough for local app)
+function hashPin(pin){
+  let h=0;
+  for(let i=0;i<pin.length;i++){h=((h<<5)-h)+pin.charCodeAt(i);h|=0}
+  return h.toString(36);
+}
+
+function initLock(){
+  loadLock();
+  const ls = document.getElementById('lock-scr');
+  if(!CAN_STORE || LOCK.type==='none'){
+    // No lock or can't store - just show app
+    ls.style.display='none';
+    return;
+  }
+  if(!LOCK.type){
+    // First time - show setup
+    ls.style.display='flex';
+    document.getElementById('lock-setup').style.display='flex';
+    return;
+  }
+  if(LOCK.type==='biometric'){
+    ls.style.display='flex';
+    document.getElementById('lock-bio').style.display='flex';
+    // Auto-trigger biometric after short delay
+    setTimeout(doBiometric, 500);
+    return;
+  }
+  if(LOCK.type==='pin'){
+    ls.style.display='flex';
+    showPinEntry();
+    return;
+  }
+}
+
+function unlockApp(){
+  const ls = document.getElementById('lock-scr');
+  ls.style.opacity='0';
+  ls.style.transition='opacity .3s';
+  setTimeout(()=>ls.style.display='none', 300);
+}
+
+function skipLock(){
+  LOCK.type='none';saveLock();unlockApp();
+}
+
+// ===== BIOMETRIC =====
+async function setupBiometric(){
+  const supported = window.PublicKeyCredential && 
+    await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(()=>false);
+  if(!supported){
+    alert('Biometric not supported on this device. Please use PIN.');
+    showPinSetup();
+    return;
+  }
+  try{
+    // Create credential
+    const cred = await navigator.credentials.create({
+      publicKey:{
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp:{name:'Expense Manager', id: location.hostname||'localhost'},
+        user:{id: new Uint8Array(16), name:'user', displayName:'User'},
+        pubKeyCredParams:[{alg:-7,type:'public-key'},{alg:-257,type:'public-key'}],
+        authenticatorSelection:{
+          authenticatorAttachment:'platform',
+          userVerification:'required'
+        },
+        timeout:60000
+      }
+    });
+    // Save credential id
+    LOCK.type='biometric';
+    LOCK.credential=Array.from(new Uint8Array(cred.rawId)).join(',');
+    saveLock();
+    unlockApp();
+  }catch(e){
+    if(e.name==='NotAllowedError'||e.name==='AbortError'){
+      // User cancelled - offer PIN
+      showPinSetup();
+    } else {
+      alert('Biometric setup failed: '+e.message+'
+Using PIN instead.');
+      showPinSetup();
+    }
+  }
+}
+
+async function doBiometric(){
+  const fp=document.getElementById('lock-fp');
+  const msg=document.getElementById('lock-bio-msg');
+  fp.classList.add('scanning');
+  msg.textContent='Scanning...';
+  msg.className='lock-msg';
+  try{
+    const credId = LOCK.credential ? 
+      new Uint8Array(LOCK.credential.split(',').map(Number)) : new Uint8Array(0);
+    await navigator.credentials.get({
+      publicKey:{
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rpId: location.hostname||'localhost',
+        allowCredentials: LOCK.credential ? [{
+          id: credId.buffer,
+          type:'public-key',
+          transports:['internal']
+        }]:[],
+        userVerification:'required',
+        timeout:60000
+      }
+    });
+    fp.classList.remove('scanning');
+    fp.classList.add('success');
+    fp.textContent='✅';
+    msg.textContent='Verified!';
+    msg.className='lock-msg ok';
+    setTimeout(unlockApp, 500);
+  }catch(e){
+    fp.classList.remove('scanning');
+    fp.classList.add('fail');
+    msg.textContent='Try again';
+    msg.className='lock-msg err';
+    setTimeout(()=>{
+      fp.classList.remove('fail');
+      fp.textContent='👆';
+      msg.textContent='Tap to unlock';
+      msg.className='lock-msg';
+    },1500);
+    // Show PIN fallback after 2 failures
+    document.getElementById('pin-fallback-btn').style.display='block';
+  }
+}
+
+// ===== PIN =====
+let pinSetupPhase=0; // 0=enter, 1=confirm
+let pinSetupFirst='';
+let pinCurrent='';
+
+function buildPinGrid(gridId, onKey){
+  const grid=document.getElementById(gridId);
+  const keys=['1','2','3','4','5','6','7','8','9','','0','del'];
+  grid.innerHTML=keys.map(k=>{
+    if(k==='') return `<div class="pin-key empty"></div>`;
+    if(k==='del') return `<div class="pin-key del" onclick="${onKey}('del')">⌫</div>`;
+    return `<div class="pin-key" onclick="${onKey}('${k}')">${k}</div>`;
+  }).join('');
+}
+
+function showPinSetup(){
+  ['lock-setup','lock-bio','lock-pin-entry'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  document.getElementById('lock-pin-setup').style.display='flex';
+  pinSetupPhase=0;pinSetupFirst='';pinCurrent='';
+  document.getElementById('pin-setup-sub').textContent='Enter a 4-digit PIN';
+  updateSetupDots('sd');
+  buildPinGrid('pin-setup-grid','pinSetupKey');
+}
+
+function pinSetupKey(k){
+  if(k==='del'){pinCurrent=pinCurrent.slice(0,-1);}
+  else if(pinCurrent.length<4){pinCurrent+=k;}
+  updateSetupDots('sd');
+  if(pinCurrent.length===4){
+    setTimeout(()=>{
+      if(pinSetupPhase===0){
+        pinSetupFirst=pinCurrent;pinCurrent='';
+        pinSetupPhase=1;
+        document.getElementById('pin-setup-sub').textContent='Confirm your PIN';
+        updateSetupDots('sd');
+      } else {
+        if(pinCurrent===pinSetupFirst){
+          LOCK.type='pin';LOCK.pin=hashPin(pinCurrent);saveLock();
+          pinCurrent='';unlockApp();
+        } else {
+          pinCurrent='';pinSetupFirst='';pinSetupPhase=0;
+          document.getElementById('pin-setup-sub').textContent="PINs don't match. Try again.";
+          updateSetupDots('sd');
+        }
+      }
+    },100);
+  }
+}
+
+function showPinEntry(){
+  ['lock-setup','lock-bio','lock-pin-setup'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  document.getElementById('lock-pin-entry').style.display='flex';
+  pinCurrent='';
+  updateEntryDots();
+  buildPinGrid('pin-entry-grid','pinEntryKey');
+}
+
+let pinAttempts=0;
+function pinEntryKey(k){
+  if(k==='del'){pinCurrent=pinCurrent.slice(0,-1);}
+  else if(pinCurrent.length<4){pinCurrent+=k;}
+  updateEntryDots();
+  const msg=document.getElementById('lock-pin-msg');
+  if(pinCurrent.length===4){
+    setTimeout(()=>{
+      if(hashPin(pinCurrent)===LOCK.pin){
+        pinAttempts=0;pinCurrent='';
+        msg.textContent='';msg.className='lock-msg';
+        unlockApp();
+      } else {
+        pinAttempts++;pinCurrent='';
+        updateEntryDots();
+        msg.textContent='Wrong PIN'+(pinAttempts>=3?' ('+pinAttempts+' attempts)':'');
+        msg.className='lock-msg err';
+      }
+    },100);
+  }
+}
+
+function updateSetupDots(prefix){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById(prefix+i);
+    if(d)d.className='pin-dot'+(pinCurrent.length>i?' filled':'');
+  }
+}
+function updateEntryDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('ed'+i);
+    if(d)d.className='pin-dot'+(pinCurrent.length>i?' filled':'');
+  }
+}
+
+// Change lock settings
+function changeLock(){
+  LOCK.type=null;LOCK.pin=null;LOCK.credential=null;saveLock();
+  const ls=document.getElementById('lock-scr');
+  ls.style.display='flex';ls.style.opacity='1';
+  ['lock-bio','lock-pin-setup','lock-pin-entry'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  document.getElementById('lock-setup').style.display='flex';
+}
+
 // ===================== INIT =====================
 function init(){
   loadSaved();
+  initLock();
   // Apply saved theme
   if(!PREF.dark)document.body.classList.add('light');
   const togDark=document.getElementById('tog-dark');
