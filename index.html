@@ -856,25 +856,38 @@ function askDel(id,mod){delId=id;delMod=mod;document.getElementById('ov').classL
 function closeOv(){document.getElementById('ov').classList.remove('on');delId=null;delMod=null}
 function confirmDel(){
   if(delId&&delMod){
-    // Instantly animate out the item in DOM
-    const el=document.getElementById('hi-'+delId);
-    if(el){
-      el.style.transform='translateX(100%)';
-      el.style.opacity='0';
-      el.style.maxHeight=el.offsetHeight+'px';
-      setTimeout(()=>{
-        el.style.maxHeight='0';
-        el.style.padding='0';
-        el.style.marginBottom='0';
-        el.style.overflow='hidden';
-      },150);
-    }
-    // Remove from DB and save
-    DB[delMod]=DB[delMod].filter(e=>e.id!==delId);
+    const savedId=delId, savedMod=delMod;
+    // Remove from DB immediately
+    DB[savedMod]=DB[savedMod].filter(e=>e.id!==savedId);
     save();
     closeOv();
-    // Re-render after animation completes
-    setTimeout(()=>{refresh(delMod);updateDash();},350);
+    // Animate out the DOM element
+    const el=document.getElementById('hi-'+savedId);
+    if(el){
+      el.style.transition='all .2s ease';
+      el.style.transform='translateX(110%)';
+      el.style.opacity='0';
+      el.style.overflow='hidden';
+      setTimeout(()=>{
+        const h=el.offsetHeight;
+        el.style.maxHeight=h+'px';
+        el.style.transition='max-height .2s ease, padding .2s, margin .2s';
+        requestAnimationFrame(()=>{
+          el.style.maxHeight='0';
+          el.style.paddingTop='0';
+          el.style.paddingBottom='0';
+          el.style.marginBottom='0';
+        });
+        setTimeout(()=>{
+          refresh(savedMod);
+          updateDash();
+        },220);
+      },200);
+    } else {
+      // No DOM element found - just re-render
+      refresh(savedMod);
+      updateDash();
+    }
     toast('Deleted ✓');
   }
 }
@@ -917,19 +930,35 @@ function updateDash(){
   const tots={};let grand=0;const cnts={};
   ['bike','kitchen','food','clothes','friends','others'].forEach(m=>{
     tots[m]=DB[m].reduce((s,e)=>s+(e.total||e.amount||0),0);
-    grand+=tots[m];cnts[m]=DB[m].length;
+    grand+=tots[m];
+    // Count only current month entries
+    cnts[m]=DB[m].filter(e=>(e.date||'').startsWith(new Date().toISOString().slice(0,7))).length;
   });
-  ['bike','kitchen','food','clothes','friends','others'].forEach(m=>{
-    document.getElementById('d-'+m).textContent='Rs '+fmt(tots[m]);
-    const pct=grand>0?Math.min(100,tots[m]/grand*100):0;
+  // Month totals per category
+  const mtots={};
+  mods.forEach(m=>{
+    mtots[m]=DB[m].filter(e=>(e.date||'').startsWith(curMonth))
+      .reduce((s,e)=>s+(e.total||e.amount||0),0);
+  });
+  mods.forEach(m=>{
+    document.getElementById('d-'+m).textContent='Rs '+fmt(mtots[m]);
+    const pct=monthTotal>0?Math.min(100,mtots[m]/monthTotal*100):0;
     document.getElementById('b-'+m).style.width=pct+'%';
   });
-  document.getElementById('d-month').textContent='Rs '+fmt(grand);
-  // Year total = actual sum of all entries (same DB, real data)
-  const yearTotal = ['bike','kitchen','food','clothes','friends','others']
-    .reduce((s,m)=>s+DB[m].reduce((a,e)=>a+(e.total||e.amount||0),0),0);
+  // Filter by current month/year
+  const now=new Date();
+  const curYear=now.getFullYear().toString();
+  const curMonth=now.toISOString().slice(0,7); // "2026-06"
+  const mods=['bike','kitchen','food','clothes','friends','others'];
+  // Month total = entries whose date starts with current month
+  const monthTotal=mods.reduce((s,m)=>s+DB[m].filter(e=>(e.date||'').startsWith(curMonth))
+    .reduce((a,e)=>a+(e.total||e.amount||0),0),0);
+  // Year total = entries whose date starts with current year
+  const yearTotal=mods.reduce((s,m)=>s+DB[m].filter(e=>(e.date||'').startsWith(curYear))
+    .reduce((a,e)=>a+(e.total||e.amount||0),0),0);
+  document.getElementById('d-month').textContent='Rs '+fmt(monthTotal);
   document.getElementById('d-year').textContent='Rs '+fmt(yearTotal);
-  const topM=Object.entries(tots).sort((a,b)=>b[1]-a[1])[0];
+  const topM=Object.entries(mtots).sort((a,b)=>b[1]-a[1])[0];
   if(topM&&topM[1]>0){document.getElementById('d-topcat').textContent=topM[0];document.getElementById('d-topcat-s').textContent='Rs '+fmt(topM[1])}
   const topU=Object.entries(cnts).sort((a,b)=>b[1]-a[1])[0];
   if(topU&&topU[1]>0){document.getElementById('d-topuse').textContent=topU[0];document.getElementById('d-topuse-s').textContent=topU[1]+' entries'}
@@ -1198,7 +1227,11 @@ function saveK(type){
   if(!name){return}
   // Auto-calc missing field if 2 are filled
   const filled=[qty>0,rate>0,total>0].filter(Boolean).length;
-  if(filled<1){document.getElementById('e-'+p).classList.add('on');return}
+  if(filled<2){
+    document.getElementById('e-'+p).classList.add('on');
+    toast('Enter at least 2 of: Qty, Rate, Total');
+    return
+  }
   if(qty>0&&rate>0&&!total) total=parseFloat((qty*rate).toFixed(2));
   else if(total>0&&rate>0&&!qty) qty=parseFloat((total/rate).toFixed(2));
   else if(qty>0&&total>0&&!rate) rate=parseFloat((total/qty).toFixed(2));
@@ -1303,11 +1336,15 @@ function saveF(cat){
   let qty=parseFloat(document.getElementById('f-'+cat+'-qty').value)||0;
   let rate=parseFloat(document.getElementById('f-'+cat+'-rate').value)||0;
   let total=parseFloat(document.getElementById('f-'+cat+'-total').value)||0;
+  // Require at least 2 of 3 fields
+  const filledF=[qty>0,rate>0,total>0].filter(Boolean).length;
+  if(filledF<2&&!(qty>0||total>0)){toast('Enter at least 2 of: Qty, Rate, Total');return}
   // Auto-calc missing field
   if(qty>0&&rate>0&&!total) total=parseFloat((qty*rate).toFixed(2));
   else if(total>0&&rate>0&&!qty) qty=parseFloat((total/rate).toFixed(2));
   else if(qty>0&&total>0&&!rate) rate=parseFloat((total/qty).toFixed(2));
   if(!total&&qty&&rate) total=qty*rate;
+  if(!total){toast('Enter at least 2 of: Qty, Rate, Total');return}
   const notes=document.getElementById('f-'+cat+'-notes').value;
   const place=cat==='restaurant'&&document.getElementById('f-restaurant-place')?document.getElementById('f-restaurant-place').value:'';
   DB.food.unshift({id:Date.now(),cat,name,qty,rate,total,date:today(),notes,place});
@@ -1381,7 +1418,8 @@ function saveC(){
   else if(total>0&&price>0&&!qty) qty=parseFloat((total/price).toFixed(0));
   else if(qty>0&&total>0&&!price) price=parseFloat((total/qty).toFixed(2));
   if(!total&&qty&&price) total=qty*price;
-  if(qty===0&&total===0){document.getElementById('e-c').classList.add('on');return}
+  const filledC=[qty>0,price>0,total>0].filter(Boolean).length;
+  if(filledC<2){document.getElementById('e-c').classList.add('on');toast('Enter at least 2 of: Qty, Price, Total');return}
   const season=document.getElementById('c-season').value;
   const shop=document.getElementById('c-shop').value;
   DB.clothes.unshift({id:Date.now(),name,qty,price,total,season,shop,date:today()});
