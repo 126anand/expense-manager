@@ -927,45 +927,53 @@ function hiItem(e,name,sub,color,mod,badge,bst){
 function updateDash(){
   const mn=new Date().toLocaleDateString('en',{month:'long',year:'numeric'});
   document.getElementById('dash-sub').textContent=mn;
-  const tots={};let grand=0;const cnts={};
-  ['bike','kitchen','food','clothes','friends','others'].forEach(m=>{
-    tots[m]=DB[m].reduce((s,e)=>s+(e.total||e.amount||0),0);
-    grand+=tots[m];
-    // Count only current month entries
-    cnts[m]=DB[m].filter(e=>(e.date||'').startsWith(new Date().toISOString().slice(0,7))).length;
-  });
-  // Month totals per category
+  // Current date strings for filtering
+  const now=new Date();
+  const curYear=now.getFullYear().toString();          // "2026"
+  const curMonth=now.toISOString().slice(0,7);         // "2026-06"
+  const mods=['bike','kitchen','food','clothes','friends','others'];
+  // Per-module totals (this month only)
   const mtots={};
   mods.forEach(m=>{
-    mtots[m]=DB[m].filter(e=>(e.date||'').startsWith(curMonth))
+    mtots[m]=DB[m]
+      .filter(e=>(e.date||'').startsWith(curMonth))
       .reduce((s,e)=>s+(e.total||e.amount||0),0);
   });
+  // Month total
+  const monthTotal=mods.reduce((s,m)=>s+mtots[m],0);
+  // Year total (all entries this year)
+  const yearTotal=mods.reduce((s,m)=>s+DB[m]
+    .filter(e=>(e.date||'').startsWith(curYear))
+    .reduce((a,e)=>a+(e.total||e.amount||0),0),0);
+  // Entry counts this month
+  const cnts={};
+  mods.forEach(m=>{
+    cnts[m]=DB[m].filter(e=>(e.date||'').startsWith(curMonth)).length;
+  });
+  // Update category tiles (show this month)
   mods.forEach(m=>{
     document.getElementById('d-'+m).textContent='Rs '+fmt(mtots[m]);
     const pct=monthTotal>0?Math.min(100,mtots[m]/monthTotal*100):0;
     document.getElementById('b-'+m).style.width=pct+'%';
   });
-  // Filter by current month/year
-  const now=new Date();
-  const curYear=now.getFullYear().toString();
-  const curMonth=now.toISOString().slice(0,7); // "2026-06"
-  const mods=['bike','kitchen','food','clothes','friends','others'];
-  // Month total = entries whose date starts with current month
-  const monthTotal=mods.reduce((s,m)=>s+DB[m].filter(e=>(e.date||'').startsWith(curMonth))
-    .reduce((a,e)=>a+(e.total||e.amount||0),0),0);
-  // Year total = entries whose date starts with current year
-  const yearTotal=mods.reduce((s,m)=>s+DB[m].filter(e=>(e.date||'').startsWith(curYear))
-    .reduce((a,e)=>a+(e.total||e.amount||0),0),0);
+  // Update summary cards
   document.getElementById('d-month').textContent='Rs '+fmt(monthTotal);
   document.getElementById('d-year').textContent='Rs '+fmt(yearTotal);
+  // Top category (this month)
   const topM=Object.entries(mtots).sort((a,b)=>b[1]-a[1])[0];
-  if(topM&&topM[1]>0){document.getElementById('d-topcat').textContent=topM[0];document.getElementById('d-topcat-s').textContent='Rs '+fmt(topM[1])}
+  if(topM&&topM[1]>0){
+    document.getElementById('d-topcat').textContent=topM[0];
+    document.getElementById('d-topcat-s').textContent='Rs '+fmt(topM[1]);
+  }
+  // Most used (this month by count)
   const topU=Object.entries(cnts).sort((a,b)=>b[1]-a[1])[0];
-  if(topU&&topU[1]>0){document.getElementById('d-topuse').textContent=topU[0];document.getElementById('d-topuse-s').textContent=topU[1]+' entries'}
+  if(topU&&topU[1]>0){
+    document.getElementById('d-topuse').textContent=topU[0];
+    document.getElementById('d-topuse-s').textContent=topU[1]+' entries';
+  }
   renderBudget();renderReports();
 }
 
-// ===================== BIKE =====================
 function openBF(type){
   ['petrol','service','accessories','repairs'].forEach(t=>{
     document.getElementById('bf-'+t).style.display='none';
