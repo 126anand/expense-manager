@@ -316,10 +316,11 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
   <div class="g2" id="dash-cats">
     <div class="tile" id="dc-bike" onclick="nav('s-bike')"><div class="tt"><div class="tic" style="background:#1e2a1e">🏍️</div><div><div class="tn">Bike</div><div class="ts" id="d-bike">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-bike" style="background:#4caf72;width:0%"></div></div></div>
     <div class="tile" id="dc-kitchen" onclick="nav('s-kitchen')"><div class="tt"><div class="tic" style="background:#2a1e1e">🍳</div><div><div class="tn">Kitchen</div><div class="ts" id="d-kitchen">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-kitchen" style="background:#e07050;width:0%"></div></div></div>
-    <div class="tile" id="dc-food" onclick="nav('s-food')"><div class="tt"><div class="tic" style="background:#2a241a">🍔</div><div><div class="tn">Food</div><div class="ts" id="d-food">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-food" style="background:#e0a030;width:0%"></div></div></div>
+    <div class="tile" id="dc-food" onclick="nav('s-food')"><div class="tt"><div class="tic" style="background:#2a241a">🛒</div><div><div class="tn">Food & Kitchen</div><div class="ts" id="d-food">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-food" style="background:#e0a030;width:0%"></div></div></div>
     <div class="tile" id="dc-clothes" onclick="nav('s-clothes')"><div class="tt"><div class="tic" style="background:#1e1e2a">👕</div><div><div class="tn">Clothes</div><div class="ts" id="d-clothes">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-clothes" style="background:#6070d0;width:0%"></div></div></div>
     <div class="tile" id="dc-friends" onclick="nav('s-friends')"><div class="tt"><div class="tic" style="background:#2a1e26">👥</div><div><div class="tn">Friends</div><div class="ts" id="d-friends">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-friends" style="background:#d05090;width:0%"></div></div></div>
     <div class="tile" id="dc-others" onclick="nav('s-others')"><div class="tt"><div class="tic" style="background:#1e2228">📦</div><div><div class="tn">Others</div><div class="ts" id="d-others">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-others" style="background:#50a0d0;width:0%"></div></div></div>
+    <div class="tile" id="dc-split" onclick="nav('s-split')"><div class="tt"><div class="tic" style="background:#1a2a1e">🤝</div><div><div class="tn">Split</div><div class="ts" id="d-split">0 groups</div></div></div><div class="bbg"><div class="bf" id="b-split" style="background:#50c080;width:0%"></div></div></div>
   </div>
   <div class="lbl">Summary</div>
   <div class="g2">
@@ -343,8 +344,6 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
   <div class="g2">
     <div class="tile" id="bt-petrol" onclick="openBF('petrol')"><div class="tic" style="background:#1e2a1e">⛽</div><div class="tn" style="margin-top:6px">Petrol</div><div class="ts">Fuel & mileage</div></div>
     <div class="tile" id="bt-service" onclick="openBF('service')"><div class="tic" style="background:#2a241a">🔧</div><div class="tn" style="margin-top:6px">Servicing</div><div class="ts">Service records</div></div>
-    <div class="tile" id="bt-accessories" onclick="openBF('accessories')"><div class="tic" style="background:#1e1e2a">🛠️</div><div class="tn" style="margin-top:6px">Accessories</div><div class="ts">Parts & add-ons</div></div>
-    <div class="tile" id="bt-repairs" onclick="openBF('repairs')"><div class="tic" style="background:#2a1e1e">🔨</div><div class="tn" style="margin-top:6px">Repairs</div><div class="ts">Fix & maintenance</div></div>
   </div>
   <div class="fw" id="bf-petrol" style="display:none">
     <div class="ft">⛽ Add Petrol <span class="fc2" onclick="closeBF('petrol')">✕</span></div>
@@ -373,27 +372,10 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
   <div class="fw" id="bf-service" style="display:none">
     <div class="ft">🔧 Add Service <span class="fc2" onclick="closeBF('service')">✕</span></div>
     <div class="otog"><button class="obtn on" id="sv-bi" onclick="svcMode('items')">Item-wise</button><button class="obtn" id="sv-bt" onclick="svcMode('total')">Direct Total</button></div>
-    <div class="fl"><label>Meter (Optional)</label><input type="number" id="s-meter" placeholder="e.g. 12700"></div>
     <div id="sv-items"><div class="irow" id="sv-list"><input placeholder="Item name"><input type="number" placeholder="Rate" style="width:63px;flex:none" oninput="calcSvc()"><input type="number" placeholder="Qty" style="width:46px;flex:none" oninput="calcSvc()"><div class="irm" onclick="rmSvcRow(this)">✕</div></div><button class="iadd" onclick="addSvcRow()">+ Add Item</button><div class="grand"><span class="gl">Grand Total</span><span class="gv" id="sv-grand">Rs 0</span></div></div>
     <div id="sv-direct" style="display:none"><div class="fl"><label>Total Amount</label><input type="number" id="s-direct" placeholder="e.g. 1500"></div></div>
     <div class="fl"><label>Notes (Optional)</label><textarea id="s-notes" rows="2" style="resize:none"></textarea></div>
     <button class="sbtn" style="background:#e0a030;color:#1a1000" onclick="saveBikeOther('service')">Save Record</button>
-  </div>
-  <div class="fw" id="bf-accessories" style="display:none">
-    <div class="ft">🛠️ Add Accessory <span class="fc2" onclick="closeBF('accessories')">✕</span></div>
-    <div class="cw"><div class="cl">Quick Select ⭐</div><div class="cs" id="acc-chips"></div></div>
-    <div class="fl"><label>Item Name</label><input type="text" id="a-name" placeholder="e.g. Tyre, Light, Chain..." list="adl"><datalist id="adl"><option value="Engine Oil"><option value="Tyre (Front)"><option value="Tyre (Rear)"><option value="Chain"><option value="Brake Pad"><option value="Light Bulb"><option value="Mirror"><option value="Air Filter"></datalist></div>
-    <div class="r2"><div class="fl"><label>Price / Item</label><input type="number" id="a-price" placeholder="e.g. 500" oninput="calcAcc()"></div><div class="fl"><label>Qty</label><input type="number" id="a-qty" placeholder="1" oninput="calcAcc()"></div></div>
-    <div class="fl"><label>Total (Rs)</label><input type="number" id="a-total" readonly placeholder="Auto" style="color:var(--t4)"></div>
-    <button class="sbtn" style="background:#6070d0;color:#080a1a" onclick="saveBikeOther('accessories')">Save Accessory</button>
-  </div>
-  <div class="fw" id="bf-repairs" style="display:none">
-    <div class="ft">🔨 Add Repair <span class="fc2" onclick="closeBF('repairs')">✕</span></div>
-    <div class="fl"><label>Meter (Optional)</label><input type="number" id="r-meter" placeholder="e.g. 12700"></div>
-    <div class="fl"><label>Problem</label><textarea id="r-prob" rows="2" placeholder="What was wrong?" style="resize:none"></textarea></div>
-    <div class="fl"><label>Total Amount</label><input type="number" id="r-total" placeholder="e.g. 800"></div>
-    <div class="fl"><label>Shop (Optional)</label><input type="text" id="r-shop" placeholder="e.g. Sharma Garage"></div>
-    <button class="sbtn" style="background:#e07050;color:#1a0800" onclick="saveBikeOther('repairs')">Save Repair</button>
   </div>
   <div class="lbl">Summary</div>
   <div class="g2">
@@ -456,19 +438,24 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
 
 <!-- ===== FOOD ===== -->
 <div class="scr" id="s-food">
-  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Food</div><div class="hs">Track food expenses</div></div></div>
-  <div class="lbl">Category</div>
-  <div class="g2">
-    <div class="tile" id="ft-home" onclick="openFF('home')"><div class="tt"><div class="tic" style="background:#1e2a1e">🏠</div><div><div class="tn">Home Food</div><div class="ts" id="fc-home">0 entries</div></div></div></div>
+  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Food</div><div class="hs">Kitchen & restaurant expenses</div></div></div>
+  <div class="lbl">Item Type</div>
+  <div class="g3">
+    <div class="tile" id="ft-solid" onclick="openFF('solid')" style="text-align:center"><div class="tic" style="background:#1e2a1e;margin:0 auto">🌾</div><div class="tn" style="margin-top:6px">Solid</div><div class="ts">kg/gram</div></div>
+    <div class="tile" id="ft-liquid" onclick="openFF('liquid')" style="text-align:center"><div class="tic" style="background:#1e1e2a;margin:0 auto">💧</div><div class="tn" style="margin-top:6px">Liquid</div><div class="ts">L/mL</div></div>
+    <div class="tile" id="ft-packet" onclick="openFF('packet')" style="text-align:center"><div class="tic" style="background:#2a241a;margin:0 auto">📦</div><div class="tn" style="margin-top:6px">Packet</div><div class="ts">pcs/box</div></div>
+  </div>
+  <div class="lbl">Restaurant</div>
+  <div class="g2" style="margin-bottom:0">
     <div class="tile" id="ft-restaurant" onclick="openFF('restaurant')"><div class="tt"><div class="tic" style="background:#2a1e1e">🍽️</div><div><div class="tn">Restaurant</div><div class="ts" id="fc-rest">0 entries</div></div></div></div>
   </div>
   <div id="food-forms"></div>
   <div class="lbl">Summary</div>
   <div class="g2">
     <div class="sc"><div class="scl">This Month</div><div class="scv" id="food-tot">Rs 0</div><div class="scs">Total food</div></div>
-    <div class="sc"><div class="scl">Home vs Outside</div><div class="scv" id="food-ratio" style="font-size:12px;margin-top:1px">0%/0%</div><div class="scs">Home/Restaurant</div></div>
-    <div class="sc"><div class="scl">Top Item</div><div class="scv" id="food-top" style="font-size:13px;margin-top:1px">—</div><div class="scs" id="food-top-s">—</div></div>
     <div class="sc"><div class="scl">Entries</div><div class="scv" id="food-cnt">0</div><div class="scs">This month</div></div>
+    <div class="sc"><div class="scl">Top Item</div><div class="scv" id="food-top" style="font-size:13px;margin-top:1px">—</div><div class="scs" id="food-top-s">—</div></div>
+    <div class="sc"><div class="scl">Most Bought</div><div class="scv" id="food-most" style="font-size:13px;margin-top:1px">—</div><div class="scs">By frequency</div></div>
   </div>
   <div class="lbl">Recent Entries</div><div class="hw" id="food-hist"></div>
 </div>
@@ -502,7 +489,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
   <div class="lbl">Add Transaction</div>
   <div class="g2">
     <div class="tile" id="frt-spent" onclick="openFrF('spent')"><div class="tic" style="background:#2a1a1e">❤️</div><div class="tn" style="margin-top:6px">Spent on Friend</div><div class="ts">Treat, gift, bill</div></div>
-    <div class="tile" id="frt-split" onclick="openFrF('split')"><div class="tic" style="background:#1a2a1e">🤝</div><div class="tn" style="margin-top:6px">Split Expense</div><div class="ts">Share bill equally</div></div>
+
   </div>
   <!-- SPENT FORM -->
   <div class="fw" id="frf-spent" style="display:none">
@@ -514,27 +501,10 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
     <div class="fl"><label>Notes (Optional)</label><input type="text" id="frs-notes" placeholder="e.g. Dashain treat"></div>
     <button class="sbtn" style="background:#e07090;color:#150008" onclick="saveFr('spent')">Save Entry</button>
   </div>
-  <!-- SPLIT FORM -->
-  <div class="fw" id="frf-split" style="display:none">
-    <div class="ft">🤝 Split Expense <span class="fc2" onclick="closeFrF('split')">✕</span></div>
-    <div class="fl"><label>Expense Title</label><input type="text" id="spl-title" placeholder="e.g. Pizza Party, Trip..."></div>
-    <div class="fl"><label>Total Amount (Rs)</label><input type="number" id="spl-total" placeholder="e.g. 1000" oninput="calcSplit()"><div class="err" id="espl">Enter title and total amount</div></div>
-    <div class="fl"><label>Split Type</label></div>
-    <div class="otog">
-      <button class="obtn on" id="spl-equal-btn" onclick="setSplitMode('equal')">⚖️ Equal</button>
-      <button class="obtn" id="spl-custom-btn" onclick="setSplitMode('custom')">✏️ Custom</button>
-      <button class="obtn" id="spl-pct-btn" onclick="setSplitMode('percent')">% Percent</button>
-    </div>
-    <div class="fl"><label>Members</label></div>
-    <div id="spl-members"></div>
-    <button class="iadd" onclick="addSplitMember()">+ Add Member</button>
-    <div class="grand"><span class="gl" id="spl-each-lbl">Each pays</span><span class="gv" id="spl-each-val">Rs 0</span></div>
-    <button class="sbtn" style="background:#50c080;color:#001508" onclick="saveSplit()">Save Split</button>
-  </div>
   <div class="lbl">Summary</div>
   <div class="g2">
     <div class="sc"><div class="scl">Total Spent</div><div class="scv" id="fr-spent" style="color:#e07090">Rs 0</div><div class="scs">On friends</div></div>
-    <div class="sc"><div class="scl">Total Splits</div><div class="scv" id="fr-splits" style="color:#50c080">Rs 0</div><div class="scs">Your share</div></div>
+<div class="sc"><div class="scl">Total Gave</div><div class="scv" id="fr-gave" style="color:#50c080">Rs 0</div><div class="scs">Given to friends</div></div>
     <div class="sc"><div class="scl">Top Friend</div><div class="scv" id="fr-top" style="font-size:13px;margin-top:1px">—</div><div class="scs" id="fr-top-s">Rs 0</div></div>
     <div class="sc"><div class="scl">Most Active</div><div class="scv" id="fr-active" style="font-size:13px;margin-top:1px">—</div><div class="scs" id="fr-active-s">0 transactions</div></div>
   </div>
@@ -604,6 +574,55 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
   <div class="rtot"><span class="rtotl" id="rlbl">Today</span><span class="rtotv" id="rtot">Rs 0</span></div>
   <div class="rcrd"><div class="rct" id="rtitle">Breakdown</div><div id="rrows"></div></div>
   <div class="exprow"><button class="expbtn" onclick="doExp()">📄 Export PDF Report</button></div>
+</div>
+
+<!-- ===== SPLIT ===== -->
+<div class="scr" id="s-split">
+  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Split</div><div class="hs">Group expense profiles</div></div><div class="ha" onclick="showNewGroup()" title="New Group">＋</div></div>
+  <div class="lbl">Groups</div>
+  <div class="hw" id="split-groups-list"></div>
+  <!-- NEW GROUP FORM -->
+  <div class="fw" id="new-group-form" style="display:none">
+    <div class="ft">🤝 New Group <span class="fc2" onclick="document.getElementById('new-group-form').style.display='none'">✕</span></div>
+    <div class="fl"><label>Group Name</label><input type="text" id="ng-name" placeholder="e.g. School Friends, Roommates..."></div>
+    <div class="fl"><label>Group Emoji</label><select id="ng-emoji"><option value="🏠">🏠 Roommates</option><option value="🎓">🎓 School Friends</option><option value="💼">💼 Colleagues</option><option value="✈️">✈️ Travel Group</option><option value="🍽️">🍽️ Food Group</option><option value="👥">👥 General</option></select></div>
+    <div class="fl"><label>Members (one per line)</label><textarea id="ng-members" rows="4" placeholder="Anand&#10;Ram&#10;Hari&#10;Sita" style="resize:none"></textarea></div>
+    <button class="sbtn" style="background:#50c080;color:#001508" onclick="createGroup()">Create Group</button>
+  </div>
+</div>
+<!-- ===== SPLIT GROUP DETAIL ===== -->
+<div class="scr" id="s-split-group">
+  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht" id="sg-title">Group</div><div class="hs" id="sg-sub">0 members</div></div><div class="ha" onclick="openSplitExpForm()" title="Add Expense">＋</div></div>
+  <!-- SETTLEMENT CARD -->
+  <div class="fw" id="sg-settlement" style="display:none">
+    <div class="ft" style="color:#50c080">🧮 Settlement</div>
+    <div style="font-size:11px;color:var(--t5);margin-bottom:10px">Minimum payments to clear all debts</div>
+    <div id="settlement-items"></div>
+  </div>
+  <!-- BALANCES -->
+  <div class="lbl">Member Balances</div>
+  <div class="fw" id="sg-balances"></div>
+  <!-- ADD EXPENSE FORM -->
+  <div class="fw" id="split-exp-form" style="display:none">
+    <div class="ft">➕ Add Expense <span class="fc2" onclick="document.getElementById('split-exp-form').style.display='none'">✕</span></div>
+    <div class="fl"><label>Expense Title</label><input type="text" id="se-title" placeholder="e.g. Pizza Party, Rent, Trip..."></div>
+    <div class="fl"><label>Paid by</label><select id="se-paidby"></select></div>
+    <div class="fl"><label>Total Amount (Rs)</label><input type="number" id="se-total" placeholder="e.g. 1000" oninput="calcGroupSplit()"><div class="err" id="ese">Enter title and amount</div></div>
+    <div class="fl"><label>Split Mode</label></div>
+    <div class="otog">
+      <button class="obtn on" id="se-equal-btn" onclick="setGroupSplitMode('equal')">⚖️ Equal</button>
+      <button class="obtn" id="se-custom-btn" onclick="setGroupSplitMode('custom')">✏️ Custom</button>
+      <button class="obtn" id="se-pct-btn" onclick="setGroupSplitMode('percent')">% Percent</button>
+    </div>
+    <div class="fl"><label>Members & Shares</label></div>
+    <div id="se-members-wrap"></div>
+    <div class="grand"><span class="gl" id="se-each-lbl">Each pays</span><span class="gv" id="se-each-val">Rs 0</span></div>
+    <div class="fl"><label>Notes (Optional)</label><input type="text" id="se-notes" placeholder="e.g. June rent"></div>
+    <button class="sbtn" style="background:#50c080;color:#001508" onclick="addGroupExpense()">Add Expense</button>
+  </div>
+  <!-- EXPENSES LIST -->
+  <div class="lbl">Expenses</div>
+  <div class="hw" id="sg-expenses"></div>
 </div>
 
 <!-- ===== SETTINGS ===== -->
@@ -686,7 +705,7 @@ const filterY=arr=>arr.filter(e=>(e.date||'').startsWith(curYear()));
 function save(){
   if(!CAN_STORE)return;
   try{
-    localStorage.setItem('lem_db',JSON.stringify(DB));
+    if(!DB.splits)DB.splits=[];localStorage.setItem('lem_db',JSON.stringify(DB));
     localStorage.setItem('lem_bud',JSON.stringify(Object.fromEntries(Object.entries(BUD).map(([k,v])=>[k,v.b]))));
     localStorage.setItem('lem_pref',JSON.stringify(PREF));
     localStorage.setItem('lem_lock',JSON.stringify(LOCK));
@@ -699,7 +718,7 @@ function loadSaved(){
   if(!CAN_STORE)return;
   try{
     const d=localStorage.getItem('lem_db');
-    if(d){const p=JSON.parse(d);['bike','kitchen','food','clothes','friends','others'].forEach(k=>{if(Array.isArray(p[k]))DB[k]=p[k]})}
+    if(d){const p=JSON.parse(d);['bike','kitchen','food','clothes','friends','others'].forEach(k=>{if(Array.isArray(p[k]))DB[k]=p[k]});if(Array.isArray(p.splits))DB.splits=p.splits;}
     const b=localStorage.getItem('lem_bud');
     if(b){const p=JSON.parse(b);Object.keys(p).forEach(k=>{if(BUD[k])BUD[k].b=p[k]})}
     const pr=localStorage.getItem('lem_pref');
@@ -835,7 +854,7 @@ function updateDash(){
     trendSEl.textContent='vs last month (Rs '+fmt(lastMonthTotal)+')';
   }else{trendEl.textContent='No prev data';trendEl.className='scv'}
   document.getElementById('dsub').textContent=new Date().toLocaleDateString('en',{month:'long',year:'numeric'});
-  renderBudget();renderReports();
+  updateSplitDash();renderBudget();renderReports();
 }
 
 // ============================================================
@@ -937,7 +956,7 @@ function rmSvcRow(el){const p=el.closest('.irow');if(p)p.remove();calcSvc()}
 function calcSvc(){let t=0;document.querySelectorAll('#sv-items .irow').forEach(r=>{const i=r.querySelectorAll('input[type=number]');t+=(parseFloat(i[0]&&i[0].value)||0)*(parseFloat(i[1]&&i[1].value)||1)});document.getElementById('sv-grand').textContent='Rs '+fmt(t)}
 function saveBikeOther(type){
   const e={id:Date.now(),type,date:today()};
-  if(type==='service'){e.meter=document.getElementById('s-meter').value;e.notes=document.getElementById('s-notes').value;e.total=document.getElementById('sv-bi').classList.contains('on')?parseInt((document.getElementById('sv-grand').textContent).replace(/\D/g,''))||0:parseFloat(document.getElementById('s-direct').value)||0}
+  if(type==='service'){e.notes=document.getElementById('s-notes').value;e.total=document.getElementById('sv-bi').classList.contains('on')?parseInt((document.getElementById('sv-grand').textContent).replace(/\D/g,''))||0:parseFloat(document.getElementById('s-direct').value)||0}
   else if(type==='accessories'){e.name=document.getElementById('a-name').value;e.price=parseFloat(document.getElementById('a-price').value)||0;e.qty=parseFloat(document.getElementById('a-qty').value)||0;e.total=parseFloat(document.getElementById('a-total').value)||0}
   else if(type==='repairs'){e.meter=document.getElementById('r-meter').value;e.problem=document.getElementById('r-prob').value;e.shop=document.getElementById('r-shop').value;e.total=parseFloat(document.getElementById('r-total').value)||0}
   DB.bike.unshift(e);save();closeBF(type);renderBikeHist();updateBike();updateDash();toast(type+' saved');
@@ -1021,7 +1040,7 @@ function saveK(type){
 function renderKHist(){
   const w=document.getElementById('kitchen-hist');if(!DB.kitchen.length){w.innerHTML='<div class="empty">No entries yet</div>';return}
   const tb={solid:'background:#1e2a1e;color:#4caf72',liquid:'background:#1e1e2a;color:#6070d0',packet:'background:#2a241a;color:#e0a030'};
-  w.innerHTML=DB.kitchen.slice(0,10).map(e=>hiItem(e,e.name,['Rate: Rs '+e.rate+'/'+e.unit+'  Qty: '+e.qty+' '+e.unit,'Total: Rs '+fmt(e.total)],'#e07050','kitchen',e.type,tb[e.type]||'')).join('');
+  w.innerHTML=DB.kitchen.slice(0,10).map(e=>hiItem(e,e.name,['Rate: Rs '+e.rate+'/'+e.unit+'  Qty: '+e.qty+' '+e.unit],'#e07050','kitchen',e.type,tb[e.type]||'')).join('');
 }
 function updateK(){
   const tot=filterM(DB.kitchen).reduce((s,e)=>s+(e.total||0),0);const cnt=filterM(DB.kitchen).length;
@@ -1034,50 +1053,130 @@ function updateK(){
 // ============================================================
 // FOOD (Home + Restaurant only)
 // ============================================================
-function initFoodForms(){
-  const wrap=document.getElementById('food-forms');
-  ['home','restaurant'].forEach(function(cat){
-    var placeF=cat==='restaurant'?'<div class="fl"><label>Place (Optional)</label><input type="text" id="f-'+cat+'-place" placeholder="e.g. Himalaya Kitchen"></div>':'';
-    var chipId='fc-chips-'+cat;
-    var html='<div class="fw" id="ff-'+cat+'" style="display:none">';
-    html+='<div class="ft" style="color:'+FCC[cat]+'">'+(cat==='home'?'🏠 Home Food':'🍽️ Restaurant')+' <span class="fc2" onclick="closeFF(\''+cat+'\')">X</span></div>';
-    html+='<div class="cw"><div class="cl">Quick Select</div><div class="cs" id="'+chipId+'"></div></div>';
-    html+='<div class="fl"><label>Item Name</label><input type="text" id="f-'+cat+'-name" placeholder="e.g. Rice, Momo..."></div>';
-    html+='<div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="f-'+cat+'-qty" placeholder="e.g. 2" oninput="calcF(\''+cat+'\',\'qty\')"></div>';
-    html+='<div class="fl"><label>Rate / Item</label><input type="number" id="f-'+cat+'-rate" placeholder="e.g. 150" oninput="calcF(\''+cat+'\',\'rate\')"></div></div>';
-    html+='<div class="fl"><label>Total (Rs)</label><input type="number" id="f-'+cat+'-total" placeholder="e.g. 300" oninput="calcF(\''+cat+'\',\'total\')"><div class="hint" id="hf-'+cat+'">Auto</div></div>';
-    html+=placeF;
-    html+='<div class="fl"><label>Notes (Optional)</label><input type="text" id="f-'+cat+'-notes" placeholder="e.g. Lunch"></div>';
-    html+='<button class="sbtn" style="background:'+FCC[cat]+';color:#0a0a0a" onclick="saveF(\''+cat+'\')">Save Entry</button>';
-    html+='</div>';
-    wrap.innerHTML+=html;
+
+function buildFoodChips(){
+  var FDEF={
+    solid:['Rice','Sugar','Flour','Onion','Potato','Salt'],
+    liquid:['Oil','Milk','Ghee','Juice'],
+    packet:['Noodles','Tea','Biscuits','Coffee'],
+    restaurant:['Momo','Chowmein','Pizza','Burger','Thali']
+  };
+  ['solid','liquid','packet','restaurant'].forEach(function(cat){
+    var freq={};var lastE={};
+    DB.food.filter(function(e){return e.cat===cat}).forEach(function(e){
+      freq[e.name]=(freq[e.name]||0)+1;lastE[e.name]=e;
+    });
+    var sorted=Object.entries(freq).sort(function(a,b){return b[1]-a[1]}).map(function(kv){return lastE[kv[0]]});
+    var names=new Set(sorted.map(function(e){return e.name}));
+    (FDEF[cat]||[]).forEach(function(n){
+      if(!names.has(n))sorted.push({name:n,cat:cat,qty:1,rate:0,unit:cat==='solid'?'kg':cat==='liquid'?'liter':'packet'});
+    });
+    var el=document.getElementById('fc-chips-'+cat);
+    if(!el)return;
+    el.innerHTML='';
+    sorted.slice(0,8).forEach(function(entry){
+      var chip=document.createElement('div');
+      chip.className='chip hi';
+      chip.textContent=entry.name;
+      chip.addEventListener('click',function(){fillF(cat,entry.name,entry.qty||1,entry.rate||0)});
+      el.appendChild(chip);
+    });
   });
 }
-function buildFoodChips(){
-  ['home','restaurant'].forEach(function(cat){
-    var freq={};var lastE={};
-    DB.food.filter(function(e){return e.cat===cat}).forEach(function(e){freq[e.name]=(freq[e.name]||0)+1;lastE[e.name]=e});
-    var sorted=Object.entries(freq).sort(function(a,b){return b[1]-a[1]}).map(function(kv){return lastE[kv[0]]});
-    var FDEF={home:['Dal Bhat','Rice','Roti','Egg','Noodles'],restaurant:['Momo','Chowmein','Pizza','Burger','Thali']};
-    var names=new Set(sorted.map(function(e){return e.name}));
-    FDEF[cat].forEach(function(n){if(!names.has(n))sorted.push({name:n,cat:cat,qty:1,rate:0,total:0})});
-    var el=document.getElementById('fc-chips-'+cat);
-    if(el)el.innerHTML=sorted.slice(0,8).map(function(e){return '<div class="chip hi" onclick="fillF(\''+cat+'\',\''+esc(e.name||'')+'\','+e.qty+','+e.rate+')">'+esc(e.name||'')+'</div>'}).join('');
+function initFoodForms(){
+  var wrap=document.getElementById('food-forms');
+  if(!wrap)return;
+  var ktypes=[
+    {id:'solid',icon:'🌾',label:'Solid Item',units:[{v:'kg',l:'kg'},{v:'gram',l:'gram'}]},
+    {id:'liquid',icon:'💧',label:'Liquid Item',units:[{v:'liter',l:'Liter'},{v:'ml',l:'mL'}]},
+    {id:'packet',icon:'📦',label:'Packet Item',units:[{v:'packet',l:'Packet'},{v:'box',l:'Box'},{v:'piece',l:'Piece'}]}
+  ];
+  ktypes.forEach(function(t){
+    var div=document.createElement('div');
+    div.className='fw';div.id='ff-'+t.id;div.style.display='none';
+    // Close button
+    var ft=document.createElement('div');ft.className='ft';
+    ft.textContent=t.icon+' '+t.label+' ';
+    var closeBtn=document.createElement('span');closeBtn.className='fc2';closeBtn.textContent='X';
+    closeBtn.onclick=function(){closeFF(t.id)};ft.appendChild(closeBtn);div.appendChild(ft);
+    // Chips
+    var cw=document.createElement('div');cw.className='cw';
+    cw.innerHTML='<div class="cl">Quick Select</div><div class="cs" id="fc-chips-'+t.id+'"></div>';
+    div.appendChild(cw);
+    // Name field
+    var nf=document.createElement('div');nf.className='fl';
+    nf.innerHTML='<label>Item Name</label><input type="text" id="f-'+t.id+'-name" placeholder="e.g. Rice, Oil...">';
+    div.appendChild(nf);
+    // Unit select
+    var uf=document.createElement('div');uf.className='fl';
+    var uSel='<label>Unit</label><select id="f-'+t.id+'-unit">';
+    t.units.forEach(function(u){uSel+='<option value="'+u.v+'">'+u.l+'</option>'});
+    uSel+='</select>';uf.innerHTML=uSel;div.appendChild(uf);
+    // Qty + Rate row
+    var r2=document.createElement('div');r2.className='r2';
+    r2.innerHTML='<div class="fl"><label>Quantity</label><input type="number" id="f-'+t.id+'-qty" placeholder="e.g. 5"><div class="err" id="ef-'+t.id+'">Enter 2 fields</div></div>'
+      +'<div class="fl"><label>Rate / Unit</label><input type="number" id="f-'+t.id+'-rate" placeholder="e.g. 80"></div>';
+    div.appendChild(r2);
+    // Total
+    var tf=document.createElement('div');tf.className='fl';
+    tf.innerHTML='<label>Total (Rs)</label><input type="number" id="f-'+t.id+'-total" placeholder="e.g. 400"><div class="hint" id="hf-'+t.id+'">Auto</div>';
+    div.appendChild(tf);
+    // Save button
+    var btn=document.createElement('button');btn.className='sbtn';btn.style.background='#e07050';btn.style.color='#1a0800';
+    btn.textContent='Save Item';btn.onclick=function(){saveF(t.id)};div.appendChild(btn);
+    wrap.appendChild(div);
+    // Wire up oninput
+    var qEl=document.getElementById('f-'+t.id+'-qty');if(qEl)qEl.oninput=function(){calcF(t.id,'qty')};
+    var rEl=document.getElementById('f-'+t.id+'-rate');if(rEl)rEl.oninput=function(){calcF(t.id,'rate')};
+    var tEl=document.getElementById('f-'+t.id+'-total');if(tEl)tEl.oninput=function(){calcF(t.id,'total')};
   });
+  // Restaurant form
+  var d2=document.createElement('div');d2.className='fw';d2.id='ff-restaurant';d2.style.display='none';
+  var ft2=document.createElement('div');ft2.className='ft';ft2.style.color='#e07050';ft2.textContent='🍽️ Restaurant ';
+  var cb2=document.createElement('span');cb2.className='fc2';cb2.textContent='X';cb2.onclick=function(){closeFF('restaurant')};ft2.appendChild(cb2);d2.appendChild(ft2);
+  var cw2=document.createElement('div');cw2.className='cw';
+  cw2.innerHTML='<div class="cl">Quick Select</div><div class="cs" id="fc-chips-restaurant"></div>';d2.appendChild(cw2);
+  d2.innerHTML+=''
+    +'<div class="fl"><label>Item Name</label><input type="text" id="f-restaurant-name" placeholder="e.g. Momo, Pizza..."></div>'
+    +'<div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="f-restaurant-qty" placeholder="e.g. 2"></div>'
+    +'<div class="fl"><label>Rate / Item</label><input type="number" id="f-restaurant-rate" placeholder="e.g. 180"></div></div>'
+    +'<div class="fl"><label>Total (Rs)</label><input type="number" id="f-restaurant-total" placeholder="e.g. 360"><div class="hint" id="hf-restaurant">Auto</div></div>'
+    +'<div class="fl"><label>Place (Optional)</label><input type="text" id="f-restaurant-place" placeholder="e.g. Himalaya Kitchen"></div>'
+    +'<div class="fl"><label>Notes (Optional)</label><input type="text" id="f-restaurant-notes" placeholder="e.g. Lunch"></div>';
+  var btn2=document.createElement('button');btn2.className='sbtn';btn2.style.background='#e07050';btn2.style.color='#1a0800';
+  btn2.textContent='Save Entry';btn2.onclick=function(){saveF('restaurant')};d2.appendChild(btn2);
+  wrap.appendChild(d2);
+  var rq=document.getElementById('f-restaurant-qty');if(rq)rq.oninput=function(){calcF('restaurant','qty')};
+  var rr=document.getElementById('f-restaurant-rate');if(rr)rr.oninput=function(){calcF('restaurant','rate')};
+  var rt=document.getElementById('f-restaurant-total');if(rt)rt.oninput=function(){calcF('restaurant','total')};
 }
 function openFF(cat){
-  ['home','restaurant'].forEach(function(c){document.getElementById('ff-'+c).style.display='none';var t=document.getElementById('ft-'+c);if(t){t.style.borderColor='';t.style.background=''}});
-  document.getElementById('ff-'+cat).style.display='block';
-  var t=document.getElementById('ft-'+cat);if(t){t.style.borderColor=FCC[cat];t.style.background=FCBG[cat]}
+  ['solid','liquid','packet','restaurant'].forEach(function(c){
+    var el=document.getElementById('ff-'+c);if(el)el.style.display='none';
+    var t=document.getElementById('ft-'+c);if(t){t.style.borderColor='';t.style.background=''}
+  });
+  var el=document.getElementById('ff-'+cat);if(el)el.style.display='block';
+  var t=document.getElementById('ft-'+cat);
+  if(t){t.style.borderColor=cat==='restaurant'?'#e07050':'#e07050';t.style.background=cat==='restaurant'?'#221a18':'#221a18'}
   buildFoodChips();
+  var el2=document.getElementById('ff-'+cat);if(el2)el2.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-function closeFF(cat){document.getElementById('ff-'+cat).style.display='none';var t=document.getElementById('ft-'+cat);if(t){t.style.borderColor='';t.style.background=''}}
+function closeFF(cat){
+  var el=document.getElementById('ff-'+cat);if(el)el.style.display='none';
+  var t=document.getElementById('ft-'+cat);if(t){t.style.borderColor='';t.style.background=''}
+}
 function fillF(cat,name,qty,rate){
   openFF(cat);
   document.getElementById('f-'+cat+'-name').value=name;
   document.getElementById('f-'+cat+'-qty').value=qty||'';
   document.getElementById('f-'+cat+'-rate').value=rate||'';
   if(qty>0&&rate>0){document.getElementById('f-'+cat+'-total').value=(qty*rate).toFixed(0);var h=document.getElementById('hf-'+cat);if(h){h.textContent='Pre-filled';h.classList.add('on')}}
+  // Set last used unit for kitchen types
+  var isKType=(cat==='solid'||cat==='liquid'||cat==='packet');
+  if(isKType){
+    var last=DB.food.filter(function(e){return e.cat===cat&&e.name===name})[0];
+    if(last&&last.unit){var uEl=document.getElementById('f-'+cat+'-unit');if(uEl)uEl.value=last.unit}
+  }
 }
 function calcF(cat,changed){
   var qEl=document.getElementById('f-'+cat+'-qty'),rEl=document.getElementById('f-'+cat+'-rate'),tEl=document.getElementById('f-'+cat+'-total');
@@ -1092,39 +1191,51 @@ function saveF(cat){
   var qty=parseFloat(document.getElementById('f-'+cat+'-qty').value)||0;
   var rate=parseFloat(document.getElementById('f-'+cat+'-rate').value)||0;
   var total=parseFloat(document.getElementById('f-'+cat+'-total').value)||0;
+  var isKType=(cat==='solid'||cat==='liquid'||cat==='packet');
+  var unit=isKType&&document.getElementById('f-'+cat+'-unit')?document.getElementById('f-'+cat+'-unit').value:'';
+  // 2-field requirement for kitchen types
+  if(isKType){
+    var filled=[qty>0,rate>0,total>0].filter(Boolean).length;
+    if(filled<2){var eEl=document.getElementById('ef-'+cat);if(eEl)eEl.classList.add('on');toast('Enter at least 2 of: Qty, Rate, Total');return}
+    var eEl=document.getElementById('ef-'+cat);if(eEl)eEl.classList.remove('on');
+  }
   if(qty>0&&rate>0&&!total)total=qty*rate;else if(total>0&&rate>0&&!qty)qty=total/rate;else if(qty>0&&total>0&&!rate)rate=total/qty;
-  if(!total&&!qty){toast('Enter at least name and amount');return}
-  var notes=document.getElementById('f-'+cat+'-notes').value;
+  if(!total){toast('Enter amount');return}
+  var notes=document.getElementById('f-'+cat+'-notes')&&document.getElementById('f-'+cat+'-notes').value||'';
   var place=cat==='restaurant'&&document.getElementById('f-restaurant-place')?document.getElementById('f-restaurant-place').value:'';
-  DB.food.unshift({id:Date.now(),cat:cat,name:name,qty:parseFloat((qty||0).toFixed(2)),rate:parseFloat((rate||0).toFixed(2)),total:parseFloat((total||0).toFixed(0)),date:today(),notes:notes,place:place});
+  DB.food.unshift({id:Date.now(),cat:cat,name:name,unit:unit,qty:parseFloat((qty||0).toFixed(2)),rate:parseFloat((rate||0).toFixed(2)),total:parseFloat((total||0).toFixed(0)),date:today(),notes:notes,place:place});
   save();
-  document.getElementById('f-'+cat+'-name').value='';document.getElementById('f-'+cat+'-qty').value='';document.getElementById('f-'+cat+'-rate').value='';document.getElementById('f-'+cat+'-total').value='';document.getElementById('f-'+cat+'-notes').value='';
-  var h=document.getElementById('hf-'+cat);if(h)h.classList.remove('on');
+  document.getElementById('f-'+cat+'-name').value='';document.getElementById('f-'+cat+'-qty').value='';document.getElementById('f-'+cat+'-rate').value='';document.getElementById('f-'+cat+'-total').value='';
+  var hEl=document.getElementById('hf-'+cat);if(hEl)hEl.classList.remove('on');
   closeFF(cat);renderFoodHist();updateFood();updateFoodCounts();updateDash();toast(name+' saved');
 }
 function renderFoodHist(){
   var w=document.getElementById('food-hist');if(!DB.food.length){w.innerHTML='<div class="empty">No entries yet</div>';return}
-  var bs={home:'background:#1e2a1e;color:#4caf72',restaurant:'background:#2a1e1e;color:#e07050'};
+  var bs={solid:'background:#1e2a1e;color:#4caf72',liquid:'background:#1e1e2a;color:#6070d0',packet:'background:#2a241a;color:#e0a030',restaurant:'background:#2a1e1e;color:#e07050'};
+  var fc2={solid:'#4caf72',liquid:'#6070d0',packet:'#e0a030',restaurant:'#e07050'};
   w.innerHTML=DB.food.slice(0,10).map(function(e){
-    var lines=['Rate: Rs '+e.rate+'  Qty: '+e.qty,(e.place?'Place: '+e.place:'')+(e.notes?' | '+e.notes:'')];
-    return hiItem(e,e.name,lines.filter(Boolean),FCC[e.cat]||'#e0a030','food',e.cat,bs[e.cat]||'');
+    var isKType=(e.cat==='solid'||e.cat==='liquid'||e.cat==='packet');
+    var lines=[];
+    if(isKType){lines.push('Rate: Rs '+e.rate+'/'+(e.unit||'unit')+'  Qty: '+e.qty+' '+(e.unit||''))}
+    else{if(e.qty>0)lines.push('Qty: '+e.qty+'  Rate: Rs '+e.rate);if(e.place)lines.push('Place: '+e.place);if(e.notes)lines.push(e.notes)}
+    return hiItem(e,e.name,lines.filter(Boolean),fc2[e.cat]||'#e0a030','food',e.cat,bs[e.cat]||'');
   }).join('');
 }
 function updateFood(){
   var tot=filterM(DB.food).reduce(function(s,e){return s+(e.total||0)},0);
   document.getElementById('food-tot').textContent='Rs '+fmt(tot);
   document.getElementById('food-cnt').textContent=filterM(DB.food).length;
-  var homeT=DB.food.filter(function(e){return e.cat==='home'}).reduce(function(s,e){return s+(e.total||0)},0);
-  var outT=DB.food.filter(function(e){return e.cat==='restaurant'}).reduce(function(s,e){return s+(e.total||0)},0);
-  var tt=homeT+outT;
-  document.getElementById('food-ratio').textContent=(tt>0?Math.round(homeT/tt*100):0)+'% / '+(tt>0?Math.round(outT/tt*100):0)+'%';
   var it={};DB.food.forEach(function(e){it[e.name]=(it[e.name]||0)+(e.total||0)});
   var top=Object.entries(it).sort(function(a,b){return b[1]-a[1]})[0];
   if(top){document.getElementById('food-top').textContent=top[0];document.getElementById('food-top-s').textContent='Rs '+fmt(top[1])}
+  var fr={};DB.food.forEach(function(e){fr[e.name]=(fr[e.name]||0)+1});
+  var most=Object.entries(fr).sort(function(a,b){return b[1]-a[1]})[0];
+  if(most){var fm=document.getElementById('food-most');if(fm)fm.textContent=most[0]}
 }
 function updateFoodCounts(){
-  var mp={home:'home',restaurant:'rest'};
-  ['home','restaurant'].forEach(function(c){var cnt=DB.food.filter(function(e){return e.cat===c}).length;var el=document.getElementById('fc-'+mp[c]);if(el)el.textContent=cnt+' entr'+(cnt===1?'y':'ies')});
+  var el=document.getElementById('fc-rest');
+  var cnt=DB.food.filter(function(e){return e.cat==='restaurant'}).length;
+  if(el)el.textContent=cnt+' entr'+(cnt===1?'y':'ies');
 }
 
 // ============================================================
@@ -1170,7 +1281,7 @@ function renderClothesHist(){
   var w=document.getElementById('clothes-hist');if(!DB.clothes.length){w.innerHTML='<div class="empty">No entries yet</div>';return}
   var sb={general:'background:#1e1e1e;color:#888',summer:'background:#2a200f;color:#e0a030',winter:'background:#1e1e2a;color:#6070d0',rainy:'background:#1e2a2a;color:#50c0c0',festival:'background:#2a1a2a;color:#c070d0'};
   w.innerHTML=DB.clothes.slice(0,10).map(function(e){
-    var lines=['Qty: '+e.qty+' pc  Price: Rs '+e.price+' each','Total: Rs '+fmt(e.total)+(e.shop?' | '+e.shop:'')];
+    var lines=['Qty: '+e.qty+' pc  Price: Rs '+e.price+(e.shop?' | Shop: '+e.shop:'')];
     return hiItem(e,e.name,lines,'#6070d0','clothes',e.season,sb[e.season]||sb.general);
   }).join('');
 }
@@ -1310,7 +1421,7 @@ function updateFr(){
   var spent=DB.friends.filter(function(e){return e.type==='spent'}).reduce(function(s,e){return s+e.amount},0);
   var splits=DB.friends.filter(function(e){return e.type==='split'}).reduce(function(s,e){return s+(e.amount||0)},0);
   document.getElementById('fr-spent').textContent='Rs '+fmt(spent);
-  document.getElementById('fr-splits').textContent='Rs '+fmt(splits);
+  var frGaveEl=document.getElementById('fr-gave');if(frGaveEl)frGaveEl.textContent='Rs '+fmt(splits);
   // Top friend
   var stats={};
   DB.friends.forEach(function(e){
@@ -1761,6 +1872,243 @@ function saveRecovery(){
 }
 
 // ============================================================
+// SPLIT MODULE — Group Profiles with Settlement Engine
+// ============================================================
+// DB.splits = array of group objects:
+// { id, name, emoji, members:[], expenses:[], created }
+// expense: { id, title, paidBy, total, shares:{name:amount}, notes, date, settled:{name:bool} }
+
+if(!DB.splits)DB.splits=[];
+
+var currentGroupId=null;
+var groupSplitMode='equal';
+
+function showNewGroup(){document.getElementById('new-group-form').style.display='block';document.getElementById('ng-name').focus()}
+
+function createGroup(){
+  var name=document.getElementById('ng-name').value.trim();
+  var emoji=document.getElementById('ng-emoji').value;
+  var membersRaw=document.getElementById('ng-members').value.trim();
+  if(!name||!membersRaw){toast('Enter group name and members');return}
+  var members=membersRaw.replace(/,/g,'\n').split('\n').map(function(m){return m.trim()}).filter(Boolean);
+
+  if(members.length<2){toast('Add at least 2 members');return}
+  var group={id:Date.now(),name:name,emoji:emoji,members:members,expenses:[],created:today()};
+  if(!DB.splits)DB.splits=[];
+  DB.splits.unshift(group);
+  save();
+  document.getElementById('new-group-form').style.display='none';
+  document.getElementById('ng-name').value='';document.getElementById('ng-members').value='';
+  renderSplitGroups();updateDash();toast(name+' group created');
+}
+
+function renderSplitGroups(){
+  var wrap=document.getElementById('split-groups-list');if(!wrap)return;
+  if(!DB.splits||!DB.splits.length){wrap.innerHTML='<div class="empty">No groups yet. Tap + to create one.</div>';return}
+  wrap.innerHTML=DB.splits.map(function(g){
+    var totalExp=g.expenses.reduce(function(s,e){return s+e.total},0);
+    var balances=calcGroupBalances(g);
+    var hasDebt=Object.values(balances).some(function(b){return Math.abs(b)>0.5});
+    return '<div class="hi2" onclick="openGroup('+g.id+')" style="cursor:pointer">'
+      +'<div class="hl">'
+      +'<div class="hd">'+g.members.length+' members • '+g.expenses.length+' expenses</div>'
+      +'<div class="hm">'+g.emoji+' '+esc(g.name)+'</div>'
+      +'<div class="hdet"><span>Total: Rs '+fmt(totalExp)+'</span></div>'
+      +'</div>'
+      +'<div class="hr2">'
+      +'<div style="font-size:11px;padding:3px 8px;border-radius:6px;font-weight:700;'+(hasDebt?'background:#2a1010;color:#e05050':'background:#1e2a1e;color:#4caf72')+'">'+(hasDebt?'Pending':'Settled')+'</div>'
+      +'<div class="hac" style="margin-top:5px"><div class="eb del" onclick="event.stopPropagation();deleteGroup('+g.id+')">🗑</div></div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function deleteGroup(gid){
+  if(!confirm('Delete this group and all its expenses?'))return;
+  DB.splits=DB.splits.filter(function(g){return g.id!==gid});
+  save();renderSplitGroups();updateDash();toast('Group deleted');
+}
+
+function openGroup(gid){
+  currentGroupId=gid;
+  var g=DB.splits.find(function(x){return x.id===gid});if(!g)return;
+  document.getElementById('sg-title').textContent=g.emoji+' '+g.name;
+  document.getElementById('sg-sub').textContent=g.members.length+' members';
+  // Setup paid-by select
+  var paidBy=document.getElementById('se-paidby');
+  if(paidBy)paidBy.innerHTML=g.members.map(function(m){return '<option value="'+esc(m)+'">'+esc(m)+'</option>'}).join('');
+  renderGroupDetail(g);
+  nav('s-split-group');
+}
+
+function renderGroupDetail(g){
+  // Balances
+  var balances=calcGroupBalances(g);
+  var balWrap=document.getElementById('sg-balances');
+  if(balWrap){
+    balWrap.innerHTML=g.members.map(function(m){
+      var b=balances[m]||0;
+      var clr=b>0?'#4caf72':b<0?'#e05050':'#888';
+      var label=b>0?'gets back Rs '+fmt(Math.abs(b).toFixed(0)):b<0?'owes Rs '+fmt(Math.abs(b).toFixed(0)):'settled';
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:.5px solid #1a1a1a">'
+        +'<div style="font-size:13px;color:var(--t);font-weight:600">'+esc(m)+'</div>'
+        +'<div style="font-size:12px;font-weight:700;color:'+clr+'">'+label+'</div>'
+        +'</div>';
+    }).join('');
+  }
+  // Settlement instructions
+  var settlements=calculateSettlements(balances);
+  var settleWrap=document.getElementById('sg-settlement');
+  var settleItems=document.getElementById('settlement-items');
+  if(settlements.length>0&&settleWrap&&settleItems){
+    settleWrap.style.display='block';
+    settleItems.innerHTML=settlements.map(function(s,i){
+      var sid='settle-'+g.id+'-'+i;
+      return '<div class="settle-item">'
+        +'<div><div class="settle-name">'+esc(s.from)+' pays '+esc(s.to)+'</div></div>'
+        +'<div style="display:flex;align-items:center;gap:7px">'
+        +'<div class="settle-amt" style="color:#e07050">Rs '+fmt(s.amount.toFixed(0))+'</div>'
+        +'</div>'
+        +'</div>';
+    }).join('');
+  }else if(settleWrap){
+    settleWrap.style.display=g.expenses.length?'block':'none';
+    if(settleItems)settleItems.innerHTML='<div style="font-size:12px;color:#4caf72;padding:5px 0">All settled! No payments needed.</div>';
+  }
+  // Expenses list
+  var expWrap=document.getElementById('sg-expenses');
+  if(expWrap){
+    if(!g.expenses.length){expWrap.innerHTML='<div class="empty">No expenses yet. Tap + to add.</div>';return}
+    expWrap.innerHTML=g.expenses.map(function(e){
+      var memberLines=Object.entries(e.shares).map(function(kv){return esc(kv[0])+': Rs '+fmt(kv[1].toFixed(0))}).join('  ');
+      return '<div class="hi2">'
+        +'<div class="hl">'
+        +'<div class="hd">'+esc(e.date)+'  Paid by: '+esc(e.paidBy)+'</div>'
+        +'<div class="hm">'+esc(e.title)+'</div>'
+        +'<div class="hdet"><span>'+memberLines+'</span>'+(e.notes?'<span>'+esc(e.notes)+'</span>':'')+'</div>'
+        +'</div>'
+        +'<div class="hr2">'
+        +'<div class="ha2" style="color:#50c080">Rs '+fmt(e.total)+'</div>'
+        +'<div class="hac"><div class="eb del" onclick="deleteGroupExpense('+e.id+')">🗑</div></div>'
+        +'</div>'
+        +'</div>';
+    }).join('');
+  }
+}
+
+// GREEDY SETTLEMENT ALGORITHM
+function calculateSettlements(balances){
+  var creditors=[];var debtors=[];
+  Object.entries(balances).forEach(function(kv){
+    if(kv[1]>0.5)creditors.push({name:kv[0],amount:kv[1]});
+    else if(kv[1]<-0.5)debtors.push({name:kv[0],amount:Math.abs(kv[1])});
+  });
+  creditors.sort(function(a,b){return b.amount-a.amount});
+  debtors.sort(function(a,b){return b.amount-a.amount});
+  var instructions=[];var ci=0,di=0;
+  while(ci<creditors.length&&di<debtors.length){
+    var cr=creditors[ci],db=debtors[di];
+    var payment=Math.min(cr.amount,db.amount);
+    if(payment>0.5)instructions.push({from:db.name,to:cr.name,amount:payment});
+    cr.amount-=payment;db.amount-=payment;
+    if(cr.amount<0.5)ci++;
+    if(db.amount<0.5)di++;
+  }
+  return instructions;
+}
+
+// Calculate running balances for a group
+function calcGroupBalances(g){
+  var bal={};
+  g.members.forEach(function(m){bal[m]=0});
+  g.expenses.forEach(function(e){
+    // Person who paid is owed back the total
+    bal[e.paidBy]=(bal[e.paidBy]||0)+e.total;
+    // Each person owes their share
+    Object.entries(e.shares).forEach(function(kv){
+      bal[kv[0]]=(bal[kv[0]]||0)-kv[1];
+    });
+  });
+  return bal;
+}
+
+var groupSplitModeG='equal';
+function openSplitExpForm(){
+  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
+  var form=document.getElementById('split-exp-form');if(form)form.style.display='block';
+  groupSplitModeG='equal';
+  ['equal','custom','percent'].forEach(function(m){
+    var btn=document.getElementById('se-'+m+'-btn');if(btn)btn.classList.toggle('on',m==='equal');
+  });
+  buildGroupMemberInputs(g,null);
+  if(form)form.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function setGroupSplitMode(mode){
+  groupSplitModeG=mode;
+  ['equal','custom','percent'].forEach(function(m){var btn=document.getElementById('se-'+m+'-btn');if(btn)btn.classList.toggle('on',m===mode)});
+  calcGroupSplit();
+}
+function buildGroupMemberInputs(g,shares){
+  var wrap=document.getElementById('se-members-wrap');if(!wrap)return;
+  var total=parseFloat(document.getElementById('se-total').value)||0;
+  var each=g.members.length>0?total/g.members.length:0;
+  wrap.innerHTML=g.members.map(function(m,i){
+    var val=shares?shares[m]||0:(groupSplitModeG==='equal'?each.toFixed(0):'');
+    return '<div class="split-member"><input type="text" value="'+esc(m)+'" readonly style="color:var(--t3)"><input type="number" id="se-share-'+i+'" placeholder="Share" value="'+val+'" oninput="calcGroupSplit()"></div>';
+  }).join('');
+}
+function calcGroupSplit(){
+  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
+  var total=parseFloat(document.getElementById('se-total').value)||0;
+  var lbl=document.getElementById('se-each-lbl');var val=document.getElementById('se-each-val');
+  if(groupSplitModeG==='equal'){
+    var each=g.members.length>0?total/g.members.length:0;
+    g.members.forEach(function(m,i){var el=document.getElementById('se-share-'+i);if(el)el.value=each.toFixed(0)});
+    if(lbl)lbl.textContent='Each pays ('+g.members.length+' members)';
+    if(val)val.textContent='Rs '+fmt(each.toFixed(0));
+  }else if(groupSplitModeG==='percent'){
+    var totalPct=0;g.members.forEach(function(m,i){totalPct+=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0)});
+    if(lbl)lbl.textContent='Enter % each';
+    if(val)val.textContent=totalPct+'% allocated';
+  }else{
+    var totalShares=0;g.members.forEach(function(m,i){totalShares+=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0)});
+    if(lbl)lbl.textContent='Custom split total';
+    if(val)val.textContent='Rs '+fmt(totalShares)+' / Rs '+fmt(total);
+  }
+}
+function addGroupExpense(){
+  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
+  var title=document.getElementById('se-title').value.trim();
+  var total=parseFloat(document.getElementById('se-total').value)||0;
+  var paidBy=document.getElementById('se-paidby').value;
+  if(!title||total===0){document.getElementById('ese').classList.add('on');toast('Enter title and amount');return}
+  document.getElementById('ese').classList.remove('on');
+  var shares={};
+  g.members.forEach(function(m,i){
+    var v=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0);
+    if(groupSplitModeG==='percent')v=parseFloat((total*v/100).toFixed(2));
+    shares[m]=v;
+  });
+  var notes=document.getElementById('se-notes').value;
+  var exp={id:Date.now(),title:title,paidBy:paidBy,total:total,shares:shares,notes:notes,date:today()};
+  g.expenses.unshift(exp);
+  save();
+  document.getElementById('se-title').value='';document.getElementById('se-total').value='';document.getElementById('se-notes').value='';
+  document.getElementById('split-exp-form').style.display='none';
+  renderGroupDetail(g);updateDash();toast(title+' added to '+g.name);
+}
+function deleteGroupExpense(eid){
+  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
+  g.expenses=g.expenses.filter(function(e){return e.id!==eid});
+  save();renderGroupDetail(g);updateDash();toast('Expense deleted');
+}
+function updateSplitDash(){
+  var cnt=(DB.splits||[]).length;
+  var el=document.getElementById('d-split');if(el)el.textContent=cnt+' group'+(cnt===1?'':'s');
+  var tile=document.getElementById('dc-split');if(tile)tile.style.display=CATS['split']!==false?'':'none';
+}
+
+// ============================================================
 // SERVICE WORKER
 // ============================================================
 if('serviceWorker' in navigator){
@@ -1783,6 +2131,7 @@ function init(){
   initFoodForms();buildKChips();buildFrChips();buildClothesChips();buildOthersChips();buildCatToggles();
   updateDash();
   ['bike','kitchen','food','clothes','friends','others'].forEach(function(m){refresh(m)});
+  renderSplitGroups();
   initLock();
 }
 init();
