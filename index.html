@@ -315,7 +315,6 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
   <div class="lbl">Categories</div>
   <div class="g2" id="dash-cats">
     <div class="tile" id="dc-bike" onclick="nav('s-bike')"><div class="tt"><div class="tic" style="background:#1e2a1e">🏍️</div><div><div class="tn">Bike</div><div class="ts" id="d-bike">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-bike" style="background:#4caf72;width:0%"></div></div></div>
-    <div class="tile" id="dc-kitchen" onclick="nav('s-kitchen')"><div class="tt"><div class="tic" style="background:#2a1e1e">🍳</div><div><div class="tn">Kitchen</div><div class="ts" id="d-kitchen">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-kitchen" style="background:#e07050;width:0%"></div></div></div>
     <div class="tile" id="dc-food" onclick="nav('s-food')"><div class="tt"><div class="tic" style="background:#2a241a">🛒</div><div><div class="tn">Food & Kitchen</div><div class="ts" id="d-food">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-food" style="background:#e0a030;width:0%"></div></div></div>
     <div class="tile" id="dc-clothes" onclick="nav('s-clothes')"><div class="tt"><div class="tic" style="background:#1e1e2a">👕</div><div><div class="tn">Clothes</div><div class="ts" id="d-clothes">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-clothes" style="background:#6070d0;width:0%"></div></div></div>
     <div class="tile" id="dc-friends" onclick="nav('s-friends')"><div class="tt"><div class="tic" style="background:#2a1e26">👥</div><div><div class="tn">Friends</div><div class="ts" id="d-friends">Rs 0</div></div></div><div class="bbg"><div class="bf" id="b-friends" style="background:#d05090;width:0%"></div></div></div>
@@ -388,54 +387,6 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
   <div class="hw" id="bike-hist"></div>
 </div>
 
-<!-- ===== KITCHEN ===== -->
-<div class="scr" id="s-kitchen">
-  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Kitchen</div><div class="hs">Manage kitchen expenses</div></div></div>
-  <div class="lbl">Item Type</div>
-  <div class="g3">
-    <div class="tile" id="kt-solid" onclick="openKF('solid')" style="text-align:center"><div class="tic" style="background:#1e2a1e;margin:0 auto">🌾</div><div class="tn" style="margin-top:6px">Solid</div><div class="ts">kg/gram</div></div>
-    <div class="tile" id="kt-liquid" onclick="openKF('liquid')" style="text-align:center"><div class="tic" style="background:#1e1e2a;margin:0 auto">💧</div><div class="tn" style="margin-top:6px">Liquid</div><div class="ts">L/mL</div></div>
-    <div class="tile" id="kt-packet" onclick="openKF('packet')" style="text-align:center"><div class="tic" style="background:#2a241a;margin:0 auto">📦</div><div class="tn" style="margin-top:6px">Packet</div><div class="ts">pcs/box</div></div>
-  </div>
-  <div class="fw" id="kf-solid" style="display:none">
-    <div class="ft">🌾 Solid Item <span class="fc2" onclick="closeKF('solid')">✕</span></div>
-    <div class="cw"><div class="cl">Quick Select ⭐</div><div class="cs" id="kc-solid"></div></div>
-    <div class="fl"><label>Item Name</label><input type="text" id="ks-name" placeholder="e.g. Rice, Sugar..." list="ksdl" oninput="kAvg('solid')"><datalist id="ksdl"><option value="Rice"><option value="Sugar"><option value="Flour"><option value="Lentils"><option value="Salt"><option value="Onion"><option value="Potato"><option value="Tomato"></datalist></div>
-    <div class="fl"><label>Unit</label><select id="ks-unit"><option value="kg">Kilogram (kg)</option><option value="gram">Gram (g)</option></select></div>
-    <div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="ks-qty" placeholder="e.g. 5" oninput="calcK('solid','qty')"><div class="err" id="eks">Enter 2 of: Qty, Rate, Total</div></div><div class="fl"><label>Rate / Unit</label><input type="number" id="ks-rate" placeholder="e.g. 80" oninput="calcK('solid','rate')"></div></div>
-    <div class="fl"><label>Total (Rs)</label><input type="number" id="ks-total" placeholder="e.g. 400" oninput="calcK('solid','total')"><div class="hint" id="hks">Auto calculated</div></div>
-    <div class="avgr" id="avg-solid" style="display:none"><span style="font-size:10px;color:var(--t5)">Market avg</span><span style="font-size:11px;color:#e07050;font-weight:700" id="avg-solid-v">—</span></div>
-    <button class="sbtn" style="background:#e07050;color:#1a0800" onclick="saveK('solid')">Save Item</button>
-  </div>
-  <div class="fw" id="kf-liquid" style="display:none">
-    <div class="ft">💧 Liquid Item <span class="fc2" onclick="closeKF('liquid')">✕</span></div>
-    <div class="cw"><div class="cl">Quick Select ⭐</div><div class="cs" id="kc-liquid"></div></div>
-    <div class="fl"><label>Item Name</label><input type="text" id="kl-name" placeholder="e.g. Oil, Milk..." list="kldl" oninput="kAvg('liquid')"><datalist id="kldl"><option value="Oil"><option value="Milk"><option value="Ghee"><option value="Juice"></datalist></div>
-    <div class="fl"><label>Unit</label><select id="kl-unit"><option value="liter">Liter (L)</option><option value="ml">Milliliter (mL)</option></select></div>
-    <div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="kl-qty" placeholder="e.g. 2" oninput="calcK('liquid','qty')"><div class="err" id="ekl">Enter 2 of: Qty, Rate, Total</div></div><div class="fl"><label>Rate / Unit</label><input type="number" id="kl-rate" placeholder="e.g. 250" oninput="calcK('liquid','rate')"></div></div>
-    <div class="fl"><label>Total (Rs)</label><input type="number" id="kl-total" placeholder="e.g. 500" oninput="calcK('liquid','total')"><div class="hint" id="hkl">Auto calculated</div></div>
-    <div class="avgr" id="avg-liquid" style="display:none"><span style="font-size:10px;color:var(--t5)">Market avg</span><span style="font-size:11px;color:#e07050;font-weight:700" id="avg-liquid-v">—</span></div>
-    <button class="sbtn" style="background:#e07050;color:#1a0800" onclick="saveK('liquid')">Save Item</button>
-  </div>
-  <div class="fw" id="kf-packet" style="display:none">
-    <div class="ft">📦 Packet Item <span class="fc2" onclick="closeKF('packet')">✕</span></div>
-    <div class="cw"><div class="cl">Quick Select ⭐</div><div class="cs" id="kc-packet"></div></div>
-    <div class="fl"><label>Item Name</label><input type="text" id="kp-name" placeholder="e.g. Noodles, Tea..." list="kpdl"><datalist id="kpdl"><option value="Noodles"><option value="Tea"><option value="Biscuits"><option value="Coffee"></datalist></div>
-    <div class="fl"><label>Unit</label><select id="kp-unit"><option value="packet">Packet</option><option value="box">Box</option><option value="piece">Piece</option></select></div>
-    <div class="r2"><div class="fl"><label>Quantity</label><input type="number" id="kp-qty" placeholder="e.g. 5" oninput="calcK('packet','qty')"><div class="err" id="ekp">Enter 2 of: Qty, Rate, Total</div></div><div class="fl"><label>Rate / Unit</label><input type="number" id="kp-rate" placeholder="e.g. 25" oninput="calcK('packet','rate')"></div></div>
-    <div class="fl"><label>Total (Rs)</label><input type="number" id="kp-total" placeholder="e.g. 125" oninput="calcK('packet','total')"><div class="hint" id="hkp">Auto calculated</div></div>
-    <button class="sbtn" style="background:#e07050;color:#1a0800" onclick="saveK('packet')">Save Item</button>
-  </div>
-  <div class="lbl">Summary</div>
-  <div class="g2">
-    <div class="sc"><div class="scl">This Month</div><div class="scv" id="k-tot">Rs 0</div><div class="scs">Total kitchen</div></div>
-    <div class="sc"><div class="scl">Entries</div><div class="scv" id="k-cnt">0</div><div class="scs">This month</div></div>
-    <div class="sc"><div class="scl">Top Item</div><div class="scv" id="k-top" style="font-size:13px;margin-top:1px">—</div><div class="scs" id="k-top-s">—</div></div>
-    <div class="sc"><div class="scl">Most Bought</div><div class="scv" id="k-most" style="font-size:13px;margin-top:1px">—</div><div class="scs">By frequency</div></div>
-  </div>
-  <div class="lbl">Recent Entries</div><div class="hw" id="kitchen-hist"></div>
-</div>
-
 <!-- ===== FOOD ===== -->
 <div class="scr" id="s-food">
   <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Food</div><div class="hs">Kitchen & restaurant expenses</div></div></div>
@@ -486,14 +437,10 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
 <!-- ===== FRIENDS ===== -->
 <div class="scr" id="s-friends">
   <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Friends</div><div class="hs">Expenses & splits</div></div></div>
-  <div class="lbl">Add Transaction</div>
-  <div class="g2">
-    <div class="tile" id="frt-spent" onclick="openFrF('spent')"><div class="tic" style="background:#2a1a1e">❤️</div><div class="tn" style="margin-top:6px">Spent on Friend</div><div class="ts">Treat, gift, bill</div></div>
-
-  </div>
-  <!-- SPENT FORM -->
-  <div class="fw" id="frf-spent" style="display:none">
-    <div class="ft">❤️ Spent on Friend <span class="fc2" onclick="closeFrF('spent')">✕</span></div>
+  <div class="lbl">Add Expense</div>
+  <!-- SPENT FORM - Always visible, no tile needed -->
+  <div class="fw" id="frf-spent">
+    <div class="ft">❤️ Spent on Friend</div>
     <div class="cw"><div class="cl">Recent Friends</div><div class="cs" id="fr-chips-spent"></div></div>
     <div class="fl"><label>Friend Name (Optional)</label><input type="text" id="frs-name" placeholder="e.g. Aman, Priya..." list="frdl"><datalist id="frdl"></datalist></div>
     <div class="fl"><label>What for?</label><input type="text" id="frs-desc" placeholder="e.g. Lunch, Gift, Movie..."></div>
@@ -578,51 +525,99 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
 
 <!-- ===== SPLIT ===== -->
 <div class="scr" id="s-split">
-  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Split</div><div class="hs">Group expense profiles</div></div><div class="ha" onclick="showNewGroup()" title="New Group">＋</div></div>
-  <div class="lbl">Groups</div>
-  <div class="hw" id="split-groups-list"></div>
-  <!-- NEW GROUP FORM -->
+  <div class="hdr">
+    <div class="hbk" onclick="goBack()">←</div>
+    <div class="hi"><div class="ht">Split</div><div class="hs">Group expense sharing</div></div>
+    <div class="ha" onclick="showNewGroupForm()">＋</div>
+  </div>
+  <!-- JOIN via link -->
+  <div class="fw" id="join-group-form" style="display:none">
+    <div class="ft">🔗 Join a Group <span class="fc2" onclick="document.getElementById('join-group-form').style.display='none'">✕</span></div>
+    <div class="fl"><label>Paste Group Link</label><input type="text" id="join-link-input" placeholder="Paste the shared link here..."></div>
+    <button class="sbtn" style="background:#50a0d0;color:#020d18" onclick="joinGroupFromLink()">Join Group</button>
+  </div>
+  <!-- Create new group form -->
   <div class="fw" id="new-group-form" style="display:none">
     <div class="ft">🤝 New Group <span class="fc2" onclick="document.getElementById('new-group-form').style.display='none'">✕</span></div>
-    <div class="fl"><label>Group Name</label><input type="text" id="ng-name" placeholder="e.g. School Friends, Roommates..."></div>
-    <div class="fl"><label>Group Emoji</label><select id="ng-emoji"><option value="🏠">🏠 Roommates</option><option value="🎓">🎓 School Friends</option><option value="💼">💼 Colleagues</option><option value="✈️">✈️ Travel Group</option><option value="🍽️">🍽️ Food Group</option><option value="👥">👥 General</option></select></div>
-    <div class="fl"><label>Members (one per line)</label><textarea id="ng-members" rows="4" placeholder="Anand&#10;Ram&#10;Hari&#10;Sita" style="resize:none"></textarea></div>
+    <div class="fl"><label>Group Name</label><input type="text" id="ng-name" placeholder="e.g. Roommates, School Friends..."></div>
+    <div class="fl"><label>Icon</label>
+      <select id="ng-emoji">
+        <option value="🏠">🏠 Roommates</option>
+        <option value="🎓">🎓 School Friends</option>
+        <option value="💼">💼 Colleagues</option>
+        <option value="✈️">✈️ Trip</option>
+        <option value="🍽️">🍽️ Food Group</option>
+        <option value="👥">👥 General</option>
+      </select>
+    </div>
+    <div class="fl"><label>Your Name in this group</label><input type="text" id="ng-myname" placeholder="e.g. Anand"></div>
+    <div class="fl"><label>Other Members (one per line)</label><textarea id="ng-members" rows="4" placeholder="Ram&#10;Hari&#10;Sita" style="resize:none"></textarea></div>
     <button class="sbtn" style="background:#50c080;color:#001508" onclick="createGroup()">Create Group</button>
   </div>
+  <div style="display:flex;gap:8px;padding:0 1rem .8rem">
+    <button onclick="showNewGroupForm()" style="flex:1;padding:10px;border-radius:10px;background:#1e2a1e;border:.5px solid #4caf72;color:#4caf72;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">＋ New Group</button>
+    <button onclick="document.getElementById('join-group-form').style.display='block'" style="flex:1;padding:10px;border-radius:10px;background:#1a2028;border:.5px solid #50a0d0;color:#50a0d0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🔗 Join via Link</button>
+  </div>
+  <div class="lbl">My Groups</div>
+  <div class="hw" id="split-groups-list"><div class="empty">No groups yet. Create one or join via link.</div></div>
 </div>
+
 <!-- ===== SPLIT GROUP DETAIL ===== -->
 <div class="scr" id="s-split-group">
-  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht" id="sg-title">Group</div><div class="hs" id="sg-sub">0 members</div></div><div class="ha" onclick="openSplitExpForm()" title="Add Expense">＋</div></div>
+  <div class="hdr">
+    <div class="hbk" onclick="goBack()">←</div>
+    <div class="hi"><div class="ht" id="sg-title">Group</div><div class="hs" id="sg-sub">0 members</div></div>
+    <div class="ha" onclick="openAddExpenseForm()" title="Add Expense">＋</div>
+  </div>
+  <!-- ACTION BUTTONS -->
+  <div style="display:flex;gap:7px;padding:0 1rem .8rem;overflow-x:auto;scrollbar-width:none">
+    <button onclick="shareGroupLink()" style="flex:1;min-width:100px;padding:9px;border-radius:9px;background:#1a2028;border:.5px solid #50a0d0;color:#50a0d0;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">📤 Share Link</button>
+    <button onclick="openEditGroup()" style="flex:1;min-width:100px;padding:9px;border-radius:9px;background:#1e2a1e;border:.5px solid #4caf72;color:#4caf72;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✏️ Edit Group</button>
+    <button onclick="openAddExpenseForm()" style="flex:1;min-width:100px;padding:9px;border-radius:9px;background:#2a1a2a;border:.5px solid #d05090;color:#d05090;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">＋ Add Expense</button>
+  </div>
   <!-- SETTLEMENT CARD -->
-  <div class="fw" id="sg-settlement" style="display:none">
-    <div class="ft" style="color:#50c080">🧮 Settlement</div>
+  <div class="fw" id="sg-settlement" style="display:none;border-color:#50c080">
+    <div class="ft" style="color:#50c080">🧮 How to Settle Up</div>
     <div style="font-size:11px;color:var(--t5);margin-bottom:10px">Minimum payments to clear all debts</div>
     <div id="settlement-items"></div>
   </div>
-  <!-- BALANCES -->
+  <!-- MEMBER BALANCES -->
   <div class="lbl">Member Balances</div>
-  <div class="fw" id="sg-balances"></div>
+  <div class="fw" id="sg-balances"><div class="empty">No expenses yet</div></div>
   <!-- ADD EXPENSE FORM -->
   <div class="fw" id="split-exp-form" style="display:none">
     <div class="ft">➕ Add Expense <span class="fc2" onclick="document.getElementById('split-exp-form').style.display='none'">✕</span></div>
-    <div class="fl"><label>Expense Title</label><input type="text" id="se-title" placeholder="e.g. Pizza Party, Rent, Trip..."></div>
-    <div class="fl"><label>Paid by</label><select id="se-paidby"></select></div>
-    <div class="fl"><label>Total Amount (Rs)</label><input type="number" id="se-total" placeholder="e.g. 1000" oninput="calcGroupSplit()"><div class="err" id="ese">Enter title and amount</div></div>
+    <div class="fl"><label>Expense Title</label><input type="text" id="se-title" placeholder="e.g. Pizza Party, Rent, Canteen..."></div>
+    <div class="fl"><label>Who Paid?</label><select id="se-paidby"></select></div>
+    <div class="fl"><label>Total Amount (Rs)</label><input type="number" id="se-total" placeholder="e.g. 1000"><div class="err" id="ese">Enter title and amount</div></div>
+    <div class="fl"><label>Split Among</label>
+      <div style="font-size:11px;color:var(--t5);margin-bottom:7px">Uncheck to exclude a member</div>
+      <div id="se-include-members"></div>
+    </div>
     <div class="fl"><label>Split Mode</label></div>
     <div class="otog">
       <button class="obtn on" id="se-equal-btn" onclick="setGroupSplitMode('equal')">⚖️ Equal</button>
       <button class="obtn" id="se-custom-btn" onclick="setGroupSplitMode('custom')">✏️ Custom</button>
       <button class="obtn" id="se-pct-btn" onclick="setGroupSplitMode('percent')">% Percent</button>
     </div>
-    <div class="fl"><label>Members & Shares</label></div>
     <div id="se-members-wrap"></div>
     <div class="grand"><span class="gl" id="se-each-lbl">Each pays</span><span class="gv" id="se-each-val">Rs 0</span></div>
     <div class="fl"><label>Notes (Optional)</label><input type="text" id="se-notes" placeholder="e.g. June rent"></div>
     <button class="sbtn" style="background:#50c080;color:#001508" onclick="addGroupExpense()">Add Expense</button>
   </div>
-  <!-- EXPENSES LIST -->
-  <div class="lbl">Expenses</div>
-  <div class="hw" id="sg-expenses"></div>
+  <!-- EDIT GROUP FORM -->
+  <div class="fw" id="edit-group-form" style="display:none">
+    <div class="ft">✏️ Edit Group <span class="fc2" onclick="document.getElementById('edit-group-form').style.display='none'">✕</span></div>
+    <div class="fl"><label>Group Name</label><input type="text" id="eg-name" placeholder="Group name"></div>
+    <div class="fl"><label>Members</label></div>
+    <div id="eg-members-list"></div>
+    <button class="iadd" onclick="addMemberToGroup()">+ Add Member</button>
+    <button class="sbtn" style="background:#4caf72;color:#0a1a0a;margin-top:8px" onclick="saveGroupEdit()">Save Changes</button>
+    <button class="sbtn" style="background:#2a1010;color:#e05050;border:.5px solid #e05050;margin-top:6px" onclick="deleteCurrentGroup()">🗑 Delete Group</button>
+  </div>
+  <!-- EXPENSES HISTORY / TALLY -->
+  <div class="lbl">Expense History</div>
+  <div class="hw" id="sg-expenses"><div class="empty">No expenses yet</div></div>
 </div>
 
 <!-- ===== SETTINGS ===== -->
@@ -667,10 +662,9 @@ const CAN_NAV=(()=>{try{history.replaceState(null,'',location.href);return true}
 // ============================================================
 // DATA STRUCTURES
 // ============================================================
-const DB={bike:[],kitchen:[],food:[],clothes:[],friends:[],others:[]};
+const DB={bike:[],food:[],clothes:[],friends:[],others:[]};
 const BUD={
   bike:{n:'Bike',e:'🏍️',c:'#4caf72',bg:'#1e2a1e',b:5000},
-  kitchen:{n:'Kitchen',e:'🍳',c:'#e07050',bg:'#2a1e1e',b:10000},
   food:{n:'Food',e:'🍔',c:'#e0a030',bg:'#2a241a',b:5000},
   clothes:{n:'Clothes',e:'👕',c:'#6070d0',bg:'#1e1e2a',b:3000},
   friends:{n:'Friends',e:'👥',c:'#d05090',bg:'#2a1e26',b:2000},
@@ -679,7 +673,7 @@ const BUD={
 const PREF={dark:true,currency:'Rs'};
 const LOCK={type:null,pin:null,credential:null,secQuestion:null,secAnswer:null,recoveryCode:null};
 // Category enable/disable
-const CATS={bike:true,kitchen:true,food:true,clothes:true,friends:true,others:true};
+const CATS={bike:true,food:true,clothes:true,friends:true,others:true};
 const CEMOJI={recharge:'📱',electricity:'⚡',internet:'🌐',water:'💧',travel:'🚌',gift:'🎁',health:'💊',personal:'✂️',rent:'🏠',other:'📦'};
 const MCOL={bike:'#4caf72',kitchen:'#e07050',food:'#e0a030',clothes:'#6070d0',friends:'#d05090',others:'#50a0d0'};
 const MEMI={bike:'🏍️',kitchen:'🍳',food:'🍔',clothes:'👕',friends:'👥',others:'📦'};
@@ -718,7 +712,7 @@ function loadSaved(){
   if(!CAN_STORE)return;
   try{
     const d=localStorage.getItem('lem_db');
-    if(d){const p=JSON.parse(d);['bike','kitchen','food','clothes','friends','others'].forEach(k=>{if(Array.isArray(p[k]))DB[k]=p[k]});if(Array.isArray(p.splits))DB.splits=p.splits;}
+    if(d){const p=JSON.parse(d);['bike','food','clothes','friends','others'].forEach(k=>{if(Array.isArray(p[k]))DB[k]=p[k]});if(Array.isArray(p.splits))DB.splits=p.splits;}
     const b=localStorage.getItem('lem_bud');
     if(b){const p=JSON.parse(b);Object.keys(p).forEach(k=>{if(BUD[k])BUD[k].b=p[k]})}
     const pr=localStorage.getItem('lem_pref');
@@ -779,7 +773,7 @@ function confirmDel(){
 }
 function refresh(mod){
   if(mod==='bike'){renderBikeHist();updateBike()}
-  else if(mod==='kitchen'){renderKHist();updateK();buildKChips()}
+  
   else if(mod==='food'){renderFoodHist();updateFood();updateFoodCounts()}
   else if(mod==='clothes'){renderClothesHist();updateClothes();buildClothesChips()}
   else if(mod==='friends'){renderFrHist();updateFr();renderFrCards();buildFrChips()}
@@ -811,7 +805,7 @@ function hiItem(e,name,detailLines,color,mod,badge,bst){
 // ============================================================
 function updateDash(){
   const cm=curMonth(),cy=curYear();
-  const mods=['bike','kitchen','food','clothes','friends','others'];
+  const mods=['bike','food','clothes','friends','others'];
   const mtots={};
   mods.forEach(m=>{mtots[m]=filterM(DB[m]).reduce((s,e)=>s+(e.total||e.amount||0),0)});
   const monthTotal=mods.reduce((s,m)=>s+mtots[m],0);
@@ -875,19 +869,20 @@ function getTopItems(arr, keyFn, labelFn, maxItems=8){
 // BIKE
 // ============================================================
 function openBF(type){
-  ['petrol','service','accessories','repairs'].forEach(t=>{
-    document.getElementById('bf-'+t).style.display='none';
-    const bt=document.getElementById('bt-'+t);if(bt){bt.style.borderColor='';bt.style.background=''}
+  // Only hide forms that exist (petrol + service only now)
+  ['petrol','service'].forEach(function(t){
+    var el=document.getElementById('bf-'+t);if(el)el.style.display='none';
+    var bt=document.getElementById('bt-'+t);if(bt){bt.style.borderColor='';bt.style.background=''}
   });
-  document.getElementById('bf-'+type).style.display='block';
-  const bt=document.getElementById('bt-'+type);if(bt){bt.style.borderColor='#4caf72';bt.style.background='#1a221a'}
+  var el=document.getElementById('bf-'+type);if(el)el.style.display='block';
+  var bt=document.getElementById('bt-'+type);if(bt){bt.style.borderColor='#4caf72';bt.style.background='#1a221a'}
   if(type==='petrol'){
-    const pe=DB.bike.filter(e=>e.type==='petrol');
+    var pe=DB.bike.filter(function(e){return e.type==='petrol'});
     document.getElementById('p-prev').value=pe.length>0?pe[0].currMeter:'';
     updateMilStats();
   }
-  if(type==='accessories')buildAccChips();
-  document.getElementById('bf-'+type).scrollIntoView({behavior:'smooth',block:'nearest'});
+  var formEl=document.getElementById('bf-'+type);
+  if(formEl)formEl.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function closeBF(type){document.getElementById('bf-'+type).style.display='none';const bt=document.getElementById('bt-'+type);if(bt){bt.style.borderColor='';bt.style.background=''}}
 function buildAccChips(){
@@ -1506,7 +1501,7 @@ function updateO(){
 // ============================================================
 function renderBudget(){
   var cm=curMonth();
-  var tots={};['bike','kitchen','food','clothes','friends','others'].forEach(function(m){tots[m]=DB[m].filter(function(e){return (e.date||'').startsWith(cm)}).reduce(function(s,e){return s+(e.total||e.amount||0)},0)});
+  var tots={};['bike','food','clothes','friends','others'].forEach(function(m){tots[m]=DB[m].filter(function(e){return (e.date||'').startsWith(cm)}).reduce(function(s,e){return s+(e.total||e.amount||0)},0)});
   document.getElementById('budget-cards').innerHTML=Object.entries(BUD).filter(function(kv){return CATS[kv[0]]}).map(function(kv){
     var k=kv[0],b=kv[1];var spent=tots[k]||0,pct=Math.min(120,Math.round(spent/b.b*100)),rem=b.b-spent;
     var wc='wg',wt='On Track',bc=b.c,cardCls='bcrd';
@@ -1584,7 +1579,7 @@ function doSearch(){
 window._period='monthly';
 function renderReports(){
   var cm=curMonth(),cy=curYear();
-  var tots={};['bike','kitchen','food','clothes','friends','others'].forEach(function(m){tots[m]=filterM(DB[m]).reduce(function(s,e){return s+(e.total||e.amount||0)},0)});
+  var tots={};['bike','food','clothes','friends','others'].forEach(function(m){tots[m]=filterM(DB[m]).reduce(function(s,e){return s+(e.total||e.amount||0)},0)});
   window._rtots=tots;
   var active=document.querySelector('.rtab.on');if(active)switchR(active.textContent.toLowerCase().trim(),active);
 }
@@ -1602,7 +1597,7 @@ function getFilteredEntries(period){
   var now=new Date();var todayStr=today();var cm=curMonth();var cy=curYear();
   var weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay()+1);var wsStr=weekStart.toISOString().split('T')[0];
   var all=[];
-  ['bike','kitchen','food','clothes','friends','others'].forEach(function(mod){
+  ['bike','food','clothes','friends','others'].forEach(function(mod){
     if(!CATS[mod])return;
     DB[mod].forEach(function(e){
       var d=e.date||'';var inc=false;
@@ -1696,7 +1691,7 @@ function doExp(){
 function toggleTheme(el){el.classList.toggle('on');document.body.classList.toggle('light',!el.classList.contains('on'));PREF.dark=el.classList.contains('on');save()}
 function savePref(){PREF.currency=document.getElementById('csel').value;save()}
 function buildCatToggles(){
-  var mods=['bike','kitchen','food','clothes','friends','others'];
+  var mods=['bike','food','clothes','friends','others'];
   var emojis={bike:'🏍️',kitchen:'🍳',food:'🍔',clothes:'👕',friends:'👥',others:'📦'};
   var names={bike:'Bike',kitchen:'Kitchen',food:'Food',clothes:'Clothes',friends:'Friends',others:'Others'};
   document.getElementById('cat-toggles').innerHTML=mods.map(function(m){
@@ -1713,9 +1708,9 @@ function doBackup(){
 }
 function doRestore(){
   var input=document.createElement('input');input.type='file';input.accept='.json';
-  input.onchange=function(ev){var file=ev.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){try{var data=JSON.parse(e.target.result);if(data.DB){Object.keys(data.DB).forEach(function(k){if(DB[k]!==undefined)DB[k]=data.DB[k]});if(data.budgets)Object.keys(data.budgets).forEach(function(k){if(BUD[k])BUD[k].b=data.budgets[k]});save();['bike','kitchen','food','clothes','friends','others'].forEach(function(m){refresh(m)});updateDash();toast('Data restored')}}catch(err){toast('Restore failed')}};reader.readAsText(file)};input.click();
+  input.onchange=function(ev){var file=ev.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){try{var data=JSON.parse(e.target.result);if(data.DB){['bike','food','clothes','friends','others'].forEach(function(k){if(data.DB&&data.DB[k])DB[k]=data.DB[k]});if(data.budgets)Object.keys(data.budgets).forEach(function(k){if(BUD[k])BUD[k].b=data.budgets[k]});save();['bike','food','clothes','friends','others'].forEach(function(m){refresh(m)});updateDash();toast('Data restored')}}catch(err){toast('Restore failed')}};reader.readAsText(file)};input.click();
 }
-function clearAll(){if(confirm('Delete ALL data? Cannot be undone.')){['bike','kitchen','food','clothes','friends','others'].forEach(function(m){DB[m]=[]});save();['bike','kitchen','food','clothes','friends','others'].forEach(function(m){refresh(m)});updateDash();toast('All data cleared')}}
+function clearAll(){if(confirm('Delete ALL data? Cannot be undone.')){['bike','food','clothes','friends','others'].forEach(function(m){DB[m]=[]});save();['bike','food','clothes','friends','others'].forEach(function(m){refresh(m)});updateDash();toast('All data cleared')}}
 function changeLock(){LOCK.type=null;LOCK.pin=null;LOCK.credential=null;LOCK.secQuestion=null;LOCK.secAnswer=null;LOCK.recoveryCode=null;save();initLock()}
 
 // ============================================================
@@ -1872,120 +1867,237 @@ function saveRecovery(){
 }
 
 // ============================================================
-// SPLIT MODULE — Group Profiles with Settlement Engine
+// SPLIT MODULE v2 — Group Profiles, Share Links, Settlement
+// DB.splits = [{ id, name, emoji, myName, members[], expenses[], created, shareCode }]
+// expense = { id, title, paidBy, total, shares:{name:amount}, notes, date }
 // ============================================================
-// DB.splits = array of group objects:
-// { id, name, emoji, members:[], expenses:[], created }
-// expense: { id, title, paidBy, total, shares:{name:amount}, notes, date, settled:{name:bool} }
-
 if(!DB.splits)DB.splits=[];
 
 var currentGroupId=null;
-var groupSplitMode='equal';
+var groupSplitModeG='equal';
 
-function showNewGroup(){document.getElementById('new-group-form').style.display='block';document.getElementById('ng-name').focus()}
+// Generate a short share code
+function genShareCode(){
+  var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var code='';for(var i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+function showNewGroupForm(){
+  document.getElementById('new-group-form').style.display='block';
+  document.getElementById('join-group-form').style.display='none';
+}
 
 function createGroup(){
   var name=document.getElementById('ng-name').value.trim();
   var emoji=document.getElementById('ng-emoji').value;
+  var myName=document.getElementById('ng-myname').value.trim()||'Me';
   var membersRaw=document.getElementById('ng-members').value.trim();
-  if(!name||!membersRaw){toast('Enter group name and members');return}
-  var members=membersRaw.replace(/,/g,'\n').split('\n').map(function(m){return m.trim()}).filter(Boolean);
+  if(!name){toast('Enter group name');return}
+  var others=membersRaw?membersRaw.split(/[\n,]+/).map(function(m){return m.trim()}).filter(Boolean):[];
 
-  if(members.length<2){toast('Add at least 2 members');return}
-  var group={id:Date.now(),name:name,emoji:emoji,members:members,expenses:[],created:today()};
+
+  var members=[myName].concat(others.filter(function(m){return m!==myName}));
+  if(members.length<1){toast('Add at least yourself');return}
+  var group={
+    id:Date.now(),
+    name:name,
+    emoji:emoji,
+    myName:myName,
+    members:members,
+    expenses:[],
+    created:today(),
+    shareCode:genShareCode()
+  };
   if(!DB.splits)DB.splits=[];
   DB.splits.unshift(group);
   save();
   document.getElementById('new-group-form').style.display='none';
-  document.getElementById('ng-name').value='';document.getElementById('ng-members').value='';
-  renderSplitGroups();updateDash();toast(name+' group created');
+  document.getElementById('ng-name').value='';
+  document.getElementById('ng-myname').value='';
+  document.getElementById('ng-members').value='';
+  renderSplitGroups();updateDash();
+  toast(name+' created!');
+  // Auto-open the group
+  openGroup(group.id);
+}
+
+// Share group link
+function shareGroupLink(){
+  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
+  // Encode group data as base64 so others can import it
+  var shareData={
+    shareCode:g.shareCode,
+    name:g.name,
+    emoji:g.emoji,
+    members:g.members,
+    groupId:g.id
+  };
+  var encoded=btoa(JSON.stringify(shareData));
+  var link='https://126anand.github.io/expense-manager/?splitjoin='+encoded;
+  if(navigator.share){
+    navigator.share({title:g.emoji+' '+g.name+' — Split Group',text:'Join my split group: '+g.name,url:link})
+      .then(function(){toast('Shared!')})
+      .catch(function(){copyToClipboard(link)});
+  }else{
+    copyToClipboard(link);
+  }
+}
+
+function copyToClipboard(text){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){toast('Link copied to clipboard!')}).catch(function(){fallbackCopy(text)});
+  }else{fallbackCopy(text)}
+}
+function fallbackCopy(text){
+  var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');toast('Link copied!')}catch(e){toast('Copy manually: '+text.slice(-20))}
+  document.body.removeChild(ta);
+}
+
+// Join group from link
+function joinGroupFromLink(){
+  var link=document.getElementById('join-link-input').value.trim();
+  // Extract encoded data from URL
+  var match=link.match(/splitjoin=([A-Za-z0-9+/=]+)/);
+  if(!match){toast('Invalid link. Check the link and try again.');return}
+  try{
+    var data=JSON.parse(atob(match[1]));
+    // Check if already joined
+    if(!DB.splits)DB.splits=[];
+    var existing=DB.splits.find(function(g){return g.shareCode===data.shareCode});
+    if(existing){toast('Already in this group: '+existing.name);return}
+    var myName=prompt('Your name in this group:','Me')||'Me';
+    // Add as new member if not already there
+    var members=data.members||[];
+    if(!members.includes(myName))members.push(myName);
+    var group={
+      id:Date.now(),
+      name:data.name,
+      emoji:data.emoji,
+      myName:myName,
+      members:members,
+      expenses:[],
+      created:today(),
+      shareCode:data.shareCode,
+      joined:true,
+      originalGroupId:data.groupId
+    };
+    DB.splits.unshift(group);
+    save();
+    document.getElementById('join-group-form').style.display='none';
+    document.getElementById('join-link-input').value='';
+    renderSplitGroups();updateDash();
+    toast('Joined '+data.name+'!');
+    openGroup(group.id);
+  }catch(e){toast('Could not read link. Try again.');}
+}
+
+// Check URL for join link on load
+function checkJoinLink(){
+  var url=window.location.href;
+  var match=url.match(/splitjoin=([A-Za-z0-9+/=]+)/);
+  if(match){
+    try{
+      var data=JSON.parse(atob(match[1]));
+      // Clean URL
+      if(CAN_NAV)try{history.replaceState({},'',location.pathname)}catch(e){}
+      // Show join prompt
+      nav('s-split');
+      setTimeout(function(){
+        document.getElementById('join-link-input').value=url;
+        document.getElementById('join-group-form').style.display='block';
+        toast('Group link detected! Enter your name to join.');
+      },500);
+    }catch(e){}
+  }
 }
 
 function renderSplitGroups(){
   var wrap=document.getElementById('split-groups-list');if(!wrap)return;
-  if(!DB.splits||!DB.splits.length){wrap.innerHTML='<div class="empty">No groups yet. Tap + to create one.</div>';return}
+  if(!DB.splits||!DB.splits.length){
+    wrap.innerHTML='<div class="empty">No groups yet. Tap + to create or join via link.</div>';return;
+  }
   wrap.innerHTML=DB.splits.map(function(g){
     var totalExp=g.expenses.reduce(function(s,e){return s+e.total},0);
-    var balances=calcGroupBalances(g);
-    var hasDebt=Object.values(balances).some(function(b){return Math.abs(b)>0.5});
-    return '<div class="hi2" onclick="openGroup('+g.id+')" style="cursor:pointer">'
+    var bal=calcGroupBalances(g);
+    var myBal=bal[g.myName]||0;
+    var balColor=myBal>0?'#4caf72':myBal<0?'#e05050':'#888';
+    var balText=myBal>0?'You get Rs '+fmt(myBal.toFixed(0)):myBal<0?'You owe Rs '+fmt(Math.abs(myBal).toFixed(0)):'Settled';
+    return '<div class="hi2" style="cursor:pointer" onclick="openGroup('+g.id+')">'
       +'<div class="hl">'
       +'<div class="hd">'+g.members.length+' members • '+g.expenses.length+' expenses</div>'
       +'<div class="hm">'+g.emoji+' '+esc(g.name)+'</div>'
       +'<div class="hdet"><span>Total: Rs '+fmt(totalExp)+'</span></div>'
       +'</div>'
       +'<div class="hr2">'
-      +'<div style="font-size:11px;padding:3px 8px;border-radius:6px;font-weight:700;'+(hasDebt?'background:#2a1010;color:#e05050':'background:#1e2a1e;color:#4caf72')+'">'+(hasDebt?'Pending':'Settled')+'</div>'
-      +'<div class="hac" style="margin-top:5px"><div class="eb del" onclick="event.stopPropagation();deleteGroup('+g.id+')">🗑</div></div>'
+      +'<div style="font-size:11px;font-weight:700;color:'+balColor+'">'+balText+'</div>'
       +'</div>'
       +'</div>';
   }).join('');
-}
-
-function deleteGroup(gid){
-  if(!confirm('Delete this group and all its expenses?'))return;
-  DB.splits=DB.splits.filter(function(g){return g.id!==gid});
-  save();renderSplitGroups();updateDash();toast('Group deleted');
 }
 
 function openGroup(gid){
   currentGroupId=gid;
   var g=DB.splits.find(function(x){return x.id===gid});if(!g)return;
   document.getElementById('sg-title').textContent=g.emoji+' '+g.name;
-  document.getElementById('sg-sub').textContent=g.members.length+' members';
-  // Setup paid-by select
-  var paidBy=document.getElementById('se-paidby');
-  if(paidBy)paidBy.innerHTML=g.members.map(function(m){return '<option value="'+esc(m)+'">'+esc(m)+'</option>'}).join('');
+  document.getElementById('sg-sub').textContent=g.members.length+' members • tap + to add expense';
   renderGroupDetail(g);
   nav('s-split-group');
 }
 
 function renderGroupDetail(g){
+  if(!g)return;
   // Balances
   var balances=calcGroupBalances(g);
   var balWrap=document.getElementById('sg-balances');
   if(balWrap){
-    balWrap.innerHTML=g.members.map(function(m){
-      var b=balances[m]||0;
-      var clr=b>0?'#4caf72':b<0?'#e05050':'#888';
-      var label=b>0?'gets back Rs '+fmt(Math.abs(b).toFixed(0)):b<0?'owes Rs '+fmt(Math.abs(b).toFixed(0)):'settled';
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:.5px solid #1a1a1a">'
-        +'<div style="font-size:13px;color:var(--t);font-weight:600">'+esc(m)+'</div>'
-        +'<div style="font-size:12px;font-weight:700;color:'+clr+'">'+label+'</div>'
-        +'</div>';
-    }).join('');
+    if(!g.expenses.length){balWrap.innerHTML='<div class="empty">No expenses yet</div>';
+    }else{
+      balWrap.innerHTML=g.members.map(function(m){
+        var b=balances[m]||0;
+        var clr=b>0.5?'#4caf72':b<-0.5?'#e05050':'#888';
+        var lbl=b>0.5?'+Rs '+fmt(b.toFixed(0))+' (gets back)':b<-0.5?'−Rs '+fmt(Math.abs(b).toFixed(0))+' (owes)':'✓ Settled';
+        var isMe=m===g.myName;
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:.5px solid #1a1a1a">'
+          +'<div style="font-size:13px;color:var(--t);font-weight:'+(isMe?'700':'400')+'">'+esc(m)+(isMe?' (you)':'')+'</div>'
+          +'<div style="font-size:12px;font-weight:700;color:'+clr+'">'+lbl+'</div>'
+          +'</div>';
+      }).join('');
+    }
   }
-  // Settlement instructions
+  // Settlement
   var settlements=calculateSettlements(balances);
   var settleWrap=document.getElementById('sg-settlement');
   var settleItems=document.getElementById('settlement-items');
-  if(settlements.length>0&&settleWrap&&settleItems){
+  if(g.expenses.length>0&&settleWrap&&settleItems){
     settleWrap.style.display='block';
-    settleItems.innerHTML=settlements.map(function(s,i){
-      var sid='settle-'+g.id+'-'+i;
-      return '<div class="settle-item">'
-        +'<div><div class="settle-name">'+esc(s.from)+' pays '+esc(s.to)+'</div></div>'
-        +'<div style="display:flex;align-items:center;gap:7px">'
-        +'<div class="settle-amt" style="color:#e07050">Rs '+fmt(s.amount.toFixed(0))+'</div>'
-        +'</div>'
-        +'</div>';
-    }).join('');
-  }else if(settleWrap){
-    settleWrap.style.display=g.expenses.length?'block':'none';
-    if(settleItems)settleItems.innerHTML='<div style="font-size:12px;color:#4caf72;padding:5px 0">All settled! No payments needed.</div>';
-  }
-  // Expenses list
+    if(settlements.length===0){
+      settleItems.innerHTML='<div style="font-size:12px;color:#4caf72;padding:5px 0">🎉 All settled! No payments needed.</div>';
+    }else{
+      settleItems.innerHTML=settlements.map(function(s){
+        var isMe=(s.from===g.myName||s.to===g.myName);
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:.5px solid #1a1a1a">'
+          +'<div><div style="font-size:12px;font-weight:'+(isMe?'700':'400')+';color:'+(isMe?'#e0a030':'var(--t)')+'">'+esc(s.from)+' → '+esc(s.to)+'</div>'
+          +'<div style="font-size:10px;color:var(--t5);margin-top:2px">'+(isMe?'(involves you)':'')+'</div></div>'
+          +'<div style="font-size:13px;font-weight:700;color:#e07050">Rs '+fmt(s.amount.toFixed(0))+'</div>'
+          +'</div>';
+      }).join('');
+    }
+  }else if(settleWrap){settleWrap.style.display='none'}
+  // Expenses
   var expWrap=document.getElementById('sg-expenses');
   if(expWrap){
     if(!g.expenses.length){expWrap.innerHTML='<div class="empty">No expenses yet. Tap + to add.</div>';return}
     expWrap.innerHTML=g.expenses.map(function(e){
-      var memberLines=Object.entries(e.shares).map(function(kv){return esc(kv[0])+': Rs '+fmt(kv[1].toFixed(0))}).join('  ');
+      var shareLines=Object.entries(e.shares).map(function(kv){
+        return esc(kv[0])+': Rs '+fmt(kv[1].toFixed(0));
+      }).join('  ');
       return '<div class="hi2">'
         +'<div class="hl">'
-        +'<div class="hd">'+esc(e.date)+'  Paid by: '+esc(e.paidBy)+'</div>'
+        +'<div class="hd">'+esc(e.date)+'</div>'
         +'<div class="hm">'+esc(e.title)+'</div>'
-        +'<div class="hdet"><span>'+memberLines+'</span>'+(e.notes?'<span>'+esc(e.notes)+'</span>':'')+'</div>'
+        +'<div class="hdet"><span>Paid by: '+esc(e.paidBy)+'</span><span>'+shareLines+'</span>'+(e.notes?'<span>'+esc(e.notes)+'</span>':'')+'</div>'
         +'</div>'
         +'<div class="hr2">'
         +'<div class="ha2" style="color:#50c080">Rs '+fmt(e.total)+'</div>'
@@ -1996,86 +2108,113 @@ function renderGroupDetail(g){
   }
 }
 
-// GREEDY SETTLEMENT ALGORITHM
+// Greedy settlement algorithm
 function calculateSettlements(balances){
-  var creditors=[];var debtors=[];
+  var creditors=[],debtors=[];
   Object.entries(balances).forEach(function(kv){
     if(kv[1]>0.5)creditors.push({name:kv[0],amount:kv[1]});
     else if(kv[1]<-0.5)debtors.push({name:kv[0],amount:Math.abs(kv[1])});
   });
   creditors.sort(function(a,b){return b.amount-a.amount});
   debtors.sort(function(a,b){return b.amount-a.amount});
-  var instructions=[];var ci=0,di=0;
+  var out=[],ci=0,di=0;
   while(ci<creditors.length&&di<debtors.length){
     var cr=creditors[ci],db=debtors[di];
-    var payment=Math.min(cr.amount,db.amount);
-    if(payment>0.5)instructions.push({from:db.name,to:cr.name,amount:payment});
-    cr.amount-=payment;db.amount-=payment;
-    if(cr.amount<0.5)ci++;
-    if(db.amount<0.5)di++;
+    var pay=Math.min(cr.amount,db.amount);
+    if(pay>0.5)out.push({from:db.name,to:cr.name,amount:pay});
+    cr.amount-=pay;db.amount-=pay;
+    if(cr.amount<0.5)ci++;if(db.amount<0.5)di++;
   }
-  return instructions;
+  return out;
 }
 
-// Calculate running balances for a group
 function calcGroupBalances(g){
   var bal={};
   g.members.forEach(function(m){bal[m]=0});
   g.expenses.forEach(function(e){
-    // Person who paid is owed back the total
     bal[e.paidBy]=(bal[e.paidBy]||0)+e.total;
-    // Each person owes their share
-    Object.entries(e.shares).forEach(function(kv){
-      bal[kv[0]]=(bal[kv[0]]||0)-kv[1];
-    });
+    Object.entries(e.shares).forEach(function(kv){bal[kv[0]]=(bal[kv[0]]||0)-kv[1]});
   });
   return bal;
 }
 
-var groupSplitModeG='equal';
-function openSplitExpForm(){
+// Add expense form
+function openAddExpenseForm(){
   var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
-  var form=document.getElementById('split-exp-form');if(form)form.style.display='block';
+  var form=document.getElementById('split-exp-form');if(!form)return;
+  form.style.display='block';
+  // Setup paid-by
+  var pb=document.getElementById('se-paidby');
+  if(pb){pb.innerHTML=g.members.map(function(m){return '<option value="'+esc(m)+'"'+(m===g.myName?' selected':'')+'>'+esc(m)+'</option>'}).join('')}
+  // Setup include checkboxes
+  var incWrap=document.getElementById('se-include-members');
+  if(incWrap){
+    incWrap.innerHTML=g.members.map(function(m){
+      return '<label style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;cursor:pointer">'
+        +'<input type="checkbox" id="se-inc-'+esc(m)+'" checked style="width:16px;height:16px;cursor:pointer"> '+esc(m)+'</label>';
+    }).join('');
+  }
   groupSplitModeG='equal';
-  ['equal','custom','percent'].forEach(function(m){
-    var btn=document.getElementById('se-'+m+'-btn');if(btn)btn.classList.toggle('on',m==='equal');
-  });
-  buildGroupMemberInputs(g,null);
-  if(form)form.scrollIntoView({behavior:'smooth',block:'nearest'});
+  ['equal','custom','percent'].forEach(function(m){var btn=document.getElementById('se-'+m+'-btn');if(btn)btn.classList.toggle('on',m==='equal')});
+  buildGroupMemberInputs(g);
+  form.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+
 function setGroupSplitMode(mode){
   groupSplitModeG=mode;
   ['equal','custom','percent'].forEach(function(m){var btn=document.getElementById('se-'+m+'-btn');if(btn)btn.classList.toggle('on',m===mode)});
-  calcGroupSplit();
+  var g=DB.splits.find(function(x){return x.id===currentGroupId});
+  if(g)buildGroupMemberInputs(g);
 }
-function buildGroupMemberInputs(g,shares){
+
+function getIncludedMembers(g){
+  return g.members.filter(function(m){
+    var cb=document.getElementById('se-inc-'+m);
+    return cb?cb.checked:true;
+  });
+}
+
+function buildGroupMemberInputs(g){
   var wrap=document.getElementById('se-members-wrap');if(!wrap)return;
   var total=parseFloat(document.getElementById('se-total').value)||0;
-  var each=g.members.length>0?total/g.members.length:0;
-  wrap.innerHTML=g.members.map(function(m,i){
-    var val=shares?shares[m]||0:(groupSplitModeG==='equal'?each.toFixed(0):'');
-    return '<div class="split-member"><input type="text" value="'+esc(m)+'" readonly style="color:var(--t3)"><input type="number" id="se-share-'+i+'" placeholder="Share" value="'+val+'" oninput="calcGroupSplit()"></div>';
-  }).join('');
+  var included=getIncludedMembers(g);
+  var each=included.length>0?total/included.length:0;
+  wrap.innerHTML='';
+  included.forEach(function(m,i){
+    var val=groupSplitModeG==='equal'?each.toFixed(0):'';
+    var div=document.createElement('div');div.className='split-member';
+    div.innerHTML='<input type="text" value="'+esc(m)+'" readonly style="color:var(--t3);font-size:12px">'
+      +'<input type="number" id="se-share-'+i+'" placeholder="'+(groupSplitModeG==='percent'?'%':'Share')+'" value="'+val+'">';
+    div.querySelector('input[type=number]').oninput=calcGroupSplit;
+    wrap.appendChild(div);
+  });
+  calcGroupSplit();
 }
+
 function calcGroupSplit(){
   var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
   var total=parseFloat(document.getElementById('se-total').value)||0;
-  var lbl=document.getElementById('se-each-lbl');var val=document.getElementById('se-each-val');
+  var included=getIncludedMembers(g);
+  var lbl=document.getElementById('se-each-lbl');
+  var val=document.getElementById('se-each-val');
   if(groupSplitModeG==='equal'){
-    var each=g.members.length>0?total/g.members.length:0;
-    g.members.forEach(function(m,i){var el=document.getElementById('se-share-'+i);if(el)el.value=each.toFixed(0)});
-    if(lbl)lbl.textContent='Each pays ('+g.members.length+' members)';
+    var each=included.length>0?total/included.length:0;
+    included.forEach(function(m,i){var el=document.getElementById('se-share-'+i);if(el)el.value=each.toFixed(0)});
+    if(lbl)lbl.textContent='Each pays ('+included.length+' members)';
     if(val)val.textContent='Rs '+fmt(each.toFixed(0));
   }else if(groupSplitModeG==='percent'){
-    var totalPct=0;g.members.forEach(function(m,i){totalPct+=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0)});
-    if(lbl)lbl.textContent='Enter % each';
-    if(val)val.textContent=totalPct+'% allocated';
+    var totalPct=0;
+    included.forEach(function(m,i){totalPct+=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0)});
+    if(lbl)lbl.textContent='% split (total: '+totalPct+'%)';
+    if(val)val.textContent=totalPct===100?'✓ 100%':totalPct+'% / 100%';
   }else{
-    var totalShares=0;g.members.forEach(function(m,i){totalShares+=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0)});
-    if(lbl)lbl.textContent='Custom split total';
+    var totalShares=0;
+    included.forEach(function(m,i){totalShares+=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0)});
+    if(lbl)lbl.textContent='Custom amounts';
     if(val)val.textContent='Rs '+fmt(totalShares)+' / Rs '+fmt(total);
   }
 }
+
 function addGroupExpense(){
   var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
   var title=document.getElementById('se-title').value.trim();
@@ -2083,29 +2222,85 @@ function addGroupExpense(){
   var paidBy=document.getElementById('se-paidby').value;
   if(!title||total===0){document.getElementById('ese').classList.add('on');toast('Enter title and amount');return}
   document.getElementById('ese').classList.remove('on');
+  var included=getIncludedMembers(g);
   var shares={};
-  g.members.forEach(function(m,i){
+  included.forEach(function(m,i){
     var v=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0);
     if(groupSplitModeG==='percent')v=parseFloat((total*v/100).toFixed(2));
     shares[m]=v;
   });
   var notes=document.getElementById('se-notes').value;
-  var exp={id:Date.now(),title:title,paidBy:paidBy,total:total,shares:shares,notes:notes,date:today()};
-  g.expenses.unshift(exp);
+  g.expenses.unshift({id:Date.now(),title:title,paidBy:paidBy,total:total,shares:shares,notes:notes,date:today()});
   save();
   document.getElementById('se-title').value='';document.getElementById('se-total').value='';document.getElementById('se-notes').value='';
   document.getElementById('split-exp-form').style.display='none';
-  renderGroupDetail(g);updateDash();toast(title+' added to '+g.name);
+  renderGroupDetail(g);updateDash();toast(title+' added');
 }
+
 function deleteGroupExpense(eid){
   var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
+  if(!confirm('Delete this expense?'))return;
   g.expenses=g.expenses.filter(function(e){return e.id!==eid});
   save();renderGroupDetail(g);updateDash();toast('Expense deleted');
 }
+
+// Edit group
+function openEditGroup(){
+  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
+  var form=document.getElementById('edit-group-form');if(!form)return;
+  form.style.display='block';
+  document.getElementById('eg-name').value=g.name;
+  renderEditMemberList(g);
+}
+
+function renderEditMemberList(g){
+  var wrap=document.getElementById('eg-members-list');if(!wrap)return;
+  wrap.innerHTML=g.members.map(function(m,i){
+    return '<div class="irow" id="eg-mem-'+i+'">'
+      +'<input type="text" value="'+esc(m)+'" id="eg-mem-val-'+i+'" style="flex:1">'
+      +'<div class="irm" onclick="removeMemberRow('+i+')">✕</div>'
+      +'</div>';
+  }).join('');
+}
+
+function removeMemberRow(idx){
+  var el=document.getElementById('eg-mem-'+idx);if(el)el.remove();
+}
+
+function addMemberToGroup(){
+  var wrap=document.getElementById('eg-members-list');if(!wrap)return;
+  var count=wrap.children.length;
+  var div=document.createElement('div');div.className='irow';div.id='eg-mem-'+count;
+  div.innerHTML='<input type="text" placeholder="Member name" id="eg-mem-val-'+count+'" style="flex:1"><div class="irm" onclick="removeMemberRow('+count+')">✕</div>';
+  wrap.appendChild(div);
+}
+
+function saveGroupEdit(){
+  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
+  var newName=document.getElementById('eg-name').value.trim();
+  if(newName)g.name=newName;
+  // Collect members
+  var newMembers=[];
+  document.querySelectorAll('[id^="eg-mem-val-"]').forEach(function(el){
+    var v=el.value.trim();if(v)newMembers.push(v);
+  });
+  if(newMembers.length>0)g.members=newMembers;
+  save();
+  document.getElementById('edit-group-form').style.display='none';
+  document.getElementById('sg-title').textContent=g.emoji+' '+g.name;
+  document.getElementById('sg-sub').textContent=g.members.length+' members';
+  renderGroupDetail(g);toast('Group updated');
+}
+
+function deleteCurrentGroup(){
+  if(!confirm('Delete this entire group and all its expenses? This cannot be undone.'))return;
+  DB.splits=DB.splits.filter(function(g){return g.id!==currentGroupId});
+  save();goBack();renderSplitGroups();updateDash();toast('Group deleted');
+}
+
 function updateSplitDash(){
   var cnt=(DB.splits||[]).length;
   var el=document.getElementById('d-split');if(el)el.textContent=cnt+' group'+(cnt===1?'':'s');
-  var tile=document.getElementById('dc-split');if(tile)tile.style.display=CATS['split']!==false?'':'none';
 }
 
 // ============================================================
@@ -2128,10 +2323,11 @@ function init(){
   var td=document.getElementById('tog-dark');if(td&&!PREF.dark)td.classList.remove('on');
   var cs=document.getElementById('csel');if(cs&&PREF.currency)cs.value=PREF.currency;
   if(CAN_NAV)try{history.replaceState({s:'s-dash'},'',location.pathname+location.search)}catch(e){}
-  initFoodForms();buildKChips();buildFrChips();buildClothesChips();buildOthersChips();buildCatToggles();
+  initFoodForms();buildFrChips();buildClothesChips();buildOthersChips();buildCatToggles();
   updateDash();
-  ['bike','kitchen','food','clothes','friends','others'].forEach(function(m){refresh(m)});
+  ['bike','food','clothes','friends','others'].forEach(function(m){refresh(m)});
   renderSplitGroups();
+  checkJoinLink();
   initLock();
 }
 init();
