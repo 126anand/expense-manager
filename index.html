@@ -467,8 +467,8 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
   <div class="lbl">Add Expense</div>
   <div class="fw">
     <div class="cw"><div class="cl">Quick Select ⭐</div><div class="cs" id="others-chips"></div></div>
-    <div class="fl"><label>Description</label><input type="text" id="o-name" placeholder="e.g. Mobile Recharge..." list="odl"><datalist id="odl"><option value="Mobile Recharge"><option value="Electricity Bill"><option value="Internet Bill"><option value="Water Bill"><option value="Travel"><option value="Gift"><option value="Medicine"><option value="Haircut"><option value="Gym"><option value="Rent"></datalist></div>
-    <div class="fl"><label>Category</label><select id="o-cat"><option value="recharge">📱 Mobile Recharge</option><option value="electricity">⚡ Electricity</option><option value="internet">🌐 Internet</option><option value="water">💧 Water</option><option value="travel">🚌 Travel</option><option value="gift">🎁 Gift</option><option value="health">💊 Health</option><option value="personal">✂️ Personal Care</option><option value="rent">🏠 Rent</option><option value="other">📦 Other</option></select></div>
+    <div class="fl"><label>Description</label><input type="text" id="o-name" placeholder="e.g. Mobile Recharge, Electricity..." list="odl" oninput="autoDetectOCat()"><datalist id="odl"><option value="Mobile Recharge"><option value="Electricity Bill"><option value="Internet Bill"><option value="Water Bill"><option value="Travel"><option value="Gift"><option value="Medicine"><option value="Haircut"><option value="Gym"><option value="Rent"></datalist></div>
+    <input type="hidden" id="o-cat" value="other">
     <div class="fl"><label>Amount (Rs)</label><input type="number" id="o-amt" placeholder="e.g. 800"><div class="err" id="eo">Amount must be > 0</div></div>
     <div class="fl"><label>Notes (Optional)</label><input type="text" id="o-notes" placeholder="e.g. Monthly bill"></div>
     <button class="sbtn" style="background:#50a0d0;color:#020d18" onclick="saveO()">Save Expense</button>
@@ -523,101 +523,160 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,sans-serif;
   <div class="exprow"><button class="expbtn" onclick="doExp()">📄 Export PDF Report</button></div>
 </div>
 
-<!-- ===== SPLIT ===== -->
+<!-- ===== SPLIT — MAIN ===== -->
 <div class="scr" id="s-split">
   <div class="hdr">
     <div class="hbk" onclick="goBack()">←</div>
-    <div class="hi"><div class="ht">Split</div><div class="hs">Group expense sharing</div></div>
-    <div class="ha" onclick="showNewGroupForm()">＋</div>
+    <div class="hi"><div class="ht">Split</div><div class="hs">Shared expenses</div></div>
+    <div class="ha" onclick="nav('s-split-create')">＋</div>
   </div>
   <!-- JOIN via link -->
-  <div class="fw" id="join-group-form" style="display:none">
-    <div class="ft">🔗 Join a Group <span class="fc2" onclick="document.getElementById('join-group-form').style.display='none'">✕</span></div>
-    <div class="fl"><label>Paste Group Link</label><input type="text" id="join-link-input" placeholder="Paste the shared link here..."></div>
+  <div class="fw" id="join-form" style="display:none">
+    <div class="ft">🔗 Join Group <span class="fc2" onclick="document.getElementById('join-form').style.display='none'">✕</span></div>
+    <div class="fl"><label>Paste Link</label><input type="text" id="join-input" placeholder="Paste the shared group link..."></div>
+    <div class="fl"><label>Your Name</label><input type="text" id="join-myname" placeholder="How others will see you"></div>
     <button class="sbtn" style="background:#50a0d0;color:#020d18" onclick="joinGroupFromLink()">Join Group</button>
   </div>
-  <!-- Create new group form -->
-  <div class="fw" id="new-group-form" style="display:none">
-    <div class="ft">🤝 New Group <span class="fc2" onclick="document.getElementById('new-group-form').style.display='none'">✕</span></div>
-    <div class="fl"><label>Group Name</label><input type="text" id="ng-name" placeholder="e.g. Roommates, School Friends..."></div>
-    <div class="fl"><label>Icon</label>
-      <select id="ng-emoji">
-        <option value="🏠">🏠 Roommates</option>
-        <option value="🎓">🎓 School Friends</option>
-        <option value="💼">💼 Colleagues</option>
-        <option value="✈️">✈️ Trip</option>
-        <option value="🍽️">🍽️ Food Group</option>
-        <option value="👥">👥 General</option>
-      </select>
-    </div>
-    <div class="fl"><label>Your Name in this group</label><input type="text" id="ng-myname" placeholder="e.g. Anand"></div>
-    <div class="fl"><label>Other Members (one per line)</label><textarea id="ng-members" rows="4" placeholder="Ram&#10;Hari&#10;Sita" style="resize:none"></textarea></div>
-    <button class="sbtn" style="background:#50c080;color:#001508" onclick="createGroup()">Create Group</button>
-  </div>
-  <div style="display:flex;gap:8px;padding:0 1rem .8rem">
-    <button onclick="showNewGroupForm()" style="flex:1;padding:10px;border-radius:10px;background:#1e2a1e;border:.5px solid #4caf72;color:#4caf72;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">＋ New Group</button>
-    <button onclick="document.getElementById('join-group-form').style.display='block'" style="flex:1;padding:10px;border-radius:10px;background:#1a2028;border:.5px solid #50a0d0;color:#50a0d0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🔗 Join via Link</button>
+  <div style="display:flex;gap:8px;padding:0 1rem .9rem">
+    <button onclick="nav('s-split-create')" style="flex:1;padding:10px;border-radius:10px;background:#1e2a1e;border:.5px solid #4caf72;color:#4caf72;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">＋ New Group</button>
+    <button onclick="document.getElementById('join-form').style.display='block'" style="flex:1;padding:10px;border-radius:10px;background:#1a2028;border:.5px solid #50a0d0;color:#50a0d0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🔗 Join via Link</button>
   </div>
   <div class="lbl">My Groups</div>
-  <div class="hw" id="split-groups-list"><div class="empty">No groups yet. Create one or join via link.</div></div>
+  <div class="hw" id="split-groups-list"><div class="empty">No groups yet</div></div>
 </div>
 
-<!-- ===== SPLIT GROUP DETAIL ===== -->
+<!-- ===== SPLIT — CREATE GROUP ===== -->
+<div class="scr" id="s-split-create">
+  <div class="hdr">
+    <div class="hbk" onclick="goBack()">←</div>
+    <div class="hi"><div class="ht">New Group</div><div class="hs">Create a shared expense group</div></div>
+  </div>
+  <div class="fw">
+    <div class="fl"><label>Group Name</label><input type="text" id="ng-name" placeholder="e.g. Pokhara Trip, Roommates..."></div>
+    <div class="fl"><label>Your Name</label><input type="text" id="ng-myname" placeholder="How others will see you"></div>
+    <div class="lbl" style="padding:.6rem 0 .4rem">Members</div>
+    <div id="ng-members-list"></div>
+    <button class="iadd" onclick="addMemberInput()">+ Add Member</button>
+    <div class="cw" style="margin-top:8px">
+      <div class="cl">Frequent Members</div>
+      <div class="cs" id="freq-members-chips"></div>
+    </div>
+    <button class="sbtn" style="background:#50c080;color:#001508;margin-top:4px" onclick="createGroup()">Create Group</button>
+  </div>
+</div>
+
+<!-- ===== SPLIT — GROUP DASHBOARD ===== -->
 <div class="scr" id="s-split-group">
   <div class="hdr">
     <div class="hbk" onclick="goBack()">←</div>
     <div class="hi"><div class="ht" id="sg-title">Group</div><div class="hs" id="sg-sub">0 members</div></div>
-    <div class="ha" onclick="openAddExpenseForm()" title="Add Expense">＋</div>
+    <div class="ha" id="sg-menu-btn" onclick="toggleGroupMenu()">⋮</div>
   </div>
-  <!-- ACTION BUTTONS -->
-  <div style="display:flex;gap:7px;padding:0 1rem .8rem;overflow-x:auto;scrollbar-width:none">
-    <button onclick="shareGroupLink()" style="flex:1;min-width:100px;padding:9px;border-radius:9px;background:#1a2028;border:.5px solid #50a0d0;color:#50a0d0;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">📤 Share Link</button>
-    <button onclick="openEditGroup()" style="flex:1;min-width:100px;padding:9px;border-radius:9px;background:#1e2a1e;border:.5px solid #4caf72;color:#4caf72;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✏️ Edit Group</button>
-    <button onclick="openAddExpenseForm()" style="flex:1;min-width:100px;padding:9px;border-radius:9px;background:#2a1a2a;border:.5px solid #d05090;color:#d05090;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">＋ Add Expense</button>
+  <!-- Group menu -->
+  <div id="sg-menu" style="display:none;position:absolute;right:1rem;top:60px;background:var(--bg2);border-radius:10px;border:.5px solid var(--bd);z-index:50;min-width:150px;box-shadow:0 4px 16px rgba(0,0,0,.4)">
+    <div onclick="nav('s-split-members');renderMembersScreen(getGroup());toggleGroupMenu()" style="padding:12px 16px;font-size:13px;color:var(--t);cursor:pointer;border-bottom:.5px solid var(--bd)">👥 Members</div>
+    <div onclick="shareGroupLink();toggleGroupMenu()" style="padding:12px 16px;font-size:13px;color:#50a0d0;cursor:pointer;border-bottom:.5px solid var(--bd)">📤 Share Link</div>
+    <div onclick="nav('s-split-activity');renderActivityFeed(getGroup());toggleGroupMenu()" style="padding:12px 16px;font-size:13px;color:var(--t);cursor:pointer;border-bottom:.5px solid var(--bd)">📋 Activity</div>
+    <div onclick="deleteCurrentGroup();toggleGroupMenu()" style="padding:12px 16px;font-size:13px;color:#e05050;cursor:pointer">🗑 Delete Group</div>
   </div>
-  <!-- SETTLEMENT CARD -->
-  <div class="fw" id="sg-settlement" style="display:none;border-color:#50c080">
-    <div class="ft" style="color:#50c080">🧮 How to Settle Up</div>
-    <div style="font-size:11px;color:var(--t5);margin-bottom:10px">Minimum payments to clear all debts</div>
-    <div id="settlement-items"></div>
+  <!-- Stats -->
+  <div class="g3" style="margin-bottom:.5rem">
+    <div class="sc"><div class="scl">Total</div><div class="scv" id="sg-total" style="font-size:15px">Rs 0</div></div>
+    <div class="sc"><div class="scl">Pending</div><div class="scv" id="sg-pending" style="font-size:15px;color:#e05050">Rs 0</div></div>
+    <div class="sc"><div class="scl">Members</div><div class="scv" id="sg-members-cnt" style="font-size:15px">0</div></div>
   </div>
-  <!-- MEMBER BALANCES -->
-  <div class="lbl">Member Balances</div>
-  <div class="fw" id="sg-balances"><div class="empty">No expenses yet</div></div>
-  <!-- ADD EXPENSE FORM -->
-  <div class="fw" id="split-exp-form" style="display:none">
-    <div class="ft">➕ Add Expense <span class="fc2" onclick="document.getElementById('split-exp-form').style.display='none'">✕</span></div>
-    <div class="fl"><label>Expense Title</label><input type="text" id="se-title" placeholder="e.g. Pizza Party, Rent, Canteen..."></div>
-    <div class="fl"><label>Who Paid?</label><select id="se-paidby"></select></div>
-    <div class="fl"><label>Total Amount (Rs)</label><input type="number" id="se-total" placeholder="e.g. 1000"><div class="err" id="ese">Enter title and amount</div></div>
-    <div class="fl"><label>Split Among</label>
-      <div style="font-size:11px;color:var(--t5);margin-bottom:7px">Uncheck to exclude a member</div>
-      <div id="se-include-members"></div>
+  <!-- Action tabs -->
+  <div style="display:flex;gap:6px;padding:0 1rem .8rem">
+    <button onclick="showGroupTab('expenses')" id="tab-expenses" class="rtab on" style="flex:1">Expenses</button>
+    <button onclick="showGroupTab('balances')" id="tab-balances" class="rtab" style="flex:1">Balances</button>
+    <button onclick="openAddExpenseScreen()" style="flex:1;padding:8px 4px;border-radius:9px;background:#50c080;border:none;color:#001508;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">＋ Add</button>
+  </div>
+  <!-- Expenses tab -->
+  <div id="group-tab-expenses">
+    <div class="hw" id="sg-expenses-list"><div class="empty">No expenses yet</div></div>
+  </div>
+  <!-- Balances tab -->
+  <div id="group-tab-balances" style="display:none">
+    <div class="hw" id="sg-balances-list"></div>
+    <!-- Settle up -->
+    <div class="fw" id="sg-settle-form" style="display:none">
+      <div class="ft" style="color:#50c080">💸 Settle Up</div>
+      <div class="fl"><label>From</label><select id="settle-from"></select></div>
+      <div class="fl"><label>To</label><select id="settle-to"></select></div>
+      <div class="fl"><label>Amount (Rs)</label><input type="number" id="settle-amount" placeholder="Amount"></div>
+      <button class="sbtn" style="background:#50c080;color:#001508" onclick="recordSettlement()">Record Payment</button>
     </div>
-    <div class="fl"><label>Split Mode</label></div>
+    <div style="padding:0 1rem .8rem">
+      <button onclick="document.getElementById('sg-settle-form').style.display='block'" style="width:100%;padding:10px;border-radius:10px;background:#1e2a1e;border:.5px solid #4caf72;color:#4caf72;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💸 Settle Up</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SPLIT — ADD EXPENSE ===== -->
+<div class="scr" id="s-split-add-expense">
+  <div class="hdr">
+    <div class="hbk" onclick="goBack()">←</div>
+    <div class="hi"><div class="ht">Add Expense</div><div class="hs" id="ae-group-name">Group</div></div>
+  </div>
+  <div class="fw">
+    <div class="fl"><label>Expense Name</label><input type="text" id="ae-title" placeholder="e.g. Hotel, Dinner, Petrol..."></div>
+    <div class="fl"><label>Amount (Rs)</label><input type="number" id="ae-amount" placeholder="e.g. 4000" oninput="recalcSplit()"></div>
+    <div class="fl"><label>Paid By</label><select id="ae-paidby"></select></div>
+    <div class="fl"><label>Split Between</label>
+      <div style="font-size:10px;color:var(--t5);margin-bottom:6px">Tap to include/exclude</div>
+      <div id="ae-members-check"></div>
+    </div>
+    <div class="fl"><label>Split Method</label></div>
     <div class="otog">
-      <button class="obtn on" id="se-equal-btn" onclick="setGroupSplitMode('equal')">⚖️ Equal</button>
-      <button class="obtn" id="se-custom-btn" onclick="setGroupSplitMode('custom')">✏️ Custom</button>
-      <button class="obtn" id="se-pct-btn" onclick="setGroupSplitMode('percent')">% Percent</button>
+      <button class="obtn on" id="ae-equal-btn" onclick="setSplitMethod('equal')">⚖️ Equal</button>
+      <button class="obtn" id="ae-unequal-btn" onclick="setSplitMethod('unequal')">✏️ Unequal</button>
+      <button class="obtn" id="ae-percent-btn" onclick="setSplitMethod('percent')">% Percent</button>
+      <button class="obtn" id="ae-shares-btn" onclick="setSplitMethod('shares')">📊 Shares</button>
     </div>
-    <div id="se-members-wrap"></div>
-    <div class="grand"><span class="gl" id="se-each-lbl">Each pays</span><span class="gv" id="se-each-val">Rs 0</span></div>
-    <div class="fl"><label>Notes (Optional)</label><input type="text" id="se-notes" placeholder="e.g. June rent"></div>
-    <button class="sbtn" style="background:#50c080;color:#001508" onclick="addGroupExpense()">Add Expense</button>
+    <div id="ae-split-inputs"></div>
+    <div class="grand"><span class="gl" id="ae-split-lbl">Split</span><span class="gv" id="ae-split-summary">Rs 0 each</span></div>
+    <div class="fl"><label>Notes (Optional)</label><input type="text" id="ae-notes" placeholder="e.g. June rent, road trip"></div>
+    <button class="sbtn" style="background:#50c080;color:#001508" onclick="addExpense()">Add Expense</button>
   </div>
-  <!-- EDIT GROUP FORM -->
-  <div class="fw" id="edit-group-form" style="display:none">
-    <div class="ft">✏️ Edit Group <span class="fc2" onclick="document.getElementById('edit-group-form').style.display='none'">✕</span></div>
-    <div class="fl"><label>Group Name</label><input type="text" id="eg-name" placeholder="Group name"></div>
-    <div class="fl"><label>Members</label></div>
-    <div id="eg-members-list"></div>
-    <button class="iadd" onclick="addMemberToGroup()">+ Add Member</button>
-    <button class="sbtn" style="background:#4caf72;color:#0a1a0a;margin-top:8px" onclick="saveGroupEdit()">Save Changes</button>
-    <button class="sbtn" style="background:#2a1010;color:#e05050;border:.5px solid #e05050;margin-top:6px" onclick="deleteCurrentGroup()">🗑 Delete Group</button>
+</div>
+
+<!-- ===== SPLIT — MEMBERS ===== -->
+<div class="scr" id="s-split-members">
+  <div class="hdr">
+    <div class="hbk" onclick="goBack()">←</div>
+    <div class="hi"><div class="ht">Members</div><div class="hs" id="members-group-name">Group</div></div>
+    <div class="ha" onclick="addMemberToExistingGroup()">＋</div>
   </div>
-  <!-- EXPENSES HISTORY / TALLY -->
-  <div class="lbl">Expense History</div>
-  <div class="hw" id="sg-expenses"><div class="empty">No expenses yet</div></div>
+  <div class="lbl">Members</div>
+  <div class="hw" id="members-list"></div>
+</div>
+
+<!-- ===== SPLIT — MEMBER PROFILE ===== -->
+<div class="scr" id="s-split-member-profile">
+  <div class="hdr">
+    <div class="hbk" onclick="goBack()">←</div>
+    <div class="hi"><div class="ht" id="mp-name">Member</div><div class="hs" id="mp-group">Group</div></div>
+  </div>
+  <div class="g2">
+    <div class="sc"><div class="scl">Total Share</div><div class="scv" id="mp-total-share">Rs 0</div></div>
+    <div class="sc"><div class="scl">Total Paid</div><div class="scv" id="mp-total-paid">Rs 0</div></div>
+    <div class="sc"><div class="scl">Balance</div><div class="scv" id="mp-balance">Rs 0</div></div>
+    <div class="sc"><div class="scl">Transactions</div><div class="scv" id="mp-txn-count">0</div></div>
+  </div>
+  <div class="lbl">Monthly Summary</div>
+  <div class="hw" id="mp-monthly"></div>
+  <div class="lbl">Transaction History</div>
+  <div class="hw" id="mp-history"></div>
+</div>
+
+<!-- ===== SPLIT — ACTIVITY ===== -->
+<div class="scr" id="s-split-activity">
+  <div class="hdr">
+    <div class="hbk" onclick="goBack()">←</div>
+    <div class="hi"><div class="ht">Activity</div><div class="hs" id="activity-group-name">Group</div></div>
+  </div>
+  <div class="lbl">All Activity</div>
+  <div class="hw" id="activity-list"></div>
 </div>
 
 <!-- ===== SETTINGS ===== -->
@@ -673,7 +732,7 @@ const BUD={
 const PREF={dark:true,currency:'Rs'};
 const LOCK={type:null,pin:null,credential:null,secQuestion:null,secAnswer:null,recoveryCode:null};
 // Category enable/disable
-const CATS={bike:true,food:true,clothes:true,friends:true,others:true};
+const CATS={bike:true,food:true,clothes:true,friends:true,others:true,split:true};
 const CEMOJI={recharge:'📱',electricity:'⚡',internet:'🌐',water:'💧',travel:'🚌',gift:'🎁',health:'💊',personal:'✂️',rent:'🏠',other:'📦'};
 const MCOL={bike:'#4caf72',kitchen:'#e07050',food:'#e0a030',clothes:'#6070d0',friends:'#d05090',others:'#50a0d0'};
 const MEMI={bike:'🏍️',kitchen:'🍳',food:'🍔',clothes:'👕',friends:'👥',others:'📦'};
@@ -1463,7 +1522,22 @@ function buildOthersChips(){
     return '<div class="chip hi" onclick="fillO(\''+esc(e.name||'')+'\',\''+esc(e.cat||'other')+'\','+(e.amount||0)+')">'+emoji+' '+esc(e.name||'')+'</div>'
   }).join('');
 }
-function fillO(name,cat,amt){document.getElementById('o-name').value=name;document.getElementById('o-cat').value=cat;document.getElementById('o-amt').value=amt||''}
+function autoDetectOCat(){
+  var name=document.getElementById('o-name').value.toLowerCase();
+  var cat='other';
+  if(name.includes('recharge')||name.includes('sim')||name.includes('mobile'))cat='recharge';
+  else if(name.includes('electric')||name.includes('light bill'))cat='electricity';
+  else if(name.includes('internet')||name.includes('wifi')||name.includes('broadband'))cat='internet';
+  else if(name.includes('water'))cat='water';
+  else if(name.includes('travel')||name.includes('bus')||name.includes('taxi')||name.includes('auto'))cat='travel';
+  else if(name.includes('gift')||name.includes('present'))cat='gift';
+  else if(name.includes('medicine')||name.includes('doctor')||name.includes('hospital')||name.includes('health'))cat='health';
+  else if(name.includes('haircut')||name.includes('salon')||name.includes('barber')||name.includes('personal'))cat='personal';
+  else if(name.includes('rent')||name.includes('house')||name.includes('room'))cat='rent';
+  else if(name.includes('gym')||name.includes('fitness')||name.includes('sport'))cat='health';
+  document.getElementById('o-cat').value=cat;
+}
+function fillO(name,cat,amt){document.getElementById('o-name').value=name;document.getElementById('o-cat').value=cat||'other';document.getElementById('o-amt').value=amt||''}
 function saveO(){
   var name=document.getElementById('o-name').value.trim(),cat=document.getElementById('o-cat').value,amount=parseFloat(document.getElementById('o-amt').value)||0;
   if(!name||amount===0){document.getElementById('eo').classList.add('on');return}
@@ -1691,9 +1765,9 @@ function doExp(){
 function toggleTheme(el){el.classList.toggle('on');document.body.classList.toggle('light',!el.classList.contains('on'));PREF.dark=el.classList.contains('on');save()}
 function savePref(){PREF.currency=document.getElementById('csel').value;save()}
 function buildCatToggles(){
-  var mods=['bike','food','clothes','friends','others'];
-  var emojis={bike:'🏍️',kitchen:'🍳',food:'🍔',clothes:'👕',friends:'👥',others:'📦'};
-  var names={bike:'Bike',kitchen:'Kitchen',food:'Food',clothes:'Clothes',friends:'Friends',others:'Others'};
+  var mods=['bike','food','clothes','friends','others','split'];
+  var emojis={bike:'🏍️',food:'🛒',clothes:'👕',friends:'👥',others:'📦',split:'🤝'};
+  var names={bike:'Bike',food:'Food & Kitchen',clothes:'Clothes',friends:'Friends',others:'Others',split:'Split Expenses'};
   document.getElementById('cat-toggles').innerHTML=mods.map(function(m){
     return '<div class="cat-tog-row">'
       +'<div style="font-size:16px;margin-right:10px">'+emojis[m]+'</div>'
@@ -1702,7 +1776,11 @@ function buildCatToggles(){
       +'</div>';
   }).join('');
 }
-function toggleCat(mod,el){el.classList.toggle('on');CATS[mod]=el.classList.contains('on');save();updateDash();renderBudget();toast(mod+(CATS[mod]?' shown':' hidden'))}
+function toggleCat(mod,el){
+  el.classList.toggle('on');CATS[mod]=el.classList.contains('on');save();updateDash();renderBudget();
+  if(mod==='split'){var t=document.getElementById('dc-split');if(t)t.style.display=CATS.split?'':'none'}
+  toast(mod+(CATS[mod]?' shown':' hidden'));
+}
 function doBackup(){
   try{var data={DB:DB,budgets:Object.fromEntries(Object.entries(BUD).map(function(kv){return[kv[0],kv[1].b]})),exportDate:new Date().toISOString()};var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='expense-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url);document.getElementById('last-bkp').textContent='Last backup: '+new Date().toLocaleTimeString();toast('Backup downloaded')}catch(e){toast('Backup failed')}
 }
@@ -1867,168 +1945,84 @@ function saveRecovery(){
 }
 
 // ============================================================
-// SPLIT MODULE v2 — Group Profiles, Share Links, Settlement
-// DB.splits = [{ id, name, emoji, myName, members[], expenses[], created, shareCode }]
-// expense = { id, title, paidBy, total, shares:{name:amount}, notes, date }
+// SPLIT MODULE — Splitwise-style
+// DB.splits = [{ id, name, myName, members[], expenses[], settlements[], created, shareCode }]
+// expense = { id, title, paidBy, total, shares:{name:amount}, notes, date, type:'expense' }
+// settlement = { id, from, to, amount, date, type:'settlement' }
 // ============================================================
 if(!DB.splits)DB.splits=[];
-
 var currentGroupId=null;
-var groupSplitModeG='equal';
+var splitMethod='equal';
 
-// Generate a short share code
+// ===== UTILS =====
 function genShareCode(){
-  var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  var code='';for(var i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+  var ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var code='';for(var i=0;i<6;i++)code+=ch[Math.floor(Math.random()*ch.length)];
   return code;
 }
 
-function showNewGroupForm(){
-  document.getElementById('new-group-form').style.display='block';
-  document.getElementById('join-group-form').style.display='none';
+function getGroup(id){return(DB.splits||[]).find(function(g){return g.id===(id||currentGroupId)})}
+
+// ===== BALANCE ENGINE =====
+// Returns {memberName: netBalance} where + = owed money, - = owes money
+function calcBalances(g){
+  var bal={};
+  g.members.forEach(function(m){bal[m]=0});
+  (g.expenses||[]).forEach(function(e){
+    // Payer gets credited the full amount
+    bal[e.paidBy]=(bal[e.paidBy]||0)+e.total;
+    // Each person is debited their share
+    Object.entries(e.shares).forEach(function(kv){
+      bal[kv[0]]=(bal[kv[0]]||0)-kv[1];
+    });
+  });
+  // Apply settlements
+  (g.settlements||[]).forEach(function(s){
+    bal[s.from]=(bal[s.from]||0)+s.amount; // payer reduces their debt
+    bal[s.to]=(bal[s.to]||0)-s.amount;     // receiver reduces their credit
+  });
+  return bal;
 }
 
-function createGroup(){
-  var name=document.getElementById('ng-name').value.trim();
-  var emoji=document.getElementById('ng-emoji').value;
-  var myName=document.getElementById('ng-myname').value.trim()||'Me';
-  var membersRaw=document.getElementById('ng-members').value.trim();
-  if(!name){toast('Enter group name');return}
-  var others=membersRaw?membersRaw.split(/[\n,]+/).map(function(m){return m.trim()}).filter(Boolean):[];
-
-
-  var members=[myName].concat(others.filter(function(m){return m!==myName}));
-  if(members.length<1){toast('Add at least yourself');return}
-  var group={
-    id:Date.now(),
-    name:name,
-    emoji:emoji,
-    myName:myName,
-    members:members,
-    expenses:[],
-    created:today(),
-    shareCode:genShareCode()
-  };
-  if(!DB.splits)DB.splits=[];
-  DB.splits.unshift(group);
-  save();
-  document.getElementById('new-group-form').style.display='none';
-  document.getElementById('ng-name').value='';
-  document.getElementById('ng-myname').value='';
-  document.getElementById('ng-members').value='';
-  renderSplitGroups();updateDash();
-  toast(name+' created!');
-  // Auto-open the group
-  openGroup(group.id);
-}
-
-// Share group link
-function shareGroupLink(){
-  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
-  // Encode group data as base64 so others can import it
-  var shareData={
-    shareCode:g.shareCode,
-    name:g.name,
-    emoji:g.emoji,
-    members:g.members,
-    groupId:g.id
-  };
-  var encoded=btoa(JSON.stringify(shareData));
-  var link='https://126anand.github.io/expense-manager/?splitjoin='+encoded;
-  if(navigator.share){
-    navigator.share({title:g.emoji+' '+g.name+' — Split Group',text:'Join my split group: '+g.name,url:link})
-      .then(function(){toast('Shared!')})
-      .catch(function(){copyToClipboard(link)});
-  }else{
-    copyToClipboard(link);
+// Greedy debt simplification algorithm
+function simplifyDebts(balances){
+  var creditors=[],debtors=[];
+  Object.entries(balances).forEach(function(kv){
+    if(kv[1]>0.5)creditors.push({name:kv[0],amount:kv[1]});
+    else if(kv[1]<-0.5)debtors.push({name:kv[0],amount:Math.abs(kv[1])});
+  });
+  creditors.sort(function(a,b){return b.amount-a.amount});
+  debtors.sort(function(a,b){return b.amount-a.amount});
+  var result=[],ci=0,di=0;
+  while(ci<creditors.length&&di<debtors.length){
+    var cr=creditors[ci],db=debtors[di];
+    var pay=Math.min(cr.amount,db.amount);
+    if(pay>0.5)result.push({from:db.name,to:cr.name,amount:pay});
+    cr.amount-=pay;db.amount-=pay;
+    if(cr.amount<0.5)ci++;if(db.amount<0.5)di++;
   }
+  return result;
 }
 
-function copyToClipboard(text){
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(text).then(function(){toast('Link copied to clipboard!')}).catch(function(){fallbackCopy(text)});
-  }else{fallbackCopy(text)}
-}
-function fallbackCopy(text){
-  var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
-  try{document.execCommand('copy');toast('Link copied!')}catch(e){toast('Copy manually: '+text.slice(-20))}
-  document.body.removeChild(ta);
-}
-
-// Join group from link
-function joinGroupFromLink(){
-  var link=document.getElementById('join-link-input').value.trim();
-  // Extract encoded data from URL
-  var match=link.match(/splitjoin=([A-Za-z0-9+/=]+)/);
-  if(!match){toast('Invalid link. Check the link and try again.');return}
-  try{
-    var data=JSON.parse(atob(match[1]));
-    // Check if already joined
-    if(!DB.splits)DB.splits=[];
-    var existing=DB.splits.find(function(g){return g.shareCode===data.shareCode});
-    if(existing){toast('Already in this group: '+existing.name);return}
-    var myName=prompt('Your name in this group:','Me')||'Me';
-    // Add as new member if not already there
-    var members=data.members||[];
-    if(!members.includes(myName))members.push(myName);
-    var group={
-      id:Date.now(),
-      name:data.name,
-      emoji:data.emoji,
-      myName:myName,
-      members:members,
-      expenses:[],
-      created:today(),
-      shareCode:data.shareCode,
-      joined:true,
-      originalGroupId:data.groupId
-    };
-    DB.splits.unshift(group);
-    save();
-    document.getElementById('join-group-form').style.display='none';
-    document.getElementById('join-link-input').value='';
-    renderSplitGroups();updateDash();
-    toast('Joined '+data.name+'!');
-    openGroup(group.id);
-  }catch(e){toast('Could not read link. Try again.');}
-}
-
-// Check URL for join link on load
-function checkJoinLink(){
-  var url=window.location.href;
-  var match=url.match(/splitjoin=([A-Za-z0-9+/=]+)/);
-  if(match){
-    try{
-      var data=JSON.parse(atob(match[1]));
-      // Clean URL
-      if(CAN_NAV)try{history.replaceState({},'',location.pathname)}catch(e){}
-      // Show join prompt
-      nav('s-split');
-      setTimeout(function(){
-        document.getElementById('join-link-input').value=url;
-        document.getElementById('join-group-form').style.display='block';
-        toast('Group link detected! Enter your name to join.');
-      },500);
-    }catch(e){}
-  }
-}
-
+// ===== GROUPS LIST =====
 function renderSplitGroups(){
+  buildFreqMemberChips();
   var wrap=document.getElementById('split-groups-list');if(!wrap)return;
   if(!DB.splits||!DB.splits.length){
-    wrap.innerHTML='<div class="empty">No groups yet. Tap + to create or join via link.</div>';return;
+    wrap.innerHTML='<div class="empty">No groups yet. Tap + to create one.</div>';return;
   }
   wrap.innerHTML=DB.splits.map(function(g){
-    var totalExp=g.expenses.reduce(function(s,e){return s+e.total},0);
-    var bal=calcGroupBalances(g);
+    var bal=calcBalances(g);
     var myBal=bal[g.myName]||0;
-    var balColor=myBal>0?'#4caf72':myBal<0?'#e05050':'#888';
-    var balText=myBal>0?'You get Rs '+fmt(myBal.toFixed(0)):myBal<0?'You owe Rs '+fmt(Math.abs(myBal).toFixed(0)):'Settled';
+    var totalExp=(g.expenses||[]).reduce(function(s,e){return s+e.total},0);
+    var pending=Math.abs(Object.values(bal).filter(function(b){return b<0}).reduce(function(s,b){return s+b},0));
+    var balColor=myBal>0.5?'#4caf72':myBal<-0.5?'#e05050':'#888';
+    var balText=myBal>0.5?'You get Rs '+fmt(myBal.toFixed(0)):myBal<-0.5?'You owe Rs '+fmt(Math.abs(myBal).toFixed(0)):'✓ Settled';
     return '<div class="hi2" style="cursor:pointer" onclick="openGroup('+g.id+')">'
       +'<div class="hl">'
-      +'<div class="hd">'+g.members.length+' members • '+g.expenses.length+' expenses</div>'
-      +'<div class="hm">'+g.emoji+' '+esc(g.name)+'</div>'
-      +'<div class="hdet"><span>Total: Rs '+fmt(totalExp)+'</span></div>'
+      +'<div class="hd">'+g.members.length+' members</div>'
+      +'<div class="hm">'+esc(g.name)+'</div>'
+      +'<div class="hdet"><span>Rs '+fmt(totalExp)+' total</span></div>'
       +'</div>'
       +'<div class="hr2">'
       +'<div style="font-size:11px;font-weight:700;color:'+balColor+'">'+balText+'</div>'
@@ -2037,273 +2031,515 @@ function renderSplitGroups(){
   }).join('');
 }
 
+// ===== CREATE GROUP =====
+function addMemberInput(val){
+  var list=document.getElementById('ng-members-list');if(!list)return;
+  var div=document.createElement('div');div.className='irow';
+  var idx=list.children.length;
+  div.innerHTML='<input type="text" placeholder="Member name" value="'+(val?esc(val):'')+'" style="flex:1">'
+    +'<div class="irm" onclick="this.parentElement.remove()">✕</div>';
+  list.appendChild(div);
+  if(!val)div.querySelector('input').focus();
+}
+
+function buildFreqMemberChips(){
+  var freq={};
+  (DB.splits||[]).forEach(function(g){
+    g.members.forEach(function(m){freq[m]=(freq[m]||0)+1});
+  });
+  var top=Object.entries(freq).sort(function(a,b){return b[1]-a[1]}).slice(0,5).map(function(kv){return kv[0]});
+  var el=document.getElementById('freq-members-chips');
+  if(!el)return;
+  el.innerHTML='';
+  top.forEach(function(m){
+    var chip=document.createElement('div');
+    chip.className='chip hi';chip.textContent=m;
+    chip.onclick=function(){addMemberInput(m)};
+    el.appendChild(chip);
+  });
+}
+
+function createGroup(){
+  var name=document.getElementById('ng-name').value.trim();
+  var myName=document.getElementById('ng-myname').value.trim()||'Me';
+  if(!name){toast('Enter group name');return}
+  var others=[];
+  document.querySelectorAll('#ng-members-list input[type=text]').forEach(function(el){
+    var v=el.value.trim();if(v&&v!==myName)others.push(v);
+  });
+  var members=[myName].concat(others);
+  var group={
+    id:Date.now(),
+    name:name,
+    myName:myName,
+    members:members,
+    expenses:[],
+    settlements:[],
+    activity:[],
+    created:today(),
+    shareCode:genShareCode()
+  };
+  if(!DB.splits)DB.splits=[];
+  DB.splits.unshift(group);
+  save();
+  // Clear form
+  document.getElementById('ng-name').value='';
+  document.getElementById('ng-myname').value='';
+  document.getElementById('ng-members-list').innerHTML='';
+  renderSplitGroups();updateDash();
+  toast(name+' created!');
+  openGroup(group.id);
+}
+
+// ===== OPEN GROUP =====
 function openGroup(gid){
   currentGroupId=gid;
-  var g=DB.splits.find(function(x){return x.id===gid});if(!g)return;
-  document.getElementById('sg-title').textContent=g.emoji+' '+g.name;
-  document.getElementById('sg-sub').textContent=g.members.length+' members • tap + to add expense';
-  renderGroupDetail(g);
+  var g=getGroup(gid);if(!g)return;
+  // Setup group screens
+  document.getElementById('sg-title').textContent=g.name;
+  document.getElementById('sg-sub').textContent=g.members.length+' members';
+  document.getElementById('ae-group-name').textContent=g.name;
+  document.getElementById('members-group-name').textContent=g.name;
+  document.getElementById('activity-group-name').textContent=g.name;
+  showGroupTab('expenses');
+  renderGroupDash(g);
   nav('s-split-group');
 }
 
-function renderGroupDetail(g){
-  if(!g)return;
-  // Balances
-  var balances=calcGroupBalances(g);
-  var balWrap=document.getElementById('sg-balances');
-  if(balWrap){
-    if(!g.expenses.length){balWrap.innerHTML='<div class="empty">No expenses yet</div>';
-    }else{
-      balWrap.innerHTML=g.members.map(function(m){
-        var b=balances[m]||0;
-        var clr=b>0.5?'#4caf72':b<-0.5?'#e05050':'#888';
-        var lbl=b>0.5?'+Rs '+fmt(b.toFixed(0))+' (gets back)':b<-0.5?'−Rs '+fmt(Math.abs(b).toFixed(0))+' (owes)':'✓ Settled';
-        var isMe=m===g.myName;
-        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:.5px solid #1a1a1a">'
-          +'<div style="font-size:13px;color:var(--t);font-weight:'+(isMe?'700':'400')+'">'+esc(m)+(isMe?' (you)':'')+'</div>'
-          +'<div style="font-size:12px;font-weight:700;color:'+clr+'">'+lbl+'</div>'
-          +'</div>';
-      }).join('');
-    }
+function toggleGroupMenu(){
+  var m=document.getElementById('sg-menu');if(m)m.style.display=m.style.display==='none'?'block':'none';
+}
+// Close menu on outside click
+document.addEventListener('click',function(e){
+  var menu=document.getElementById('sg-menu');
+  var btn=document.getElementById('sg-menu-btn');
+  if(menu&&menu.style.display==='block'&&e.target!==menu&&e.target!==btn&&!menu.contains(e.target)){
+    menu.style.display='none';
   }
-  // Settlement
-  var settlements=calculateSettlements(balances);
-  var settleWrap=document.getElementById('sg-settlement');
-  var settleItems=document.getElementById('settlement-items');
-  if(g.expenses.length>0&&settleWrap&&settleItems){
-    settleWrap.style.display='block';
-    if(settlements.length===0){
-      settleItems.innerHTML='<div style="font-size:12px;color:#4caf72;padding:5px 0">🎉 All settled! No payments needed.</div>';
-    }else{
-      settleItems.innerHTML=settlements.map(function(s){
-        var isMe=(s.from===g.myName||s.to===g.myName);
-        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:.5px solid #1a1a1a">'
-          +'<div><div style="font-size:12px;font-weight:'+(isMe?'700':'400')+';color:'+(isMe?'#e0a030':'var(--t)')+'">'+esc(s.from)+' → '+esc(s.to)+'</div>'
-          +'<div style="font-size:10px;color:var(--t5);margin-top:2px">'+(isMe?'(involves you)':'')+'</div></div>'
-          +'<div style="font-size:13px;font-weight:700;color:#e07050">Rs '+fmt(s.amount.toFixed(0))+'</div>'
-          +'</div>';
-      }).join('');
-    }
-  }else if(settleWrap){settleWrap.style.display='none'}
-  // Expenses
-  var expWrap=document.getElementById('sg-expenses');
-  if(expWrap){
-    if(!g.expenses.length){expWrap.innerHTML='<div class="empty">No expenses yet. Tap + to add.</div>';return}
-    expWrap.innerHTML=g.expenses.map(function(e){
-      var shareLines=Object.entries(e.shares).map(function(kv){
-        return esc(kv[0])+': Rs '+fmt(kv[1].toFixed(0));
-      }).join('  ');
-      return '<div class="hi2">'
-        +'<div class="hl">'
-        +'<div class="hd">'+esc(e.date)+'</div>'
-        +'<div class="hm">'+esc(e.title)+'</div>'
-        +'<div class="hdet"><span>Paid by: '+esc(e.paidBy)+'</span><span>'+shareLines+'</span>'+(e.notes?'<span>'+esc(e.notes)+'</span>':'')+'</div>'
-        +'</div>'
-        +'<div class="hr2">'
-        +'<div class="ha2" style="color:#50c080">Rs '+fmt(e.total)+'</div>'
-        +'<div class="hac"><div class="eb del" onclick="deleteGroupExpense('+e.id+')">🗑</div></div>'
-        +'</div>'
+});
+
+function showGroupTab(tab){
+  document.getElementById('group-tab-expenses').style.display=tab==='expenses'?'block':'none';
+  document.getElementById('group-tab-balances').style.display=tab==='balances'?'block':'none';
+  document.getElementById('tab-expenses').classList.toggle('on',tab==='expenses');
+  document.getElementById('tab-balances').classList.toggle('on',tab==='balances');
+  var g=getGroup();if(g){
+    if(tab==='balances')renderBalancesTab(g);
+  }
+}
+
+function renderGroupDash(g){
+  var bal=calcBalances(g);
+  var totalExp=(g.expenses||[]).reduce(function(s,e){return s+e.total},0);
+  var pending=Math.abs(Object.values(bal).filter(function(b){return b<-0.5}).reduce(function(s,b){return s+b},0));
+  document.getElementById('sg-total').textContent='Rs '+fmt(totalExp);
+  document.getElementById('sg-pending').textContent='Rs '+fmt(pending.toFixed(0));
+  document.getElementById('sg-members-cnt').textContent=g.members.length;
+  renderExpensesTab(g);
+}
+
+function renderExpensesTab(g){
+  var wrap=document.getElementById('sg-expenses-list');if(!wrap)return;
+  var items=(g.expenses||[]).slice().reverse().concat(); // newest first
+  items=(g.expenses||[]);
+  if(!items.length){wrap.innerHTML='<div class="empty">No expenses yet. Tap + Add to start.</div>';return}
+  wrap.innerHTML=items.map(function(e){
+    var shareLines=Object.entries(e.shares).map(function(kv){
+      return esc(kv[0])+': Rs '+fmt(kv[1].toFixed(0));
+    }).join('  ');
+    return '<div class="hi2">'
+      +'<div class="hl">'
+      +'<div class="hd">'+esc(e.date)+'</div>'
+      +'<div class="hm">'+esc(e.title)+'</div>'
+      +'<div class="hdet"><span>Paid by '+esc(e.paidBy)+'</span><span>'+shareLines+'</span>'+(e.notes?'<span>'+esc(e.notes)+'</span>':'')+'</div>'
+      +'</div>'
+      +'<div class="hr2">'
+      +'<div class="ha2" style="color:#50c080">Rs '+fmt(e.total)+'</div>'
+      +'<div class="hac"><div class="eb del" onclick="deleteExpense('+e.id+')">🗑</div></div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderBalancesTab(g){
+  var bal=calcBalances(g);
+  var debts=simplifyDebts(bal);
+  var wrap=document.getElementById('sg-balances-list');if(!wrap)return;
+  var html='';
+  // Show simplified debts
+  if(!debts.length){
+    html='<div style="margin:0 1rem .8rem;background:#1e2a1e;border-radius:12px;padding:14px;text-align:center;border:.5px solid #4caf72"><div style="font-size:20px;margin-bottom:6px">🎉</div><div style="font-size:13px;color:#4caf72;font-weight:700">All settled!</div><div style="font-size:11px;color:var(--t5);margin-top:3px">No outstanding balances</div></div>';
+  }else{
+    html='<div style="padding:0 1rem .5rem"><div style="font-size:10px;color:var(--t5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">Who Owes What</div>';
+    debts.forEach(function(d){
+      var isMyDebt=(d.from===g.myName||d.to===g.myName);
+      html+='<div style="background:var(--bg2);border-radius:11px;padding:12px 14px;border:.5px solid '+(isMyDebt?'#e0a030':'var(--bd)')+';margin-bottom:7px;display:flex;justify-content:space-between;align-items:center">'
+        +'<div><div style="font-size:13px;color:'+(isMyDebt?'#e0a030':'var(--t)')+';font-weight:'+(isMyDebt?'700':'400')+'">'+esc(d.from)+' owes '+esc(d.to)+'</div>'+(isMyDebt?'<div style="font-size:10px;color:#e0a030;margin-top:2px">involves you</div>':'')+'</div>'
+        +'<div style="font-size:14px;font-weight:700;color:#e05050">Rs '+fmt(d.amount.toFixed(0))+'</div>'
+        +'</div>';
+    });
+    html+='</div>';
+  }
+  html+='<div id="sg-bal-members-placeholder"></div>';
+  wrap.innerHTML=html;
+  // Wire simplified debt rows
+  wrap.querySelectorAll('[data-member]').forEach(function(el){
+    el.onclick=function(){openMemberProfile(this.dataset.member)};
+  });
+  // Build individual balances using DOM (avoids onclick escaping)
+  var placeholder=document.getElementById('sg-bal-members-placeholder');
+  if(placeholder){
+    var container=document.createElement('div');
+    container.style.padding='0 1rem .8rem';
+    var title=document.createElement('div');
+    title.style.cssText='font-size:10px;color:var(--t5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700';
+    title.textContent='Individual Balances';container.appendChild(title);
+    g.members.forEach(function(m){
+      var b=bal[m]||0;
+      var clr=b>0.5?'#4caf72':b<-0.5?'#e05050':'#888';
+      var lbl=b>0.5?'gets Rs '+fmt(b.toFixed(0)):b<-0.5?'owes Rs '+fmt(Math.abs(b).toFixed(0)):'Settled';
+      var isMe=m===g.myName;
+      var row=document.createElement('div');
+      row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:.5px solid var(--bd);cursor:pointer';
+      row.innerHTML='<div style="font-size:13px;color:var(--t);font-weight:'+(isMe?'700':'400')+'">'+esc(m)+(isMe?' (you)':'')+'</div>'
+        +'<div style="font-size:12px;font-weight:700;color:'+clr+'">'+lbl+'</div>';
+      row.onclick=function(){openMemberProfile(m)};
+      container.appendChild(row);
+    });
+    placeholder.replaceWith(container);
+  }
+  // Setup settle-up form
+  var fromSel=document.getElementById('settle-from');
+  var toSel=document.getElementById('settle-to');
+  if(fromSel)fromSel.innerHTML=g.members.map(function(m){return '<option value="'+esc(m)+'"'+(m===g.myName?' selected':'')+'>'+esc(m)+'</option>'}).join('');
+  if(toSel)toSel.innerHTML=g.members.map(function(m){return '<option value="'+esc(m)+'">'+esc(m)+'</option>'}).join('');
+}
+
+// ===== ADD EXPENSE =====
+function openAddExpenseScreen(){
+  var g=getGroup();if(!g)return;
+  nav('s-split-add-expense');
+  var pb=document.getElementById('ae-paidby');
+  if(pb)pb.innerHTML=g.members.map(function(m){return '<option value="'+esc(m)+'"'+(m===g.myName?' selected':'')+'>'+esc(m)+'</option>'}).join('');
+  var mc=document.getElementById('ae-members-check');
+  if(mc){
+    mc.innerHTML='';
+    g.members.forEach(function(m){
+      var lbl=document.createElement('label');
+      lbl.style.cssText='display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13px;cursor:pointer;border-bottom:.5px solid var(--bd)';
+      var cb=document.createElement('input');
+      cb.type='checkbox';cb.checked=true;cb.dataset.member=m;
+      cb.style.cssText='width:16px;height:16px;accent-color:#4caf72;cursor:pointer';
+      cb.onchange=function(){buildSplitInputs();recalcSplit()};
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(' '+m));
+      mc.appendChild(lbl);
+    });
+  }
+  splitMethod='equal';
+  ['equal','unequal','percent','shares'].forEach(function(m){
+    var btn=document.getElementById('ae-'+m+'-btn');if(btn)btn.classList.toggle('on',m==='equal');
+  });
+  document.getElementById('ae-title').value='';
+  document.getElementById('ae-amount').value='';
+  document.getElementById('ae-notes').value='';
+  buildSplitInputs();
+}
+
+function setSplitMethod(method){
+  splitMethod=method;
+  ['equal','unequal','percent','shares'].forEach(function(m){
+    var btn=document.getElementById('ae-'+m+'-btn');if(btn)btn.classList.toggle('on',m===method);
+  });
+  buildSplitInputs();
+}
+
+function getCheckedMembers(){
+  var checked=[];
+  document.querySelectorAll('#ae-members-check input[type=checkbox]').forEach(function(cb){
+    if(cb.checked&&cb.dataset.member)checked.push(cb.dataset.member);
+  });
+  return checked;
+}
+
+function buildSplitInputs(){
+  var wrap=document.getElementById('ae-split-inputs');if(!wrap)return;
+  var members=getCheckedMembers();
+  var total=parseFloat(document.getElementById('ae-amount').value)||0;
+  if(splitMethod==='equal'||members.length===0){wrap.innerHTML='';recalcSplit();return}
+  var each=members.length>0?total/members.length:0;
+  wrap.innerHTML='';
+  members.forEach(function(m,i){
+    var div=document.createElement('div');div.className='split-member';
+    var nameInp=document.createElement('input');nameInp.type='text';nameInp.value=m;nameInp.readOnly=true;nameInp.style.color='var(--t3)';nameInp.style.fontSize='12px';
+    var amtInp=document.createElement('input');amtInp.type='number';amtInp.id='ae-s-'+i;
+    amtInp.placeholder=splitMethod==='percent'?'%':splitMethod==='shares'?'shares':'amount';
+    amtInp.value=splitMethod==='equal'?each.toFixed(0):'';
+    amtInp.oninput=recalcSplit;
+    div.appendChild(nameInp);div.appendChild(amtInp);wrap.appendChild(div);
+  });
+  recalcSplit();
+}
+
+function recalcSplit(){
+  var members=getCheckedMembers();
+  var total=parseFloat(document.getElementById('ae-amount').value)||0;
+  var lbl=document.getElementById('ae-split-lbl');
+  var summ=document.getElementById('ae-split-summary');
+  if(!members.length){if(summ)summ.textContent='Select members';return}
+  if(splitMethod==='equal'){
+    var each=members.length>0?total/members.length:0;
+    if(lbl)lbl.textContent='Equal split ('+members.length+' members)';
+    if(summ)summ.textContent='Rs '+fmt(each.toFixed(0))+' each';
+  }else if(splitMethod==='percent'){
+    var totalPct=0;members.forEach(function(m,i){totalPct+=parseFloat(document.getElementById('ae-s-'+i)&&document.getElementById('ae-s-'+i).value||0)});
+    if(lbl)lbl.textContent='Percent split';
+    if(summ)summ.textContent=totalPct+'% / 100%'+(totalPct===100?' ✓':'');
+  }else if(splitMethod==='shares'){
+    var totalShares=0;members.forEach(function(m,i){totalShares+=parseFloat(document.getElementById('ae-s-'+i)&&document.getElementById('ae-s-'+i).value||0)});
+    if(lbl)lbl.textContent='Share-based split';
+    if(totalShares>0){var perShare=total/totalShares;if(summ)summ.textContent='Rs '+fmt(perShare.toFixed(0))+' per share';}
+  }else{
+    var totalCustom=0;members.forEach(function(m,i){totalCustom+=parseFloat(document.getElementById('ae-s-'+i)&&document.getElementById('ae-s-'+i).value||0)});
+    if(lbl)lbl.textContent='Custom split';
+    if(summ)summ.textContent='Rs '+fmt(totalCustom)+' / Rs '+fmt(total);
+  }
+}
+
+function addExpense(){
+  var g=getGroup();if(!g)return;
+  var title=document.getElementById('ae-title').value.trim();
+  var total=parseFloat(document.getElementById('ae-amount').value)||0;
+  var paidBy=document.getElementById('ae-paidby').value;
+  var notes=document.getElementById('ae-notes').value;
+  if(!title||total===0){document.getElementById('ese')&&document.getElementById('ese').classList.add('on');toast('Enter name and amount');return}
+  var members=getCheckedMembers();
+  if(!members.length){toast('Select at least one member');return}
+  var shares={};
+  if(splitMethod==='equal'){
+    var each=total/members.length;
+    members.forEach(function(m){shares[m]=parseFloat(each.toFixed(2))});
+  }else if(splitMethod==='percent'){
+    var totalPct=0;members.forEach(function(m,i){totalPct+=parseFloat(document.getElementById('ae-s-'+i)&&document.getElementById('ae-s-'+i).value||0)});
+    members.forEach(function(m,i){var pct=parseFloat(document.getElementById('ae-s-'+i)&&document.getElementById('ae-s-'+i).value||0);shares[m]=parseFloat((total*pct/100).toFixed(2))});
+  }else if(splitMethod==='shares'){
+    var totalShares=0;members.forEach(function(m,i){totalShares+=parseFloat(document.getElementById('ae-s-'+i)&&document.getElementById('ae-s-'+i).value||0)});
+    if(totalShares===0){toast('Enter shares');return}
+    var perShare=total/totalShares;
+    members.forEach(function(m,i){var sh=parseFloat(document.getElementById('ae-s-'+i)&&document.getElementById('ae-s-'+i).value||0);shares[m]=parseFloat((sh*perShare).toFixed(2))});
+  }else{
+    members.forEach(function(m,i){var v=parseFloat(document.getElementById('ae-s-'+i)&&document.getElementById('ae-s-'+i).value||0);shares[m]=v});
+  }
+  var exp={id:Date.now(),title:title,paidBy:paidBy,total:total,shares:shares,notes:notes,date:today(),type:'expense'};
+  if(!g.expenses)g.expenses=[];
+  if(!g.activity)g.activity=[];
+  g.expenses.unshift(exp);
+  g.activity.unshift({id:Date.now(),text:paidBy+' added '+title,amount:total,date:today(),type:'expense'});
+  save();
+  document.getElementById('ae-title').value='';document.getElementById('ae-amount').value='';document.getElementById('ae-notes').value='';
+  goBack();renderGroupDash(g);updateDash();toast(title+' added');
+}
+
+function deleteExpense(eid){
+  var g=getGroup();if(!g)return;
+  if(!confirm('Delete this expense?'))return;
+  g.expenses=(g.expenses||[]).filter(function(e){return e.id!==eid});
+  save();renderGroupDash(g);renderExpensesTab(g);updateDash();toast('Deleted');
+}
+
+// ===== SETTLE UP =====
+function recordSettlement(){
+  var g=getGroup();if(!g)return;
+  var from=document.getElementById('settle-from').value;
+  var to=document.getElementById('settle-to').value;
+  var amount=parseFloat(document.getElementById('settle-amount').value)||0;
+  if(from===to){toast('From and To cannot be the same');return}
+  if(amount===0){toast('Enter amount');return}
+  if(!g.settlements)g.settlements=[];
+  if(!g.activity)g.activity=[];
+  g.settlements.push({id:Date.now(),from:from,to:to,amount:amount,date:today(),type:'settlement'});
+  g.activity.unshift({id:Date.now(),text:from+' settled Rs '+fmt(amount)+' to '+to,amount:amount,date:today(),type:'settlement'});
+  save();
+  document.getElementById('sg-settle-form').style.display='none';
+  document.getElementById('settle-amount').value='';
+  renderBalancesTab(g);renderGroupDash(g);updateDash();toast(from+' paid Rs '+fmt(amount)+' to '+to);
+}
+
+// ===== MEMBERS =====
+function renderMembersScreen(g){
+  if(!g)g=getGroup();if(!g)return;
+  var wrap=document.getElementById('members-list');if(!wrap)return;
+  var bal=calcBalances(g);
+  wrap.innerHTML='';
+  g.members.forEach(function(m){
+    var b=bal[m]||0;
+    var clr=b>0.5?'#4caf72':b<-0.5?'#e05050':'#888';
+    var lbl=b>0.5?'+Rs '+fmt(b.toFixed(0)):b<-0.5?'- Rs '+fmt(Math.abs(b).toFixed(0)):'Settled';
+    var div=document.createElement('div');div.className='hi2';div.style.cursor='pointer';
+    div.innerHTML='<div class="hl"><div class="hm">'+esc(m)+(m===g.myName?' (you)':'')+'</div></div>'
+      +'<div class="hr2"><div style="font-size:12px;font-weight:700;color:'+clr+'">'+lbl+'</div></div>';
+    div.onclick=function(){openMemberProfile(m)};
+    wrap.appendChild(div);
+  });
+}
+
+function addMemberToExistingGroup(){
+  var g=getGroup();if(!g)return;
+  var name=prompt('New member name:');
+  if(!name||!name.trim())return;
+  name=name.trim();
+  if(g.members.includes(name)){toast(name+' is already in this group');return}
+  g.members.push(name);
+  save();renderMembersScreen(g);toast(name+' added');
+}
+
+// ===== MEMBER PROFILE =====
+function openMemberProfile(memberName){
+  var g=getGroup();if(!g)return;
+  nav('s-split-member-profile');
+  document.getElementById('mp-name').textContent=memberName;
+  document.getElementById('mp-group').textContent=g.name;
+  var bal=calcBalances(g);
+  var b=bal[memberName]||0;
+  var totalPaid=(g.expenses||[]).filter(function(e){return e.paidBy===memberName}).reduce(function(s,e){return s+e.total},0);
+  var totalShare=(g.expenses||[]).reduce(function(s,e){return s+(e.shares[memberName]||0)},0);
+  var txnCount=(g.expenses||[]).filter(function(e){return e.shares[memberName]!==undefined}).length;
+  document.getElementById('mp-total-share').textContent='Rs '+fmt(totalShare.toFixed(0));
+  document.getElementById('mp-total-paid').textContent='Rs '+fmt(totalPaid);
+  var balColor=b>0.5?'#4caf72':b<-0.5?'#e05050':'#888';
+  document.getElementById('mp-balance').textContent=(b>0.5?'+':'')+'Rs '+fmt(b.toFixed(0));
+  document.getElementById('mp-balance').style.color=balColor;
+  document.getElementById('mp-txn-count').textContent=txnCount;
+  // Monthly summary
+  var monthly={};
+  (g.expenses||[]).forEach(function(e){
+    var mo=e.date.slice(0,7);
+    if(!monthly[mo])monthly[mo]=0;
+    monthly[mo]+=(e.shares[memberName]||0);
+  });
+  var monthWrap=document.getElementById('mp-monthly');
+  if(monthWrap){
+    var monthHtml=Object.entries(monthly).sort(function(a,b){return b[0].localeCompare(a[0])}).map(function(kv){
+      return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:.5px solid var(--bd);font-size:12px"><span style="color:var(--t2)">'+kv[0]+'</span><span style="font-weight:700;color:var(--t)">Rs '+fmt(kv[1].toFixed(0))+'</span></div>';
+    }).join('');
+    monthWrap.innerHTML=monthHtml||'<div class="empty">No data</div>';
+  }
+  // Transaction history
+  var histWrap=document.getElementById('mp-history');
+  if(histWrap){
+    var hist=(g.expenses||[]).filter(function(e){return e.shares[memberName]!==undefined});
+    histWrap.innerHTML=hist.map(function(e){
+      var share=e.shares[memberName]||0;
+      return '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:.5px solid var(--bd)">'
+        +'<div><div style="font-size:13px;color:var(--t);font-weight:600">'+esc(e.title)+'</div>'
+        +'<div style="font-size:10px;color:var(--t5);margin-top:2px">'+esc(e.date)+' • Paid by '+esc(e.paidBy)+'</div></div>'
+        +'<div style="font-size:13px;font-weight:700;color:#e07050">Rs '+fmt(share.toFixed(0))+'</div>'
         +'</div>';
     }).join('');
   }
 }
 
-// Greedy settlement algorithm
-function calculateSettlements(balances){
-  var creditors=[],debtors=[];
-  Object.entries(balances).forEach(function(kv){
-    if(kv[1]>0.5)creditors.push({name:kv[0],amount:kv[1]});
-    else if(kv[1]<-0.5)debtors.push({name:kv[0],amount:Math.abs(kv[1])});
-  });
-  creditors.sort(function(a,b){return b.amount-a.amount});
-  debtors.sort(function(a,b){return b.amount-a.amount});
-  var out=[],ci=0,di=0;
-  while(ci<creditors.length&&di<debtors.length){
-    var cr=creditors[ci],db=debtors[di];
-    var pay=Math.min(cr.amount,db.amount);
-    if(pay>0.5)out.push({from:db.name,to:cr.name,amount:pay});
-    cr.amount-=pay;db.amount-=pay;
-    if(cr.amount<0.5)ci++;if(db.amount<0.5)di++;
-  }
-  return out;
-}
-
-function calcGroupBalances(g){
-  var bal={};
-  g.members.forEach(function(m){bal[m]=0});
-  g.expenses.forEach(function(e){
-    bal[e.paidBy]=(bal[e.paidBy]||0)+e.total;
-    Object.entries(e.shares).forEach(function(kv){bal[kv[0]]=(bal[kv[0]]||0)-kv[1]});
-  });
-  return bal;
-}
-
-// Add expense form
-function openAddExpenseForm(){
-  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
-  var form=document.getElementById('split-exp-form');if(!form)return;
-  form.style.display='block';
-  // Setup paid-by
-  var pb=document.getElementById('se-paidby');
-  if(pb){pb.innerHTML=g.members.map(function(m){return '<option value="'+esc(m)+'"'+(m===g.myName?' selected':'')+'>'+esc(m)+'</option>'}).join('')}
-  // Setup include checkboxes
-  var incWrap=document.getElementById('se-include-members');
-  if(incWrap){
-    incWrap.innerHTML=g.members.map(function(m){
-      return '<label style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;cursor:pointer">'
-        +'<input type="checkbox" id="se-inc-'+esc(m)+'" checked style="width:16px;height:16px;cursor:pointer"> '+esc(m)+'</label>';
-    }).join('');
-  }
-  groupSplitModeG='equal';
-  ['equal','custom','percent'].forEach(function(m){var btn=document.getElementById('se-'+m+'-btn');if(btn)btn.classList.toggle('on',m==='equal')});
-  buildGroupMemberInputs(g);
-  form.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-function setGroupSplitMode(mode){
-  groupSplitModeG=mode;
-  ['equal','custom','percent'].forEach(function(m){var btn=document.getElementById('se-'+m+'-btn');if(btn)btn.classList.toggle('on',m===mode)});
-  var g=DB.splits.find(function(x){return x.id===currentGroupId});
-  if(g)buildGroupMemberInputs(g);
-}
-
-function getIncludedMembers(g){
-  return g.members.filter(function(m){
-    var cb=document.getElementById('se-inc-'+m);
-    return cb?cb.checked:true;
-  });
-}
-
-function buildGroupMemberInputs(g){
-  var wrap=document.getElementById('se-members-wrap');if(!wrap)return;
-  var total=parseFloat(document.getElementById('se-total').value)||0;
-  var included=getIncludedMembers(g);
-  var each=included.length>0?total/included.length:0;
-  wrap.innerHTML='';
-  included.forEach(function(m,i){
-    var val=groupSplitModeG==='equal'?each.toFixed(0):'';
-    var div=document.createElement('div');div.className='split-member';
-    div.innerHTML='<input type="text" value="'+esc(m)+'" readonly style="color:var(--t3);font-size:12px">'
-      +'<input type="number" id="se-share-'+i+'" placeholder="'+(groupSplitModeG==='percent'?'%':'Share')+'" value="'+val+'">';
-    div.querySelector('input[type=number]').oninput=calcGroupSplit;
-    wrap.appendChild(div);
-  });
-  calcGroupSplit();
-}
-
-function calcGroupSplit(){
-  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
-  var total=parseFloat(document.getElementById('se-total').value)||0;
-  var included=getIncludedMembers(g);
-  var lbl=document.getElementById('se-each-lbl');
-  var val=document.getElementById('se-each-val');
-  if(groupSplitModeG==='equal'){
-    var each=included.length>0?total/included.length:0;
-    included.forEach(function(m,i){var el=document.getElementById('se-share-'+i);if(el)el.value=each.toFixed(0)});
-    if(lbl)lbl.textContent='Each pays ('+included.length+' members)';
-    if(val)val.textContent='Rs '+fmt(each.toFixed(0));
-  }else if(groupSplitModeG==='percent'){
-    var totalPct=0;
-    included.forEach(function(m,i){totalPct+=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0)});
-    if(lbl)lbl.textContent='% split (total: '+totalPct+'%)';
-    if(val)val.textContent=totalPct===100?'✓ 100%':totalPct+'% / 100%';
-  }else{
-    var totalShares=0;
-    included.forEach(function(m,i){totalShares+=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0)});
-    if(lbl)lbl.textContent='Custom amounts';
-    if(val)val.textContent='Rs '+fmt(totalShares)+' / Rs '+fmt(total);
-  }
-}
-
-function addGroupExpense(){
-  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
-  var title=document.getElementById('se-title').value.trim();
-  var total=parseFloat(document.getElementById('se-total').value)||0;
-  var paidBy=document.getElementById('se-paidby').value;
-  if(!title||total===0){document.getElementById('ese').classList.add('on');toast('Enter title and amount');return}
-  document.getElementById('ese').classList.remove('on');
-  var included=getIncludedMembers(g);
-  var shares={};
-  included.forEach(function(m,i){
-    var v=parseFloat(document.getElementById('se-share-'+i)&&document.getElementById('se-share-'+i).value||0);
-    if(groupSplitModeG==='percent')v=parseFloat((total*v/100).toFixed(2));
-    shares[m]=v;
-  });
-  var notes=document.getElementById('se-notes').value;
-  g.expenses.unshift({id:Date.now(),title:title,paidBy:paidBy,total:total,shares:shares,notes:notes,date:today()});
-  save();
-  document.getElementById('se-title').value='';document.getElementById('se-total').value='';document.getElementById('se-notes').value='';
-  document.getElementById('split-exp-form').style.display='none';
-  renderGroupDetail(g);updateDash();toast(title+' added');
-}
-
-function deleteGroupExpense(eid){
-  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
-  if(!confirm('Delete this expense?'))return;
-  g.expenses=g.expenses.filter(function(e){return e.id!==eid});
-  save();renderGroupDetail(g);updateDash();toast('Expense deleted');
-}
-
-// Edit group
-function openEditGroup(){
-  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
-  var form=document.getElementById('edit-group-form');if(!form)return;
-  form.style.display='block';
-  document.getElementById('eg-name').value=g.name;
-  renderEditMemberList(g);
-}
-
-function renderEditMemberList(g){
-  var wrap=document.getElementById('eg-members-list');if(!wrap)return;
-  wrap.innerHTML=g.members.map(function(m,i){
-    return '<div class="irow" id="eg-mem-'+i+'">'
-      +'<input type="text" value="'+esc(m)+'" id="eg-mem-val-'+i+'" style="flex:1">'
-      +'<div class="irm" onclick="removeMemberRow('+i+')">✕</div>'
+// ===== ACTIVITY FEED =====
+function renderActivityFeed(g){
+  if(!g)g=getGroup();if(!g)return;
+  var wrap=document.getElementById('activity-list');if(!wrap)return;
+  var acts=(g.activity||[]);
+  if(!acts.length){wrap.innerHTML='<div class="empty">No activity yet</div>';return}
+  wrap.innerHTML=acts.map(function(a){
+    var icon=a.type==='settlement'?'💸':'➕';
+    var clr=a.type==='settlement'?'#4caf72':'#50a0d0';
+    return '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:.5px solid var(--bd)">'
+      +'<div><div style="font-size:13px;color:var(--t)">'+icon+' '+esc(a.text)+'</div>'
+      +'<div style="font-size:10px;color:var(--t5);margin-top:2px">'+esc(a.date)+'</div></div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+clr+'">Rs '+fmt(a.amount)+'</div>'
       +'</div>';
   }).join('');
 }
 
-function removeMemberRow(idx){
-  var el=document.getElementById('eg-mem-'+idx);if(el)el.remove();
+// ===== SHARE LINK =====
+function shareGroupLink(){
+  var g=getGroup();if(!g)return;
+  var data={shareCode:g.shareCode,name:g.name,members:g.members,groupId:g.id};
+  var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+  var link='https://126anand.github.io/expense-manager/?splitjoin='+encoded;
+  if(navigator.share){
+    navigator.share({title:g.name+' — Split Group',text:'Join my split group: '+g.name,url:link})
+      .then(function(){toast('Shared!')})
+      .catch(function(){copyLink(link)});
+  }else{copyLink(link)}
+}
+function copyLink(text){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){toast('Link copied! Share it with friends.')}).catch(function(){fallbackCopy2(text)});
+  }else{fallbackCopy2(text)}
+}
+function fallbackCopy2(text){
+  var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');toast('Link copied!')}catch(e){toast('Copy: '+text.slice(-30))}
+  document.body.removeChild(ta);
 }
 
-function addMemberToGroup(){
-  var wrap=document.getElementById('eg-members-list');if(!wrap)return;
-  var count=wrap.children.length;
-  var div=document.createElement('div');div.className='irow';div.id='eg-mem-'+count;
-  div.innerHTML='<input type="text" placeholder="Member name" id="eg-mem-val-'+count+'" style="flex:1"><div class="irm" onclick="removeMemberRow('+count+')">✕</div>';
-  wrap.appendChild(div);
+// ===== JOIN VIA LINK =====
+function joinGroupFromLink(){
+  var link=document.getElementById('join-input').value.trim();
+  var myName=document.getElementById('join-myname').value.trim()||'Me';
+  var match=link.match(/splitjoin=([A-Za-z0-9+/=%-]+)/);
+  if(!match){toast('Invalid link. Check and try again.');return}
+  try{
+    var decoded=decodeURIComponent(escape(atob(match[1].replace(/-/g,'+').replace(/_/g,'/'))));
+    var data=JSON.parse(decoded);
+    if(!DB.splits)DB.splits=[];
+    var existing=DB.splits.find(function(g){return g.shareCode===data.shareCode});
+    if(existing){toast('Already in this group: '+existing.name);openGroup(existing.id);return}
+    var members=data.members||[];
+    if(!members.includes(myName))members.push(myName);
+    var group={id:Date.now(),name:data.name,myName:myName,members:members,expenses:[],settlements:[],activity:[],created:today(),shareCode:data.shareCode,joined:true};
+    DB.splits.unshift(group);
+    save();
+    document.getElementById('join-form').style.display='none';
+    document.getElementById('join-input').value='';
+    document.getElementById('join-myname').value='';
+    renderSplitGroups();updateDash();toast('Joined '+data.name+'!');
+    openGroup(group.id);
+  }catch(e){console.error(e);toast('Could not read link. Try again.')}
 }
 
-function saveGroupEdit(){
-  var g=DB.splits.find(function(x){return x.id===currentGroupId});if(!g)return;
-  var newName=document.getElementById('eg-name').value.trim();
-  if(newName)g.name=newName;
-  // Collect members
-  var newMembers=[];
-  document.querySelectorAll('[id^="eg-mem-val-"]').forEach(function(el){
-    var v=el.value.trim();if(v)newMembers.push(v);
-  });
-  if(newMembers.length>0)g.members=newMembers;
-  save();
-  document.getElementById('edit-group-form').style.display='none';
-  document.getElementById('sg-title').textContent=g.emoji+' '+g.name;
-  document.getElementById('sg-sub').textContent=g.members.length+' members';
-  renderGroupDetail(g);toast('Group updated');
+function checkJoinLink(){
+  var url=window.location.href;
+  var match=url.match(/splitjoin=([A-Za-z0-9+/=%-]+)/);
+  if(match){
+    if(CAN_NAV)try{history.replaceState({},'',location.pathname)}catch(e){}
+    nav('s-split');
+    setTimeout(function(){
+      document.getElementById('join-input').value=url;
+      document.getElementById('join-form').style.display='block';
+      toast('Group link detected! Enter your name to join.');
+    },600);
+  }
 }
 
+// ===== DELETE GROUP =====
 function deleteCurrentGroup(){
-  if(!confirm('Delete this entire group and all its expenses? This cannot be undone.'))return;
-  DB.splits=DB.splits.filter(function(g){return g.id!==currentGroupId});
+  var g=getGroup();if(!g)return;
+  if(!confirm('Delete "'+g.name+'" and all its data? Cannot be undone.'))return;
+  DB.splits=DB.splits.filter(function(x){return x.id!==currentGroupId});
   save();goBack();renderSplitGroups();updateDash();toast('Group deleted');
 }
 
 function updateSplitDash(){
   var cnt=(DB.splits||[]).length;
-  var el=document.getElementById('d-split');if(el)el.textContent=cnt+' group'+(cnt===1?'':'s');
+  var el=document.getElementById('d-split');if(el)el.textContent=cnt+' group'+(cnt!==1?'s':'');
+}
+
+// Wire nav for add expense button in group dashboard
+function wireGroupNav(){
+  // Called when group screen is shown
+  var addBtn=document.querySelector('#s-split-group button[onclick*="Add"]');
 }
 
 // ============================================================
+// SERVICE WORKER// ============================================================
 // SERVICE WORKER
 // ============================================================
 if('serviceWorker' in navigator){
