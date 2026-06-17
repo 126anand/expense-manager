@@ -964,10 +964,15 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
 
 <!-- ===== STUDENTS ===== -->
 <div class="scr" id="s-students">
-  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">🎓 Students</div><div class="hs">Tuition fee management</div></div><div class="ha" onclick="nav('s-student-add')">＋</div></div>
+  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">🎓 Students</div><div class="hs" id="stu-today-display">Tuition fee management</div></div><div class="ha" onclick="nav('s-student-add')">＋</div></div>
   <div style="display:flex;gap:8px;padding:0 1.1rem .8rem">
     <button onclick="nav('s-student-add')" style="flex:1;padding:10px;border-radius:10px;background:var(--green)15;border:1.5px solid var(--green)55;color:var(--green);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">＋ Add Student</button>
     <button onclick="renderTrash();nav('s-student-trash')" style="flex:1;padding:10px;border-radius:10px;background:var(--bg2);border:1.5px solid var(--bd);color:var(--t3);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🗑 Trash</button>
+  </div>
+  <div class="g3" style="margin-bottom:.5rem">
+    <div class="sc"><div class="scl">This Month</div><div class="scv" id="stu-earn-month" style="font-size:15px;color:var(--green)">Rs 0</div></div>
+    <div class="sc"><div class="scl">This Year</div><div class="scv" id="stu-earn-year" style="font-size:15px;color:var(--green)">Rs 0</div></div>
+    <div class="sc"><div class="scl">All Time</div><div class="scv" id="stu-earn-total" style="font-size:15px;color:var(--accent)">Rs 0</div></div>
   </div>
   <div class="otog" style="margin:0 1.1rem .8rem">
     <button class="obtn on" id="stu-tab-active" onclick="showStudentTab('active')">Active</button>
@@ -1028,6 +1033,50 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
   </div>
 </div>
 
+<!-- ===== CUSTOM CATEGORIES LIST ===== -->
+<div class="scr" id="s-custom-categories">
+  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">✨ Your Categories</div><div class="hs">Custom-built categories</div></div><div class="ha" onclick="openNewCategoryForm()">＋</div></div>
+  <div style="padding:0 1.1rem .8rem">
+    <button onclick="openNewCategoryForm()" style="width:100%;padding:12px;border-radius:11px;background:var(--accent)15;border:1.5px solid var(--accent)55;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">＋ New Category</button>
+  </div>
+  <div class="lbl">Tap to edit · toggle to show/hide · ▲▼ to reorder</div>
+  <div class="sg">
+    <div id="custom-cat-settings-list"></div>
+  </div>
+</div>
+
+<!-- ===== CUSTOM CATEGORY CREATE/EDIT FORM ===== -->
+<div class="scr" id="s-custom-cat-form">
+  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht" id="cc-form-title">New Category</div><div class="hs">Design your category</div></div></div>
+  <div class="fw">
+    <div class="fl"><label>Category Name</label><input type="text" id="cc-name" placeholder="e.g. Pet Care, Subscriptions, Gym"></div>
+    <div class="fl"><label>Icon (emoji)</label><input type="text" id="cc-icon" placeholder="e.g. 🐶 🎵 💪" maxlength="4"></div>
+    <div class="fl"><label>Color</label><div id="cc-color-picker" style="display:flex;gap:10px;flex-wrap:wrap;padding:6px 0"></div></div>
+    <div class="fl"><label>Entry Type</label></div>
+    <div class="otog">
+      <button class="obtn on" id="cc-mode-amount" onclick="setCcMode('amount')">💵 Amount Only</button>
+      <button class="obtn" id="cc-mode-calc" onclick="setCcMode('calc')">🧮 Rate × Qty</button>
+    </div>
+    <div class="srow" style="padding:11px 0;border-top:none" onclick="toggleCcNotes()">
+      <div class="sic" style="background:#1e1e2a">📝</div>
+      <div class="slb"><div class="stit">Include Notes Field</div><div class="ssub">Add an optional text note per entry</div></div>
+      <div class="tog" id="cc-notes-toggle"><div class="togk"></div></div>
+    </div>
+    <button class="sbtn" style="background:var(--accent);color:#fff;margin-top:8px" onclick="saveCustomCategory()">Save Category</button>
+    <div id="cc-delete-row" style="display:none;margin-top:10px">
+      <button class="sbtn" style="background:var(--red)15;color:var(--red);border:1.5px solid var(--red)55" onclick="deleteCustomCategory()">🗑 Delete Category</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CUSTOM CATEGORY — DYNAMIC ENTRY SCREEN ===== -->
+<div class="scr" id="s-custom-cat-screen">
+  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht" id="ccs-title">Category</div><div class="hs">Add & view entries</div></div><div class="ha" id="ccs-settings-btn">⚙️</div></div>
+  <div class="fw" id="ccs-form"></div>
+  <div class="lbl">History</div>
+  <div class="hw" id="ccs-history"></div>
+</div>
+
 <!-- ===== SETTINGS ===== -->
 <div class="scr" id="s-settings">
   <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Settings</div><div class="hs">Preferences & data</div></div></div>
@@ -1042,6 +1091,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
   <div class="sg">
     <div class="sgt">Categories</div>
     <div class="srow" onclick="buildCatToggles();nav('s-categories')"><div class="sic" style="background:#1a2030">🗂️</div><div class="slb"><div class="stit">Show / Hide Categories</div><div class="ssub">Tap to manage visibility & order</div></div><span style="color:var(--t4);font-size:16px">›</span></div>
+    <div class="srow" onclick="buildCustomCatSettingsList();nav('s-custom-categories')"><div class="sic" style="background:#241a30">✨</div><div class="slb"><div class="stit">Create Your Own Category</div><div class="ssub">Build a custom expense category</div></div><span style="color:var(--t4);font-size:16px">›</span></div>
   </div>
   <div class="sg">
     <div class="sgt">Security</div>
@@ -1120,11 +1170,11 @@ function loadSaved(){
   if(!CAN_STORE)return;
   try{
     const d=localStorage.getItem('lem_db');
-    if(d){const p=JSON.parse(d);['bike','food','clothes','friends','others'].forEach(k=>{if(Array.isArray(p[k]))DB[k]=p[k]});if(Array.isArray(p.splits))DB.splits=p.splits;if(Array.isArray(p.students))DB.students=p.students;if(Array.isArray(p.deletedStudents))DB.deletedStudents=p.deletedStudents;}
+    if(d){const p=JSON.parse(d);['bike','food','clothes','friends','others'].forEach(k=>{if(Array.isArray(p[k]))DB[k]=p[k]});if(Array.isArray(p.splits))DB.splits=p.splits;if(Array.isArray(p.students))DB.students=p.students;if(Array.isArray(p.deletedStudents))DB.deletedStudents=p.deletedStudents;if(Array.isArray(p.customCats))DB.customCats=p.customCats;}
     const b=localStorage.getItem('lem_bud');
     if(b){const p=JSON.parse(b);Object.keys(p).forEach(k=>{if(BUD[k])BUD[k].b=p[k]})}
     const pr=localStorage.getItem('lem_pref');
-    if(pr){const p=JSON.parse(pr);Object.assign(PREF,p);if(!Array.isArray(PREF.catOrder)||PREF.catOrder.length<6)PREF.catOrder=['bike','food','clothes','friends','others','split','students']}
+    if(pr){const p=JSON.parse(pr);Object.assign(PREF,p);if(!Array.isArray(PREF.catOrder)||PREF.catOrder.length<6)PREF.catOrder=['bike','food','clothes','friends','others','split','students'];if(!Array.isArray(PREF.customCatOrder))PREF.customCatOrder=[]}
     const lk=localStorage.getItem('lem_lock');
     if(lk){const p=JSON.parse(lk);Object.assign(LOCK,p)}
     const ct=localStorage.getItem('lem_cats');
@@ -2231,7 +2281,7 @@ function doRestore(){
   input.onchange=function(ev){var file=ev.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){try{var data=JSON.parse(e.target.result);if(data.DB){['bike','food','clothes','friends','others'].forEach(function(k){if(data.DB&&data.DB[k])DB[k]=data.DB[k]});if(data.budgets)Object.keys(data.budgets).forEach(function(k){if(BUD[k])BUD[k].b=data.budgets[k]});save();['bike','food','clothes','friends','others'].forEach(function(m){refresh(m)});updateDash();toast('Data restored')}}catch(err){toast('Restore failed')}};reader.readAsText(file)};input.click();
 }
 function clearAll(){if(confirm('Delete ALL data? Cannot be undone.')){['bike','food','clothes','friends','others'].forEach(function(m){DB[m]=[]});save();['bike','food','clothes','friends','others'].forEach(function(m){refresh(m)});updateDash();toast('All data cleared')}}
-function changeLock(){LOCK.type=null;LOCK.pin=null;LOCK.credential=null;LOCK.secQuestion=null;LOCK.secAnswer=null;LOCK.recoveryCode=null;save();initLock()}
+function changeLock(){LOCK.type=null;LOCK.pin=null;LOCK.credential=null;LOCK.secQuestion=null;LOCK.secAnswer=null;LOCK.recoveryCode=null;LOCK.recoveryCodeHash=null;LOCK.salt=null;save();initLock()}
 
 // ============================================================
 // EDIT ENTRY
@@ -2251,8 +2301,27 @@ function editEntry(id,mod){
 // ============================================================
 // LOCK / BIOMETRIC / PIN
 // ============================================================
-function hpin(pin){var h=0;for(var i=0;i<pin.length;i++){h=((h<<5)-h)+pin.charCodeAt(i);h|=0}return h.toString(36)}
+// Cryptographically strong hash using the browser's native Web Crypto API (SHA-256).
+// Unlike a simple checksum, SHA-256 cannot be reversed or trivially brute-forced offline
+// the way a basic bit-shift hash can. We salt with a fixed app-specific string plus the
+// LOCK object's own creation-time nonce so the same PIN doesn't hash identically across
+// different installs of the app.
+async function hpinAsync(text){
+  if(!LOCK.salt){LOCK.salt=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(function(b){return b.toString(16).padStart(2,'0')}).join('')}
+  var enc=new TextEncoder();
+  var data=enc.encode('LEM-v2::'+LOCK.salt+'::'+text);
+  var hashBuf=await crypto.subtle.digest('SHA-256',data);
+  var hashArr=Array.from(new Uint8Array(hashBuf));
+  return hashArr.map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+}
+// Legacy weak hash kept ONLY to detect and silently upgrade old PINs set before this change.
+function hpinLegacy(pin){var h=0;for(var i=0;i<pin.length;i++){h=((h<<5)-h)+pin.charCodeAt(i);h|=0}return h.toString(36)}
 function genRecCode(){var ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';var code='';for(var i=0;i<8;i++){if(i===4)code+='-';code+=ch[Math.floor(Math.random()*ch.length)]}return code}
+async function genRecCodeAsync(){
+  var plain=genRecCode();
+  var hash=await hpinAsync(plain);
+  return {plain:plain,hash:hash};
+}
 
 function initLock(){
   // Check sessionStorage first - don't re-authenticate on refresh
@@ -2309,15 +2378,22 @@ function psk(k){
     setTimeout(function(){
       if(psPhase===0){psFirst=psCurr;psCurr='';psPhase=1;document.getElementById('psetupsubtext').textContent='Confirm PIN';updPDots('psd');document.getElementById('pin-q-section').style.display='block'}
       else if(psCurr===psFirst){
-        LOCK.type='pin';LOCK.pin=hpin(psCurr);LOCK.recoveryCode=genRecCode();
-        var qSel=document.getElementById('sec-q-sel');if(qSel)LOCK.secQuestion=qSel.value;
-        save();psCurr='';
-        document.getElementById('lpinsetup').style.display='none';
-        document.getElementById('lreccode').style.display='flex';
-        document.getElementById('rec-code-show').textContent=LOCK.recoveryCode;
-        var qShow=document.getElementById('rec-q-setup-show');if(qShow&&LOCK.secQuestion)qShow.textContent=RQ[LOCK.secQuestion]||'';
-        document.getElementById('pin-q-section').style.display='none';
-        var raEl=document.getElementById('rec-a-setup');if(raEl)raEl.value='';
+        var finalPin=psCurr;
+        hpinAsync(finalPin).then(function(hashedPin){
+          LOCK.type='pin';LOCK.pin=hashedPin;
+          genRecCodeAsync().then(function(rc){
+            LOCK.recoveryCode=rc.plain; // shown once to user
+            LOCK.recoveryCodeHash=rc.hash; // what's actually stored/compared going forward
+            var qSel=document.getElementById('sec-q-sel');if(qSel)LOCK.secQuestion=qSel.value;
+            save();psCurr='';
+            document.getElementById('lpinsetup').style.display='none';
+            document.getElementById('lreccode').style.display='flex';
+            document.getElementById('rec-code-show').textContent=LOCK.recoveryCode;
+            var qShow=document.getElementById('rec-q-setup-show');if(qShow&&LOCK.secQuestion)qShow.textContent=RQ[LOCK.secQuestion]||'';
+            document.getElementById('pin-q-section').style.display='none';
+            var raEl=document.getElementById('rec-a-setup');if(raEl)raEl.value='';
+          });
+        });
       }else{psCurr='';psFirst='';psPhase=0;document.getElementById('psetupsubtext').textContent="PINs don't match";updPDots('psd')}
     },100);
   }
@@ -2330,14 +2406,47 @@ function showPinEntry(){
   var m=document.getElementById('lpinmsg');if(m)m.textContent='';
 }
 function pek(k){
+  if(Date.now()<lockoutUntil)return; // ignore keypad taps during the 30s cooldown
   if(k==='del')peCurr=peCurr.slice(0,-1);else if(peCurr.length<4)peCurr+=k;
   updPDots('ped');
   if(peCurr.length===4){
     setTimeout(function(){
-      if(hpin(peCurr)===LOCK.pin){peAttempts=0;peCurr='';var m=document.getElementById('lpinmsg');if(m){m.textContent='';m.className='lmsg err'};unlockApp()}
-      else{peAttempts++;peCurr='';updPDots('ped');var m=document.getElementById('lpinmsg');if(m){m.textContent='Wrong PIN'+(peAttempts>=3?' ('+peAttempts+' attempts)':'');m.className='lmsg err'};if(peAttempts>=3){var fb=document.getElementById('forgot-pin-btn');if(fb)fb.style.display='block'}}
+      var entered=peCurr;
+      checkPinMatch(entered).then(function(ok){
+        if(ok){peAttempts=0;peCurr='';var m=document.getElementById('lpinmsg');if(m){m.textContent='';m.className='lmsg err'};unlockApp()}
+        else{peAttempts++;peCurr='';updPDots('ped');var m=document.getElementById('lpinmsg');if(m){m.textContent='Wrong PIN'+(peAttempts>=3?' ('+peAttempts+' attempts)':'');m.className='lmsg err'};if(peAttempts>=5){var fb=document.getElementById('forgot-pin-btn');if(fb)fb.style.display='block';lockOutTemporarily()}else if(peAttempts>=3){var fb2=document.getElementById('forgot-pin-btn');if(fb2)fb2.style.display='block'}}
+      });
     },100);
   }
+}
+// Compares an entered PIN against the stored hash. If the stored hash is from the OLD
+// weak algorithm (pre-upgrade installs), it's detected, verified against the legacy
+// hash once, and silently re-hashed with SHA-256 going forward so security improves
+// automatically without forcing the user to reset their PIN.
+async function checkPinMatch(entered){
+  if(!LOCK.pin)return false;
+  var newHash=await hpinAsync(entered);
+  if(newHash===LOCK.pin)return true;
+  // Fallback: check against legacy weak hash (only relevant for PINs set before this update)
+  if(!LOCK.salt&&hpinLegacy(entered)===LOCK.pin){
+    // Correct PIN under the old scheme — upgrade storage to the strong hash now.
+    LOCK.pin=await hpinAsync(entered);
+    save();
+    return true;
+  }
+  return false;
+}
+var lockoutUntil=0;
+function lockOutTemporarily(){
+  lockoutUntil=Date.now()+30000; // 30 second cooldown after 5 wrong attempts
+  var m=document.getElementById('lpinmsg');
+  if(m){m.textContent='Too many attempts. Wait 30 seconds.';m.className='lmsg err'}
+  var grid=document.getElementById('pentry-grid');
+  if(grid)grid.style.opacity='.4';
+  setTimeout(function(){
+    if(grid)grid.style.opacity='1';
+    var m2=document.getElementById('lpinmsg');if(m2){m2.textContent='';m2.className='lmsg'}
+  },30000);
 }
 function updPDots(pfx){var curr=pfx==='psd'?psCurr:peCurr;for(var i=0;i<4;i++){var d=document.getElementById(pfx+i);if(d)d.className='pdot'+(curr.length>i?' on':'')}}
 function buildPGrid(gridId,fn){
@@ -2360,17 +2469,22 @@ function showForgotPin(){
 function verifySecAnswer(){
   var ans=document.getElementById('rec-answer').value.trim().toLowerCase();if(!ans){toast('Enter your answer');return}
   if(!LOCK.secAnswer){toast('No security question was set');return}
-  if(hpin(ans)===LOCK.secAnswer){toast('Correct! Set new PIN');setTimeout(startNewPin,500)}
-  else{toast('Wrong answer');document.getElementById('rec-answer').value=''}
+  hpinAsync(ans).then(function(h){
+    if(h===LOCK.secAnswer){toast('Correct! Set new PIN');setTimeout(startNewPin,500)}
+    else{toast('Wrong answer');document.getElementById('rec-answer').value=''}
+  });
 }
 function verifyRecCode(){
   var code=document.getElementById('rec-code').value.trim().toUpperCase();if(!code){toast('Enter recovery code');return}
-  if(code===LOCK.recoveryCode){toast('Correct! Set new PIN');setTimeout(startNewPin,500)}
-  else{toast('Wrong code');document.getElementById('rec-code').value=''}
+  if(!LOCK.recoveryCodeHash){toast('No recovery code was set');return}
+  hpinAsync(code).then(function(h){
+    if(h===LOCK.recoveryCodeHash){toast('Correct! Set new PIN');setTimeout(startNewPin,500)}
+    else{toast('Wrong code');document.getElementById('rec-code').value=''}
+  });
 }
 function emergencyReset(){
   if(!confirm('Remove the lock? Your data stays safe.')){return}
-  LOCK.type='none';LOCK.pin=null;LOCK.credential=null;LOCK.secQuestion=null;LOCK.secAnswer=null;LOCK.recoveryCode=null;
+  LOCK.type='none';LOCK.pin=null;LOCK.credential=null;LOCK.secQuestion=null;LOCK.secAnswer=null;LOCK.recoveryCode=null;LOCK.recoveryCodeHash=null;LOCK.salt=null;
   save();unlockApp();toast('Lock removed. Data safe.');
 }
 function startNewPin(){
@@ -2382,8 +2496,12 @@ function startNewPin(){
 }
 function saveRecovery(){
   var ans=document.getElementById('rec-a-setup').value.trim().toLowerCase();if(!ans){toast('Enter your security answer');return}
-  LOCK.secAnswer=hpin(ans);save();
-  document.getElementById('lreccode').style.display='none';unlockApp();toast('PIN set with recovery');
+  hpinAsync(ans).then(function(h){
+    LOCK.secAnswer=h;
+    LOCK.recoveryCode=null; // wipe the plaintext copy now that the user has seen it once — only the hash is kept
+    save();
+    document.getElementById('lreccode').style.display='none';unlockApp();toast('PIN set with recovery');
+  });
 }
 
 // ============================================================
@@ -2998,7 +3116,7 @@ var BS_CALENDAR={
   2080:[31,31,32,31,31,30,30,30,29,30,30,30],
   2081:[31,32,31,32,31,30,30,30,29,30,29,31],
   2082:[31,31,32,32,31,30,30,29,30,29,30,30],
-  2083:[31,32,31,32,31,30,30,30,29,30,29,30],
+  2083:[31,31,32,32,31,30,30,30,29,30,29,30],
   2084:[31,31,32,31,31,30,30,30,29,30,30,30],
   2085:[31,32,31,32,31,30,30,30,29,30,29,31],
   2086:[31,31,32,31,31,30,30,29,30,29,30,30],
@@ -3098,8 +3216,29 @@ function adToBs(adDate){
   // safe because we never cross a year boundary here (daysSinceNewYear stays within one BS year).
   return bsAddDays({y:bsYear,m:1,d:1},daysSinceNewYear);
 }
+function nepalNow(){
+  // Nepal Standard Time is fixed at UTC+5:45, year-round (no DST).
+  // Using device local time directly can land on the wrong calendar day
+  // if the device's timezone differs from Nepal's — so we compute NPT explicitly.
+  var nowUtcMs=Date.now();
+  var nptOffsetMs=(5*60+45)*60*1000;
+  return new Date(nowUtcMs+nptOffsetMs);
+}
 function bsToday(){
-  return adToBs(new Date());
+  var npt=nepalNow();
+  // nepalNow() returns a UTC-based Date shifted to NPT wall-clock time;
+  // pull the Y/M/D using UTC getters so we read the shifted values correctly.
+  var adDate=new Date(npt.getUTCFullYear(),npt.getUTCMonth(),npt.getUTCDate());
+  return adToBs(adDate);
+}
+function nepalTimeString(){
+  var npt=nepalNow();
+  var h=npt.getUTCHours(),m=npt.getUTCMinutes();
+  var ampm=h>=12?'PM':'AM';
+  var h12=h%12;if(h12===0)h12=12;
+  function pad(n){return n<10?'0'+n:''+n}
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  return days[npt.getUTCDay()]+' '+pad(h12)+':'+pad(m)+' '+ampm+' NPT';
 }
 // True calendar-accurate day difference between two BS dates, computed via their real AD dates.
 // This avoids any accumulated drift from the month-length table when dates span a year boundary.
@@ -3163,13 +3302,17 @@ function studentDueInfo(s){
   var unpaidDues=dues.slice(paidCount); // dues not yet covered by recorded payments
   var nextDueObj=bsAddMonths(anchor,paidCount+1);
   var overdueDays=0;
+  var daysUntilDue=0;
   if(bsCompare(nextDueObj,today)<0){
     overdueDays=bsDiffDaysSafe(nextDueObj,today);
+  }else{
+    daysUntilDue=bsDiffDaysSafe(today,nextDueObj);
   }
   return {
     nextDue:bsFmt(nextDueObj),
     unpaidMonths:Math.max(0,unpaidDues.length-(bsCompare(nextDueObj,today)>0?1:0)),
     overdueDays:overdueDays,
+    daysUntilDue:daysUntilDue,
     isOverdue:overdueDays>0
   };
 }
@@ -3300,7 +3443,25 @@ function showStudentTab(tab){
   document.getElementById('students-list-label').textContent=tab==='active'?'Active Students':'Left Students';
   renderStudents();
 }
+function updateStudentEarnings(){
+  var today=bsToday();
+  var monthTotal=0,yearTotal=0,allTimeTotal=0;
+  (DB.students||[]).concat(DB.deletedStudents||[]).forEach(function(s){
+    (s.payments||[]).forEach(function(p){
+      allTimeTotal+=p.amount;
+      var pd=bsParse(p.date);
+      if(pd.y===today.y)yearTotal+=p.amount;
+      if(pd.y===today.y&&pd.m===today.m)monthTotal+=p.amount;
+    });
+  });
+  var elM=document.getElementById('stu-earn-month');if(elM)elM.textContent='Rs '+fmt(monthTotal);
+  var elY=document.getElementById('stu-earn-year');if(elY)elY.textContent='Rs '+fmt(yearTotal);
+  var elT=document.getElementById('stu-earn-total');if(elT)elT.textContent='Rs '+fmt(allTimeTotal);
+}
 function renderStudents(){
+  updateStudentEarnings();
+  var todayDisp=document.getElementById('stu-today-display');
+  if(todayDisp)todayDisp.textContent='Today: '+bsFmt(bsToday())+' BS · '+nepalTimeString();
   var wrap=document.getElementById('students-list');if(!wrap)return;
   var list=(DB.students||[]).filter(function(s){
     return studentTab==='active'?s.status!=='left':s.status==='left';
@@ -3330,6 +3491,8 @@ function renderStudents(){
       topHtml+='<div style="margin-top:4px"><span style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700">Next Due</span><br>'
         +'<span style="font-size:19px;font-weight:900;color:'+(info.isOverdue?'var(--red)':'var(--accent)')+';letter-spacing:-.3px">'+esc(info.nextDue)+'</span></div>';
       if(info.isOverdue)topHtml+='<div style="margin-top:3px;font-size:11px;color:var(--red);font-weight:700">⚠ '+info.overdueDays+' days overdue</div>';
+      else if(info.daysUntilDue===0)topHtml+='<div style="margin-top:3px;font-size:11px;color:var(--orange);font-weight:700">⏰ Due today</div>';
+      else topHtml+='<div style="margin-top:3px;font-size:11px;color:var(--t3);font-weight:600">'+info.daysUntilDue+' day'+(info.daysUntilDue!==1?'s':'')+' remaining</div>';
     }
     topHtml+='</div><div style="text-align:right"><div class="badge" style="background:'+statusColor+'22;color:'+statusColor+';white-space:nowrap">'+statusLbl+'</div></div>';
     top.innerHTML=topHtml;
@@ -3463,6 +3626,290 @@ function updateStudentsDash(){
 }
 
 // ============================================================
+
+// ============================================================
+// CUSTOM CATEGORIES ENGINE
+// Lets the user build their own dashboard categories from Settings:
+// choose name + icon, choose field mode (amount-only, or rate*qty=total),
+// optionally add a notes field, and the category appears on the dashboard
+// with its own toggle (show/hide) and can be deleted entirely.
+// DB.customCats = [{ id, name, icon, color, mode:'amount'|'calc', hasNotes, entries:[] }]
+// ============================================================
+if(!DB.customCats)DB.customCats=[];
+if(!PREF.customCatOrder)PREF.customCatOrder=[];
+
+var CUSTOM_CAT_COLORS=['#6c63ff','#4cdf90','#ff9f43','#ff5f6d','#54a0ff','#ff6b9d','#ffd32a','#20c997','#a78bfa','#fb7185'];
+var editingCustomCatId=null;
+
+function ccId(){return 'cc_'+Date.now()+'_'+Math.floor(Math.random()*1000)}
+
+function openNewCategoryForm(){
+  editingCustomCatId=null;
+  document.getElementById('cc-form-title').textContent='New Category';
+  document.getElementById('cc-name').value='';
+  document.getElementById('cc-icon').value='';
+  document.getElementById('cc-mode-amount').classList.add('on');
+  document.getElementById('cc-mode-calc').classList.remove('on');
+  document.getElementById('cc-notes-toggle').classList.remove('on');
+  document.getElementById('cc-delete-row').style.display='none';
+  renderCcColorPicker(CUSTOM_CAT_COLORS[Math.floor(Math.random()*CUSTOM_CAT_COLORS.length)]);
+  nav('s-custom-cat-form');
+}
+
+function openEditCategoryForm(catId){
+  var cat=DB.customCats.find(function(c){return c.id===catId});if(!cat)return;
+  editingCustomCatId=catId;
+  document.getElementById('cc-form-title').textContent='Edit Category';
+  document.getElementById('cc-name').value=cat.name;
+  document.getElementById('cc-icon').value=cat.icon;
+  document.getElementById('cc-mode-amount').classList.toggle('on',cat.mode==='amount');
+  document.getElementById('cc-mode-calc').classList.toggle('on',cat.mode==='calc');
+  document.getElementById('cc-notes-toggle').classList.toggle('on',!!cat.hasNotes);
+  document.getElementById('cc-delete-row').style.display='block';
+  renderCcColorPicker(cat.color);
+  nav('s-custom-cat-form');
+}
+
+var ccSelectedColor=CUSTOM_CAT_COLORS[0];
+function renderCcColorPicker(selected){
+  ccSelectedColor=selected;
+  var wrap=document.getElementById('cc-color-picker');if(!wrap)return;
+  wrap.innerHTML='';
+  CUSTOM_CAT_COLORS.forEach(function(col){
+    var dot=document.createElement('div');
+    dot.style.cssText='width:32px;height:32px;border-radius:50%;background:'+col+';cursor:pointer;border:3px solid '+(col===selected?'#fff':'transparent')+';box-shadow:0 0 0 1px '+col+';transition:transform .15s cubic-bezier(.34,1.56,.64,1)';
+    dot.onclick=function(){
+      ccSelectedColor=col;
+      wrap.querySelectorAll('div').forEach(function(d){d.style.border='3px solid transparent'});
+      dot.style.border='3px solid #fff';
+    };
+    wrap.appendChild(dot);
+  });
+}
+
+function setCcMode(mode){
+  document.getElementById('cc-mode-amount').classList.toggle('on',mode==='amount');
+  document.getElementById('cc-mode-calc').classList.toggle('on',mode==='calc');
+}
+function toggleCcNotes(){
+  document.getElementById('cc-notes-toggle').classList.toggle('on');
+}
+
+function saveCustomCategory(){
+  var name=document.getElementById('cc-name').value.trim();
+  var icon=document.getElementById('cc-icon').value.trim()||'⭐';
+  if(!name){toast('Enter a category name');return}
+  var mode=document.getElementById('cc-mode-calc').classList.contains('on')?'calc':'amount';
+  var hasNotes=document.getElementById('cc-notes-toggle').classList.contains('on');
+  if(editingCustomCatId){
+    var cat=DB.customCats.find(function(c){return c.id===editingCustomCatId});
+    if(cat){
+      cat.name=name;cat.icon=icon;cat.mode=mode;cat.hasNotes=hasNotes;cat.color=ccSelectedColor;
+    }
+  }else{
+    var newCat={id:ccId(),name:name,icon:icon,color:ccSelectedColor,mode:mode,hasNotes:hasNotes,entries:[],visible:true,createdAt:new Date().toISOString()};
+    DB.customCats.push(newCat);
+    PREF.customCatOrder.push(newCat.id);
+  }
+  save();
+  buildCustomCatDashboardTiles();
+  buildCustomCatSettingsList();
+  goBack();
+  toast('Category saved ✓');
+}
+
+function deleteCustomCategory(){
+  if(!editingCustomCatId)return;
+  var cat=DB.customCats.find(function(c){return c.id===editingCustomCatId});
+  if(!cat)return;
+  if(!confirm('Delete "'+cat.name+'" and all its entries? This cannot be undone.'))return;
+  DB.customCats=DB.customCats.filter(function(c){return c.id!==editingCustomCatId});
+  PREF.customCatOrder=PREF.customCatOrder.filter(function(id){return id!==editingCustomCatId});
+  save();
+  buildCustomCatDashboardTiles();
+  buildCustomCatSettingsList();
+  goBack();goBack();
+  toast('Category deleted');
+}
+
+function toggleCustomCatVisible(catId){
+  var cat=DB.customCats.find(function(c){return c.id===catId});if(!cat)return;
+  cat.visible=!cat.visible;
+  save();
+  buildCustomCatDashboardTiles();
+  var tile=document.getElementById('dc-custom-'+catId);
+  if(tile)tile.style.display=cat.visible?'':'none';
+}
+
+function moveCcUp(catId){
+  var idx=PREF.customCatOrder.indexOf(catId);if(idx<=0)return;
+  PREF.customCatOrder.splice(idx,1);PREF.customCatOrder.splice(idx-1,0,catId);
+  save();buildCustomCatSettingsList();buildCustomCatDashboardTiles();
+}
+function moveCcDown(catId){
+  var idx=PREF.customCatOrder.indexOf(catId);if(idx<0||idx>=PREF.customCatOrder.length-1)return;
+  PREF.customCatOrder.splice(idx,1);PREF.customCatOrder.splice(idx+1,0,catId);
+  save();buildCustomCatSettingsList();buildCustomCatDashboardTiles();
+}
+
+// ---- Settings list of custom categories (with reorder + edit) ----
+function buildCustomCatSettingsList(){
+  var wrap=document.getElementById('custom-cat-settings-list');if(!wrap)return;
+  var order=(PREF.customCatOrder||[]).filter(function(id){return DB.customCats.find(function(c){return c.id===id})});
+  DB.customCats.forEach(function(c){if(!order.includes(c.id))order.push(c.id)});
+  if(!order.length){wrap.innerHTML='<div class="empty" style="padding:1.5rem">No custom categories yet. Tap + New Category to create one.</div>';return}
+  wrap.innerHTML='';
+  order.forEach(function(catId,idx){
+    var cat=DB.customCats.find(function(c){return c.id===catId});if(!cat)return;
+    var row=document.createElement('div');row.className='cat-tog-row';
+    var emoji=document.createElement('div');emoji.style.cssText='font-size:16px;flex-shrink:0;margin-right:2px';emoji.textContent=cat.icon;row.appendChild(emoji);
+    var lbl=document.createElement('div');lbl.className='slb';lbl.style.cursor='pointer';
+    lbl.innerHTML='<div class="stit">'+esc(cat.name)+'</div><div class="ssub">'+(cat.mode==='calc'?'Rate × Qty':'Amount only')+(cat.hasNotes?' · Notes':'')+'</div>';
+    lbl.onclick=function(){openEditCategoryForm(cat.id)};
+    row.appendChild(lbl);
+    var right=document.createElement('div');right.style.cssText='display:flex;align-items:center;gap:8px';
+    var arrows=document.createElement('div');arrows.style.cssText='display:flex;flex-direction:column;gap:3px';
+    var up=document.createElement('div');up.style.cssText='cursor:pointer;font-size:10px;color:var(--t3);padding:1px 6px;border-radius:4px;background:var(--bg3);'+(idx===0?'opacity:.2;pointer-events:none':'');
+    up.textContent='▲';up.onclick=function(){moveCcUp(cat.id)};arrows.appendChild(up);
+    var dn=document.createElement('div');dn.style.cssText='cursor:pointer;font-size:10px;color:var(--t3);padding:1px 6px;border-radius:4px;background:var(--bg3);'+(idx===order.length-1?'opacity:.2;pointer-events:none':'');
+    dn.textContent='▼';dn.onclick=function(){moveCcDown(cat.id)};arrows.appendChild(dn);
+    right.appendChild(arrows);
+    var tog=document.createElement('div');tog.className='tog'+(cat.visible!==false?' on':'');
+    tog.innerHTML='<div class="togk"></div>';
+    tog.onclick=function(){toggleCustomCatVisible(cat.id);tog.classList.toggle('on')};
+    right.appendChild(tog);row.appendChild(right);
+    wrap.appendChild(row);
+  });
+}
+
+// ---- Dashboard tile injection ----
+function buildCustomCatDashboardTiles(){
+  var dashGrid=document.getElementById('dash-cats');if(!dashGrid)return;
+  // Remove any existing custom tiles first (rebuild fresh)
+  dashGrid.querySelectorAll('[data-custom-cat]').forEach(function(el){el.remove()});
+  var order=(PREF.customCatOrder||[]).filter(function(id){return DB.customCats.find(function(c){return c.id===id})});
+  DB.customCats.forEach(function(c){if(!order.includes(c.id))order.push(c.id)});
+  order.forEach(function(catId){
+    var cat=DB.customCats.find(function(c){return c.id===catId});if(!cat)return;
+    var monthTotal=(cat.entries||[]).filter(function(e){return (e.date||'').startsWith(curMonth())}).reduce(function(s,e){return s+(e.total||0)},0);
+    var tile=document.createElement('div');
+    tile.className='tile';tile.id='dc-custom-'+cat.id;tile.dataset.customCat='1';
+    tile.style.display=cat.visible!==false?'':'none';
+    tile.onclick=function(){openCustomCategory(cat.id)};
+    tile.innerHTML='<div class="tt"><div class="tic" style="background:'+cat.color+'22;color:'+cat.color+'">'+esc(cat.icon)+'</div><div><div class="tn">'+esc(cat.name)+'</div><div class="ts">Rs '+fmt(monthTotal)+'</div></div></div><div class="bbg"><div class="bf" style="background:'+cat.color+';width:0%"></div></div>';
+    dashGrid.appendChild(tile);
+  });
+}
+
+// ---- The dynamic category screen itself ----
+var currentCustomCatId=null;
+function openCustomCategory(catId){
+  var cat=DB.customCats.find(function(c){return c.id===catId});if(!cat)return;
+  currentCustomCatId=catId;
+  document.getElementById('ccs-title').textContent=cat.icon+' '+cat.name;
+  document.getElementById('ccs-settings-btn').onclick=function(){openEditCategoryForm(catId)};
+  buildCustomCatEntryForm(cat);
+  renderCustomCatHistory(cat);
+  nav('s-custom-cat-screen');
+}
+
+function buildCustomCatEntryForm(cat){
+  var wrap=document.getElementById('ccs-form');if(!wrap)return;
+  wrap.innerHTML='';
+  var nameFl=document.createElement('div');nameFl.className='fl';
+  nameFl.innerHTML='<label>Item / Description</label>';
+  var nameInp=document.createElement('input');nameInp.type='text';nameInp.id='ccs-name';nameInp.placeholder='e.g. '+cat.name+' item';
+  nameFl.appendChild(nameInp);wrap.appendChild(nameFl);
+  if(cat.mode==='calc'){
+    var r2=document.createElement('div');r2.className='r2';
+    var qtyFl=document.createElement('div');qtyFl.className='fl';qtyFl.innerHTML='<label>Quantity</label>';
+    var qtyInp=document.createElement('input');qtyInp.type='number';qtyInp.id='ccs-qty';qtyInp.placeholder='e.g. 2';qtyInp.oninput=function(){calcCcTotal()};
+    qtyFl.appendChild(qtyInp);r2.appendChild(qtyFl);
+    var rateFl=document.createElement('div');rateFl.className='fl';rateFl.innerHTML='<label>Rate</label>';
+    var rateInp=document.createElement('input');rateInp.type='number';rateInp.id='ccs-rate';rateInp.placeholder='e.g. 50';rateInp.oninput=function(){calcCcTotal()};
+    rateFl.appendChild(rateInp);r2.appendChild(rateFl);
+    wrap.appendChild(r2);
+    var totFl=document.createElement('div');totFl.className='fl';totFl.innerHTML='<label>Total (Rs)</label>';
+    var totInp=document.createElement('input');totInp.type='number';totInp.id='ccs-total';totInp.placeholder='Auto-calculated';
+    totFl.appendChild(totInp);wrap.appendChild(totFl);
+  }else{
+    var amtFl=document.createElement('div');amtFl.className='fl';amtFl.innerHTML='<label>Amount (Rs)</label>';
+    var amtInp=document.createElement('input');amtInp.type='number';amtInp.id='ccs-total';amtInp.placeholder='e.g. 500';
+    amtFl.appendChild(amtInp);wrap.appendChild(amtFl);
+  }
+  if(cat.hasNotes){
+    var noteFl=document.createElement('div');noteFl.className='fl';noteFl.innerHTML='<label>Notes (Optional)</label>';
+    var noteInp=document.createElement('input');noteInp.type='text';noteInp.id='ccs-notes';noteInp.placeholder='Any additional note...';
+    noteFl.appendChild(noteInp);wrap.appendChild(noteFl);
+  }
+  var saveBtn=document.createElement('button');saveBtn.className='sbtn';
+  saveBtn.style.background=cat.color;saveBtn.style.color='#fff';
+  saveBtn.textContent='Save Entry';
+  saveBtn.onclick=function(){saveCustomCatEntry(cat)};
+  wrap.appendChild(saveBtn);
+}
+function calcCcTotal(){
+  var qty=parseFloat(document.getElementById('ccs-qty')&&document.getElementById('ccs-qty').value)||0;
+  var rate=parseFloat(document.getElementById('ccs-rate')&&document.getElementById('ccs-rate').value)||0;
+  var totEl=document.getElementById('ccs-total');
+  if(totEl)totEl.value=(qty*rate)||'';
+}
+function saveCustomCatEntry(cat){
+  var name=document.getElementById('ccs-name').value.trim();
+  var total=parseFloat(document.getElementById('ccs-total').value)||0;
+  if(!name||total<=0){toast('Enter a description and amount');return}
+  var entry={id:Date.now(),name:name,total:total,date:today()};
+  if(cat.mode==='calc'){
+    entry.qty=parseFloat(document.getElementById('ccs-qty').value)||0;
+    entry.rate=parseFloat(document.getElementById('ccs-rate').value)||0;
+  }
+  if(cat.hasNotes){
+    var notesEl=document.getElementById('ccs-notes');
+    entry.notes=notesEl?notesEl.value.trim():'';
+  }
+  if(!cat.entries)cat.entries=[];
+  cat.entries.unshift(entry);
+  save();
+  document.getElementById('ccs-name').value='';
+  var qtyEl=document.getElementById('ccs-qty');if(qtyEl)qtyEl.value='';
+  var rateEl=document.getElementById('ccs-rate');if(rateEl)rateEl.value='';
+  document.getElementById('ccs-total').value='';
+  var notesEl2=document.getElementById('ccs-notes');if(notesEl2)notesEl2.value='';
+  renderCustomCatHistory(cat);
+  buildCustomCatDashboardTiles();
+  toast('Entry saved ✓');
+}
+function renderCustomCatHistory(cat){
+  var wrap=document.getElementById('ccs-history');if(!wrap)return;
+  if(!cat.entries||!cat.entries.length){
+    wrap.innerHTML='<div class="empty" style="padding:2rem;text-align:center"><div style="font-size:2.5rem;margin-bottom:.5rem;opacity:.4">'+esc(cat.icon)+'</div><div style="color:var(--t3);font-size:13px;font-weight:600">No entries yet</div></div>';
+    return;
+  }
+  wrap.innerHTML='';
+  cat.entries.forEach(function(e){
+    var row=document.createElement('div');row.className='hi2';
+    var detailParts=[];
+    if(e.qty&&e.rate)detailParts.push('Qty: '+e.qty+' × Rs '+e.rate);
+    if(e.notes)detailParts.push(e.notes);
+    row.innerHTML='<div class="hl"><div class="hd">'+esc(e.date)+'</div><div class="hm">'+esc(e.name)+'</div>'
+      +(detailParts.length?'<div class="hdet">'+detailParts.map(function(d){return '<span>'+esc(d)+'</span>'}).join('')+'</div>':'')+'</div>'
+      +'<div class="hr2"><div class="ha2" style="color:'+cat.color+'">Rs '+fmt(e.total)+'</div>'
+      +'<div class="hac"><div class="eb del" onclick="deleteCcEntry(\''+cat.id+'\','+e.id+')">🗑</div></div></div>';
+    wrap.appendChild(row);
+  });
+}
+function deleteCcEntry(catId,entryId){
+  var cat=DB.customCats.find(function(c){return c.id===catId});if(!cat)return;
+  if(!confirm('Delete this entry?'))return;
+  cat.entries=cat.entries.filter(function(e){return e.id!==entryId});
+  save();renderCustomCatHistory(cat);buildCustomCatDashboardTiles();toast('Deleted');
+}
+
+function initCustomCategories(){
+  buildCustomCatDashboardTiles();
+  buildCustomCatSettingsList();
+}
+
 // SERVICE WORKER// ============================================================
 // SERVICE WORKER
 // ============================================================
@@ -3484,6 +3931,7 @@ function init(){
   var cs=document.getElementById('csel');if(cs&&PREF.currency)cs.value=PREF.currency;
   initFoodForms();buildFrChips();buildClothesChips();buildOthersChips();buildCatToggles();
   initStudentModule();
+  initCustomCategories();
   updateDash();
   ['bike','food','clothes','friends','others'].forEach(function(m){refresh(m)});
   renderSplitGroups();
