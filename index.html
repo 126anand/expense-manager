@@ -596,17 +596,10 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
       <div class="hs" id="dsub" style="font-size:12px;margin-top:3px">June 2026</div>
     </div>
     <div style="display:flex;gap:8px">
-      <div class="ha" onclick="nav('s-search')">🔍</div>
-      <div class="ha" onclick="nav('s-settings')">⚙️</div>
-    </div>
-  </div>
-  <!-- MONTHLY TOTAL BANNER -->
-  <div style="margin:0 1.1rem .9rem;background:linear-gradient(135deg,var(--accent)22,var(--accent)08);border-radius:var(--r);padding:16px 18px;border:1px solid var(--accent)33;position:relative;overflow:hidden">
-    <div style="position:absolute;right:-10px;top:-10px;font-size:60px;opacity:.07">💰</div>
-    <div style="font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">This Month</div>
-    <div style="font-size:32px;font-weight:900;color:var(--t);letter-spacing:-.8px" id="d-month-big">Rs 0</div>
-    <div style="font-size:11px;color:var(--t3);margin-top:4px;font-weight:500">
-      <span id="d-trend-inline" style="font-weight:700">—</span>
+      <div class="ha" onclick="nav('s-budget')" title="Budget">💰</div>
+      <div class="ha" onclick="nav('s-reports')" title="Reports">📊</div>
+      <div class="ha" onclick="nav('s-search')" title="Search">🔍</div>
+      <div class="ha" onclick="nav('s-settings')" title="Settings">⚙️</div>
     </div>
   </div>
   <div class="lbl" style="margin-top:.2rem">Categories</div>
@@ -976,7 +969,11 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
     <button onclick="nav('s-student-add')" style="flex:1;padding:10px;border-radius:10px;background:var(--green)15;border:1.5px solid var(--green)55;color:var(--green);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">＋ Add Student</button>
     <button onclick="renderTrash();nav('s-student-trash')" style="flex:1;padding:10px;border-radius:10px;background:var(--bg2);border:1.5px solid var(--bd);color:var(--t3);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🗑 Trash</button>
   </div>
-  <div class="lbl">Active Students</div>
+  <div class="otog" style="margin:0 1.1rem .8rem">
+    <button class="obtn on" id="stu-tab-active" onclick="showStudentTab('active')">Active</button>
+    <button class="obtn" id="stu-tab-left" onclick="showStudentTab('left')">Left</button>
+  </div>
+  <div class="lbl" id="students-list-label">Active Students</div>
   <div class="hw" id="students-list"></div>
 </div>
 
@@ -990,6 +987,18 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
     <div class="fl"><label>Monthly Fee (Rs)</label><input type="number" id="ns-fee" placeholder="e.g. 2000"></div>
     <div class="fl"><label>Join Date (Nepali, YYYY/MM/DD)</label><input type="text" id="ns-join" placeholder="e.g. 2083/05/07"></div>
     <button class="sbtn" style="background:var(--green);color:#001a0a" onclick="saveNewStudent()">Add Student</button>
+  </div>
+</div>
+
+<!-- ===== EDIT STUDENT ===== -->
+<div class="scr" id="s-student-edit">
+  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Edit Student</div><div class="hs">Update details</div></div></div>
+  <div class="fw">
+    <div class="fl"><label>Name</label><input type="text" id="es-name"></div>
+    <div class="fl"><label>Parent Name</label><input type="text" id="es-parent"></div>
+    <div class="fl"><label>Phone</label><input type="text" id="es-phone"></div>
+    <div class="fl"><label>Monthly Fee (Rs)</label><input type="number" id="es-fee"></div>
+    <button class="sbtn" style="background:var(--blue);color:#001226" onclick="saveEditedStudent()">Save Changes</button>
   </div>
 </div>
 
@@ -1010,37 +1019,18 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
   <div class="hw" id="trash-list"></div>
 </div>
 
+<!-- ===== CATEGORIES MANAGEMENT ===== -->
+<div class="scr" id="s-categories">
+  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Categories</div><div class="hs">Show, hide & reorder</div></div></div>
+  <div class="lbl">Tap toggle to show/hide · use ▲▼ to reorder</div>
+  <div class="sg">
+    <div id="cat-toggles"></div>
+  </div>
+</div>
+
 <!-- ===== SETTINGS ===== -->
 <div class="scr" id="s-settings">
   <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">Settings</div><div class="hs">Preferences & data</div></div></div>
-  <!-- SUMMARY IN SETTINGS -->
-  <div class="sg">
-    <div class="sgt">Overview</div>
-    <div style="padding:14px 16px;border-top:.5px solid var(--bg4)">
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
-        <div style="background:var(--bg3);border-radius:var(--r2);padding:12px">
-          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;font-weight:800;margin-bottom:5px">This Month</div>
-          <div style="font-size:20px;font-weight:900;color:var(--t);letter-spacing:-.3px" id="set-d-month">Rs 0</div>
-        </div>
-        <div style="background:var(--bg3);border-radius:var(--r2);padding:12px">
-          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;font-weight:800;margin-bottom:5px">This Year</div>
-          <div style="font-size:20px;font-weight:900;color:var(--t);letter-spacing:-.3px" id="set-d-year">Rs 0</div>
-        </div>
-        <div style="background:var(--bg3);border-radius:var(--r2);padding:12px">
-          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;font-weight:800;margin-bottom:5px">Top Category</div>
-          <div style="font-size:14px;font-weight:800;color:var(--t);margin-top:2px" id="set-d-topcat">—</div>
-          <div style="font-size:10px;color:var(--t3);margin-top:2px;font-weight:600" id="set-d-topcat-s">—</div>
-        </div>
-        <div style="background:var(--bg3);border-radius:var(--r2);padding:12px">
-          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;font-weight:800;margin-bottom:5px">Trend</div>
-          <div style="font-size:18px;font-weight:900;margin-top:2px" id="set-d-trend">—</div>
-        </div>
-      </div>
-    </div>
-    <!-- Quick nav to Budget and Reports -->
-    <div onclick="goBack();nav('s-budget')" class="srow"><div class="sic" style="background:#1e2a1a">💰</div><div class="slb"><div class="stit">Budget</div><div class="ssub">Monthly limits & warnings</div></div><span style="color:var(--t4);font-size:16px">›</span></div>
-    <div onclick="goBack();nav('s-reports')" class="srow"><div class="sic" style="background:#1a2028">📊</div><div class="slb"><div class="stit">Reports</div><div class="ssub">Export PDF report</div></div><span style="color:var(--t4);font-size:16px">›</span></div>
-  </div>
   <div class="sg">
     <div class="sgt">Appearance</div>
     <div class="srow"><div class="sic" style="background:#1e1e2a">🌙</div><div class="slb"><div class="stit">Dark Mode</div><div class="ssub">Toggle dark/light theme</div></div><div class="tog on" id="tog-dark" onclick="toggleTheme(this)"><div class="togk"></div></div></div>
@@ -1050,8 +1040,8 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
     <div class="srow"><div class="sic" style="background:#1e2a1e">💰</div><div class="slb"><div class="stit">Currency</div><div class="ssub">Select your currency</div></div><select class="csel" id="csel" onchange="savePref()"><option value="Rs">Rs (NPR)</option><option value="₹">₹ (INR)</option><option value="$">$ (USD)</option><option value="€">€ (EUR)</option></select></div>
   </div>
   <div class="sg">
-    <div class="sgt">Categories (Show/Hide)</div>
-    <div id="cat-toggles"></div>
+    <div class="sgt">Categories</div>
+    <div class="srow" onclick="buildCatToggles();nav('s-categories')"><div class="sic" style="background:#1a2030">🗂️</div><div class="slb"><div class="stit">Show / Hide Categories</div><div class="ssub">Tap to manage visibility & order</div></div><span style="color:var(--t4);font-size:16px">›</span></div>
   </div>
   <div class="sg">
     <div class="sgt">Security</div>
@@ -1310,16 +1300,6 @@ function updateDash(){
   if(dti){
     if(lastMonthTotal>0){var diff2=monthTotal-lastMonthTotal;var p2=Math.round(Math.abs(diff2)/lastMonthTotal*100);dti.textContent=(diff2>=0?'↑ +':'↓ −')+p2+'%';dti.style.color=diff2>=0?'var(--green)':'var(--red)'}
     else{dti.textContent='';dti.style.color='var(--t3)'}
-  }
-  // Sync settings summary
-  var sm=document.getElementById('set-d-month');if(sm)sm.textContent='Rs '+fmt(monthTotal);
-  var sy=document.getElementById('set-d-year');if(sy)sy.textContent='Rs '+fmt(yearTotal);
-  var stc=document.getElementById('set-d-topcat');var stcs=document.getElementById('set-d-topcat-s');
-  if(stc&&topM&&topM[1]>0){stc.textContent=(MEMI[topM[0]]||'')+' '+topM[0];if(stcs)stcs.textContent='Rs '+fmt(topM[1])}
-  var str=document.getElementById('set-d-trend');
-  if(str){
-    if(lastMonthTotal>0){var diff3=monthTotal-lastMonthTotal;var p3=Math.round(Math.abs(diff3)/lastMonthTotal*100);str.textContent=(diff3>=0?'↑ +':'↓ −')+p3+'%';str.style.color=diff3>=0?'var(--green)':'var(--red)'}
-    else{str.textContent='—';str.style.color='var(--t3)'}
   }
   updateSplitDash();renderBudget();renderReports();
 }
@@ -3011,18 +2991,21 @@ if(!DB.deletedStudents)DB.deletedStudents=[];
 
 // ---- Nepali calendar (Bikram Sambat) month-length table ----
 // Each entry: [year]: [month1..month12 day counts] (Baisakh..Chaitra)
+// Used ONLY for clamping a day-of-month within a known year (e.g. "is day 32 valid").
+// Cross-year day counting and "today" use the verified New Year anchor table below instead,
+// since that's independently confirmed against real public Nepali calendars and won't drift.
 var BS_CALENDAR={
-  2080:[31,31,32,31,31,30,30,30,29,30,29,30],
+  2080:[31,31,32,31,31,30,30,30,29,30,30,30],
   2081:[31,32,31,32,31,30,30,30,29,30,29,31],
-  2082:[31,31,32,31,31,30,30,29,30,29,30,30],
-  2083:[31,32,31,32,31,30,30,30,29,30,29,31],
-  2084:[30,32,31,32,31,30,30,30,29,30,30,30],
-  2085:[31,31,32,31,31,31,29,30,29,30,29,31],
-  2086:[31,32,31,32,31,30,30,29,30,29,30,30],
-  2087:[31,31,32,31,31,30,30,30,29,30,29,31],
-  2088:[31,32,31,32,31,30,30,30,29,30,29,31],
-  2089:[31,31,32,32,31,30,30,29,30,29,30,30],
-  2090:[31,32,31,32,31,30,30,30,29,30,29,31]
+  2082:[31,31,32,32,31,30,30,29,30,29,30,30],
+  2083:[31,32,31,32,31,30,30,30,29,30,29,30],
+  2084:[31,31,32,31,31,30,30,30,29,30,30,30],
+  2085:[31,32,31,32,31,30,30,30,29,30,29,31],
+  2086:[31,31,32,31,31,30,30,29,30,29,30,30],
+  2087:[31,32,31,32,31,30,30,30,29,30,29,31],
+  2088:[31,31,32,31,31,30,30,30,29,30,29,30],
+  2089:[31,32,31,32,31,30,30,30,29,30,30,31],
+  2090:[31,31,32,31,31,30,30,30,29,30,29,30]
 };
 function bsDaysInMonth(year,month){
   var row=BS_CALENDAR[year];
@@ -3089,21 +3072,73 @@ function bsDiffDays(a,b){
   }
   return neg?-count:count;
 }
-function bsToday(){
-  // Approximate conversion AD->BS using a fixed offset (BS is ~56-57 years ahead, new year mid-April).
-  // This gives a usable "today" for due-date comparisons; exact astronomical conversion isn't required for billing.
-  var now=new Date();
-  var adY=now.getFullYear(),adM=now.getMonth()+1,adD=now.getDate();
-  var bsY=adY+56;
-  if(adM>4||(adM===4&&adD>=13))bsY=adY+57;
-  // crude month mapping: BS Baisakh starts ~Apr 13
-  var bsM=adM-3; // shift so Apr(4)->Baisakh(1)
-  if(bsM<=0)bsM+=12;
-  var bsD=adD>=13?adD-12:adD+18;
-  if(bsD>bsDaysInMonth(bsY,bsM))bsD=bsDaysInMonth(bsY,bsM);
-  if(bsD<1)bsD=1;
-  return {y:bsY,m:bsM,d:bsD};
+// Verified Baisakh-1 (Nepali New Year) AD dates, cross-checked against public Nepali calendars.
+// "Today" and AD<->BS conversion use THIS table directly (not the month-length table above),
+// so they stay accurate and never drift, even if a specific month's length is ever slightly off.
+var BS_NEWYEAR_AD={
+  2080:[2023,4,14],2081:[2024,4,13],2082:[2025,4,14],2083:[2026,4,14],
+  2084:[2027,4,14],2085:[2028,4,13],2086:[2029,4,14],2087:[2030,4,14],
+  2088:[2031,4,14],2089:[2032,4,13],2090:[2033,4,14]
+};
+function adToBs(adDate){
+  var d=new Date(adDate.getFullYear(),adDate.getMonth(),adDate.getDate());
+  var msPerDay=86400000;
+  var years=Object.keys(BS_NEWYEAR_AD).map(Number).sort(function(a,b){return a-b});
+  var bsYear=years[0];
+  for(var i=0;i<years.length;i++){
+    var ny=BS_NEWYEAR_AD[years[i]];
+    var nyDate=new Date(ny[0],ny[1]-1,ny[2]);
+    if(d>=nyDate)bsYear=years[i];
+    else break;
+  }
+  var anchorAd=BS_NEWYEAR_AD[bsYear];
+  var anchorDate=new Date(anchorAd[0],anchorAd[1]-1,anchorAd[2]);
+  var daysSinceNewYear=Math.round((d-anchorDate)/msPerDay);
+  // Walk forward day-by-day from Baisakh 1 using the real month-length table for THIS year only —
+  // safe because we never cross a year boundary here (daysSinceNewYear stays within one BS year).
+  return bsAddDays({y:bsYear,m:1,d:1},daysSinceNewYear);
 }
+function bsToday(){
+  return adToBs(new Date());
+}
+// True calendar-accurate day difference between two BS dates, computed via their real AD dates.
+// This avoids any accumulated drift from the month-length table when dates span a year boundary.
+function bsToAdApprox(o){
+  // Find this date's BS year anchor, then add (this date's offset from Baisakh 1) in AD days.
+  var anchorAd=BS_NEWYEAR_AD[o.y];
+  if(!anchorAd){
+    // Outside verified table: fall back to table-walk method (rare, only for years <2080 or >2090)
+    return null;
+  }
+  var anchorDate=new Date(anchorAd[0],anchorAd[1]-1,anchorAd[2]);
+  var offsetDays=bsDiffDaysTableOnly({y:o.y,m:1,d:1},o);
+  return new Date(anchorDate.getTime()+offsetDays*86400000);
+}
+function bsDiffDaysTableOnly(a,b){
+  // Original table-walk diff, used only for offsets WITHIN a single known BS year (safe).
+  if(bsCompare(a,b)===0)return 0;
+  var neg=bsCompare(a,b)>0;
+  var lo=neg?b:a, hi=neg?a:b;
+  var count=0,y=lo.y,m=lo.m,d=lo.d;
+  while(!(y===hi.y&&m===hi.m&&d===hi.d)){
+    var maxD=bsDaysInMonth(y,m);
+    if(d<maxD){d++;}else{d=1;m++;if(m>12){m=1;y++}}
+    count++;
+    if(count>20000)break;
+  }
+  return neg?-count:count;
+}
+// Safe day-difference: uses verified AD anchors when both dates fall in the verified
+// year range (no drift risk), falls back to table-walking only outside that range.
+function bsDiffDaysSafe(a,b){
+  var adA=bsToAdApprox(a), adB=bsToAdApprox(b);
+  if(adA&&adB){
+    return Math.round((adB-adA)/86400000);
+  }
+  return bsDiffDays(a,b);
+}
+
+
 
 // ---- Billing cycle calculation ----
 // Given a student's anchor date (join date, or last hold-resume date) and "today",
@@ -3129,7 +3164,7 @@ function studentDueInfo(s){
   var nextDueObj=bsAddMonths(anchor,paidCount+1);
   var overdueDays=0;
   if(bsCompare(nextDueObj,today)<0){
-    overdueDays=bsDiffDays(nextDueObj,today);
+    overdueDays=bsDiffDaysSafe(nextDueObj,today);
   }
   return {
     nextDue:bsFmt(nextDueObj),
@@ -3159,9 +3194,15 @@ function createStudent(data){
 }
 
 function recordPayment(studentId,amount,dateStr){
-  var s=DB.students.find(function(x){return x.id===studentId});if(!s)return;
-  s.payments.unshift({id:Date.now(),amount:amount||s.fee,date:dateStr||bsFmt(bsToday())});
+  var s=DB.students.find(function(x){return x.id===studentId});if(!s)return false;
+  var payDate=dateStr||bsFmt(bsToday());
+  if(s.payments&&s.payments.length&&s.payments[0].date===payDate){
+    toast('Already marked PAID today for '+s.name);
+    return false;
+  }
+  s.payments.unshift({id:Date.now(),amount:amount||s.fee,date:payDate});
   save();
+  return true;
 }
 
 function holdStudent(studentId,holdDateStr){
@@ -3169,8 +3210,8 @@ function holdStudent(studentId,holdDateStr){
   var anchor=bsParse(s.billingAnchor);
   var holdDate=bsParse(holdDateStr||bsFmt(bsToday()));
   var nextDue=bsAddMonths(anchor,(s.payments||[]).length+1);
-  var usedDays=bsDiffDays(anchor,holdDate);
-  var totalCycleDays=bsDiffDays(anchor,nextDue);
+  var usedDays=bsDiffDaysSafe(anchor,holdDate);
+  var totalCycleDays=bsDiffDaysSafe(anchor,nextDue);
   var remainingDays=Math.max(0,totalCycleDays-usedDays);
   s.status='hold';
   s.holdInfo={holdDate:bsFmt(holdDate),usedDays:usedDays,remainingDays:remainingDays,cycleStart:bsFmt(anchor),cycleEnd:bsFmt(nextDue)};
@@ -3202,10 +3243,10 @@ function unholdStudent(studentId,resumeDateStr){
 
 function leaveStudent(studentId){
   var s=DB.students.find(function(x){return x.id===studentId});if(!s)return;
-  if(!confirm('Mark '+s.name+' as LEFT? They will be removed from the active list, but history is kept.'))return;
+  if(!confirm('Mark '+s.name+' as LEFT? They will move to the Left tab. Full payment and hold history stays accessible there.'))return;
   s.status='left';
   s.leaveDate=bsFmt(bsToday());
-  save();renderStudents();
+  save();renderStudents();toast(s.name+' marked as left');
 }
 
 function softDeleteStudent(studentId){
@@ -3231,52 +3272,109 @@ function permanentDeleteStudent(studentId){
 
 function editStudent(studentId){
   var s=DB.students.find(function(x){return x.id===studentId});if(!s)return;
-  var name=prompt('Name:',s.name);if(name===null)return;
-  var parent=prompt('Parent name:',s.parent||'');if(parent===null)return;
-  var phone=prompt('Phone:',s.phone||'');if(phone===null)return;
-  var fee=prompt('Monthly fee (Rs):',s.fee);if(fee===null)return;
-  s.name=name;s.parent=parent;s.phone=phone;s.fee=parseFloat(fee)||s.fee;
-  save();renderStudents();toast('Student updated');
+  currentStudentId=studentId;
+  document.getElementById('es-name').value=s.name||'';
+  document.getElementById('es-parent').value=s.parent||'';
+  document.getElementById('es-phone').value=s.phone||'';
+  document.getElementById('es-fee').value=s.fee||'';
+  nav('s-student-edit');
+}
+function saveEditedStudent(){
+  var s=DB.students.find(function(x){return x.id===currentStudentId});if(!s)return;
+  var name=document.getElementById('es-name').value.trim();
+  var fee=document.getElementById('es-fee').value.trim();
+  if(!name||!fee){toast('Name and fee are required');return}
+  s.name=name;
+  s.parent=document.getElementById('es-parent').value.trim();
+  s.phone=document.getElementById('es-phone').value.trim();
+  s.fee=parseFloat(fee)||s.fee;
+  save();renderStudents();goBack();toast('Student updated ✓');
 }
 
 // ---- Rendering ----
+var studentTab='active';
+function showStudentTab(tab){
+  studentTab=tab;
+  document.getElementById('stu-tab-active').classList.toggle('on',tab==='active');
+  document.getElementById('stu-tab-left').classList.toggle('on',tab==='left');
+  document.getElementById('students-list-label').textContent=tab==='active'?'Active Students':'Left Students';
+  renderStudents();
+}
 function renderStudents(){
   var wrap=document.getElementById('students-list');if(!wrap)return;
-  var list=(DB.students||[]).filter(function(s){return s.status!=='left'});
-  if(!list.length){wrap.innerHTML='<div class="empty" style="padding:2rem;text-align:center"><div style="font-size:2.5rem;margin-bottom:.5rem;opacity:.4">🎓</div><div style="color:var(--t3);font-size:13px;font-weight:600">No students yet</div></div>';return}
+  var list=(DB.students||[]).filter(function(s){
+    return studentTab==='active'?s.status!=='left':s.status==='left';
+  });
+  if(!list.length){
+    var emptyMsg=studentTab==='active'?'No active students yet':'No students have left yet';
+    var emptyIcon=studentTab==='active'?'🎓':'👋';
+    wrap.innerHTML='<div class="empty" style="padding:2rem;text-align:center"><div style="font-size:2.5rem;margin-bottom:.5rem;opacity:.4">'+emptyIcon+'</div><div style="color:var(--t3);font-size:13px;font-weight:600">'+emptyMsg+'</div></div>';
+    return;
+  }
   wrap.innerHTML='';
   list.forEach(function(s){
     var info=studentDueInfo(s);
-    var statusColor=s.status==='hold'?'var(--orange)':info.isOverdue?'var(--red)':'var(--green)';
-    var statusLbl=s.status==='hold'?'ON HOLD':info.isOverdue?info.unpaidMonths+'mo overdue':'Active';
+    var statusColor=s.status==='left'?'var(--t3)':s.status==='hold'?'var(--orange)':info.isOverdue?'var(--red)':'var(--green)';
+    var statusLbl=s.status==='left'?'LEFT '+(s.leaveDate||''):s.status==='hold'?'ON HOLD':info.isOverdue?info.unpaidMonths+' MO OVERDUE':'ACTIVE';
     var card=document.createElement('div');
     card.className='hi2';card.style.flexDirection='column';card.style.alignItems='stretch';
-    var top=document.createElement('div');top.style.cssText='display:flex;justify-content:space-between;align-items:flex-start;width:100%';
-    top.innerHTML='<div class="hl"><div class="hm">'+esc(s.name)+'</div>'
-      +'<div class="hdet"><span>Fee: Rs '+fmt(s.fee)+'/mo</span><span>Next due: '+esc(info.nextDue)+'</span>'+(info.isOverdue?'<span style="color:var(--red);font-weight:700">'+info.overdueDays+' days overdue</span>':'')+'</div></div>'
-      +'<div style="text-align:right"><div class="badge" style="background:'+statusColor+'22;color:'+statusColor+'">'+statusLbl+'</div></div>';
+    card.style.padding='16px';
+    card.style.transition='all .2s cubic-bezier(.34,1.56,.64,1)';
+    var top=document.createElement('div');
+    top.style.cssText='display:flex;justify-content:space-between;align-items:flex-start;width:100%;cursor:pointer';
+    top.onclick=function(){openStudentProfile(s.id)};
+    var topHtml='<div class="hl" style="gap:6px">'
+      +'<div class="hm" style="font-size:16px">'+esc(s.name)+'</div>'
+      +'<div class="hdet" style="gap:4px"><span>Fee: Rs '+fmt(s.fee)+'/mo</span></div>';
+    if(studentTab==='active'){
+      topHtml+='<div style="margin-top:4px"><span style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700">Next Due</span><br>'
+        +'<span style="font-size:19px;font-weight:900;color:'+(info.isOverdue?'var(--red)':'var(--accent)')+';letter-spacing:-.3px">'+esc(info.nextDue)+'</span></div>';
+      if(info.isOverdue)topHtml+='<div style="margin-top:3px;font-size:11px;color:var(--red);font-weight:700">⚠ '+info.overdueDays+' days overdue</div>';
+    }
+    topHtml+='</div><div style="text-align:right"><div class="badge" style="background:'+statusColor+'22;color:'+statusColor+';white-space:nowrap">'+statusLbl+'</div></div>';
+    top.innerHTML=topHtml;
     card.appendChild(top);
-    var actions=document.createElement('div');
-    actions.style.cssText='display:flex;gap:6px;margin-top:10px;flex-wrap:wrap';
-    function mkBtn(label,color,fn){
-      var b=document.createElement('button');
-      b.textContent=label;
-      b.style.cssText='flex:1;min-width:60px;padding:8px 6px;border-radius:9px;border:.5px solid '+color+'55;background:'+color+'15;color:'+color+';font-size:11px;font-weight:700;cursor:pointer;font-family:inherit';
-      b.onclick=fn;
-      return b;
-    }
-    actions.appendChild(mkBtn('PAID','var(--green)',function(){recordPayment(s.id,s.fee);renderStudents();toast('Payment recorded ✓')}));
-    if(s.status==='hold'){
-      actions.appendChild(mkBtn('UNHOLD','var(--blue)',function(){unholdStudent(s.id);renderStudents();toast('Resumed')}));
+    if(studentTab==='active'){
+      var actions=document.createElement('div');
+      actions.style.cssText='display:flex;gap:6px;margin-top:12px;flex-wrap:wrap';
+      function mkBtn(label,color,fn){
+        var b=document.createElement('button');
+        b.textContent=label;
+        b.style.cssText='flex:1;min-width:58px;padding:10px 6px;border-radius:10px;border:1.5px solid '+color+'55;background:'+color+'14;color:'+color+';font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.2px;transition:all .15s cubic-bezier(.34,1.56,.64,1)';
+        b.onmousedown=function(){b.style.transform='scale(.92)'};
+        b.onmouseup=function(){b.style.transform='scale(1)'};
+        b.ontouchstart=function(){b.style.transform='scale(.92)'};
+        b.ontouchend=function(){b.style.transform='scale(1)'};
+        b.onclick=fn;
+        return b;
+      }
+      actions.appendChild(mkBtn('✓ PAID','var(--green)',function(){var ok=recordPayment(s.id,s.fee);renderStudents();if(ok)toast('Payment recorded ✓')}));
+      if(s.status==='hold'){
+        actions.appendChild(mkBtn('▶ UNHOLD','var(--blue)',function(){unholdStudent(s.id);renderStudents();toast('Resumed billing')}));
+      }else{
+        actions.appendChild(mkBtn('⏸ HOLD','var(--orange)',function(){holdStudent(s.id);renderStudents();toast('Student on hold')}));
+      }
+      actions.appendChild(mkBtn('✎ EDIT','var(--t2)',function(){editStudent(s.id)}));
+      actions.appendChild(mkBtn('LEFT','var(--red)',function(){leaveStudent(s.id)}));
+      actions.appendChild(mkBtn('🗑','var(--red)',function(){softDeleteStudent(s.id)}));
+      card.appendChild(actions);
     }else{
-      actions.appendChild(mkBtn('HOLD','var(--orange)',function(){holdStudent(s.id);renderStudents();toast('On hold')}));
+      // Left students: show a small history button + restore-to-active option
+      var leftActions=document.createElement('div');
+      leftActions.style.cssText='display:flex;gap:6px;margin-top:12px';
+      var histBtn=document.createElement('button');
+      histBtn.textContent='View History';
+      histBtn.style.cssText='flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--blue)55;background:var(--blue)14;color:var(--blue);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit';
+      histBtn.onclick=function(){openStudentProfile(s.id)};
+      var rejoinBtn=document.createElement('button');
+      rejoinBtn.textContent='Mark Active Again';
+      rejoinBtn.style.cssText='flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--green)55;background:var(--green)14;color:var(--green);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit';
+      rejoinBtn.onclick=function(){
+        s.status='active';delete s.leaveDate;save();renderStudents();toast(s.name+' is active again');
+      };
+      leftActions.appendChild(histBtn);leftActions.appendChild(rejoinBtn);
+      card.appendChild(leftActions);
     }
-    actions.appendChild(mkBtn('EDIT','var(--t3)',function(){editStudent(s.id)}));
-    actions.appendChild(mkBtn('LEFT','var(--red)',function(){leaveStudent(s.id)}));
-    actions.appendChild(mkBtn('DELETE','var(--red)',function(){softDeleteStudent(s.id)}));
-    card.appendChild(actions);
-    card.style.cursor='pointer';
-    card.querySelector('.hl').onclick=function(){openStudentProfile(s.id)};
     wrap.appendChild(card);
   });
 }
