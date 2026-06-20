@@ -499,6 +499,20 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
 /* ====== SCROLLBAR ====== */
 ::-webkit-scrollbar{width:0}
 
+/* ====== STUDENT COMPACT ROWS ====== */
+#students-list .hi2{margin-bottom:6px}
+.stu-row{background:var(--bg2);border-radius:12px;border:.5px solid var(--bd);margin-bottom:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.stu-row-main{display:flex;align-items:center;padding:10px 12px;gap:10px;cursor:pointer;transition:background .1s;-webkit-tap-highlight-color:transparent}
+.stu-row-main:active{background:var(--bg3)}
+.stu-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0}
+.stu-panel{border-top:.5px solid var(--bd)}
+
+/* ====== BOTTOM SHEET MODALS ====== */
+.bottom-sheet{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:200;align-items:flex-end;justify-content:center}
+.bottom-sheet-inner{background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-width:430px;border-top:.5px solid var(--bd);animation:slideUpSheet .25s cubic-bezier(.34,1.56,.64,1)}
+@keyframes slideUpSheet{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.bs-handle{width:36px;height:4px;border-radius:2px;background:var(--bd2);margin:0 auto 16px}
+
 /* ====== ANIMATIONS ====== */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .scr.on{animation:fadeIn .2s ease}
@@ -964,22 +978,46 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
 
 <!-- ===== STUDENTS ===== -->
 <div class="scr" id="s-students">
-  <div class="hdr"><div class="hbk" onclick="goBack()">←</div><div class="hi"><div class="ht">🎓 Students</div><div class="hs" id="stu-today-display">Tuition fee management</div></div><div class="ha" onclick="nav('s-student-add')">＋</div></div>
-  <div style="display:flex;gap:8px;padding:0 1.1rem .8rem">
-    <button onclick="nav('s-student-add')" style="flex:1;padding:10px;border-radius:10px;background:var(--green)15;border:1.5px solid var(--green)55;color:var(--green);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">＋ Add Student</button>
-    <button onclick="renderTrash();nav('s-student-trash')" style="flex:1;padding:10px;border-radius:10px;background:var(--bg2);border:1.5px solid var(--bd);color:var(--t3);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🗑 Trash</button>
+  <div class="hdr">
+    <div class="hbk" onclick="goBack()">←</div>
+    <div class="hi"><div class="ht">🎓 Students</div><div class="hs" id="stu-today-display">Loading...</div></div>
+    <div class="ha" onclick="openStudentSettings()" title="Settings">⚙️</div>
+    <div class="ha" onclick="nav('s-student-add')" title="Add Student">＋</div>
   </div>
-  <div class="g3" style="margin-bottom:.5rem">
-    <div class="sc"><div class="scl">This Month</div><div class="scv" id="stu-earn-month" style="font-size:15px;color:var(--green)">Rs 0</div></div>
-    <div class="sc"><div class="scl">This Year</div><div class="scv" id="stu-earn-year" style="font-size:15px;color:var(--green)">Rs 0</div></div>
-    <div class="sc"><div class="scl">All Time</div><div class="scv" id="stu-earn-total" style="font-size:15px;color:var(--accent)">Rs 0</div></div>
-  </div>
-  <div class="otog" style="margin:0 1.1rem .8rem">
+  <div class="otog" style="margin:0 1.1rem .5rem">
     <button class="obtn on" id="stu-tab-active" onclick="showStudentTab('active')">Active</button>
     <button class="obtn" id="stu-tab-left" onclick="showStudentTab('left')">Left</button>
   </div>
-  <div class="lbl" id="students-list-label">Active Students</div>
-  <div class="hw" id="students-list"></div>
+  <div class="lbl" id="students-list-label" style="padding:.4rem 1.1rem .3rem">Active Students</div>
+  <div id="students-list" style="padding:0 .7rem"></div>
+</div>
+
+<!-- Student Settings Modal -->
+<div id="stu-settings-ov" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:200;align-items:flex-end;justify-content:center">
+  <div style="background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 20px 32px;width:100%;max-width:430px;border-top:.5px solid var(--bd)">
+    <div style="width:36px;height:4px;border-radius:2px;background:var(--bd2);margin:0 auto 18px"></div>
+    <div style="font-size:16px;font-weight:800;color:var(--t);margin-bottom:16px">Student Settings</div>
+    <!-- Income summary -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+      <div style="background:var(--bg3);border-radius:12px;padding:12px;border:.5px solid var(--bd)">
+        <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;font-weight:800;margin-bottom:4px">This Month</div>
+        <div style="font-size:16px;font-weight:800;color:var(--green)" id="stu-earn-month">Rs 0</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:12px;padding:12px;border:.5px solid var(--bd)">
+        <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;font-weight:800;margin-bottom:4px">This Year</div>
+        <div style="font-size:16px;font-weight:800;color:var(--green)" id="stu-earn-year">Rs 0</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:12px;padding:12px;border:.5px solid var(--bd)">
+        <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;font-weight:800;margin-bottom:4px">All Time</div>
+        <div style="font-size:16px;font-weight:800;color:var(--accent)" id="stu-earn-total">Rs 0</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button onclick="closeStudentSettings();renderTrash();nav('s-student-trash')" style="width:100%;padding:13px;border-radius:12px;background:var(--bg3);border:.5px solid var(--bd);color:var(--t2);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px"><span style="font-size:18px">🗑</span><span>Trash</span><span style="font-size:11px;color:var(--t3);margin-left:auto" id="stu-trash-count">0 students</span></button>
+      <button onclick="closeStudentSettings();nav('s-student-add')" style="width:100%;padding:13px;border-radius:12px;background:var(--green)15;border:1.5px solid var(--green)44;color:var(--green);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px"><span style="font-size:18px">＋</span><span>Add New Student</span></button>
+      <button onclick="closeStudentSettings()" style="width:100%;padding:13px;border-radius:12px;background:var(--bg3);border:.5px solid var(--bd);color:var(--t3);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Close</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== ADD STUDENT ===== -->
@@ -3336,14 +3374,15 @@ function createStudent(data){
   return s;
 }
 
-function recordPayment(studentId,amount,dateStr){
+function recordPayment(studentId,amount,dateStr,allowSameDay){
   var s=DB.students.find(function(x){return x.id===studentId});if(!s)return false;
   var payDate=dateStr||bsFmt(bsToday());
-  if(s.payments&&s.payments.length&&s.payments[0].date===payDate){
+  // Dedup guard: block double-tap for single payments, but allow multi-month bulk pay
+  if(!allowSameDay&&s.payments&&s.payments.length&&s.payments[0].date===payDate){
     toast('Already marked PAID today for '+s.name);
     return false;
   }
-  s.payments.unshift({id:Date.now(),amount:amount||s.fee,date:payDate});
+  s.payments.unshift({id:Date.now()+Math.floor(Math.random()*1000),amount:amount||s.fee,date:payDate});
   save();
   return true;
 }
@@ -3436,6 +3475,17 @@ function saveEditedStudent(){
 
 // ---- Rendering ----
 var studentTab='active';
+function openStudentSettings(){
+  updateStudentEarnings();
+  var tc=document.getElementById('stu-trash-count');
+  if(tc)tc.textContent=(DB.deletedStudents||[]).length+' student'+(DB.deletedStudents.length!==1?'s':'')+' in trash';
+  var ov=document.getElementById('stu-settings-ov');
+  if(ov){ov.style.display='flex';}
+}
+function closeStudentSettings(){
+  var ov=document.getElementById('stu-settings-ov');
+  if(ov)ov.style.display='none';
+}
 function showStudentTab(tab){
   studentTab=tab;
   document.getElementById('stu-tab-active').classList.toggle('on',tab==='active');
@@ -3446,7 +3496,9 @@ function showStudentTab(tab){
 function updateStudentEarnings(){
   var today=bsToday();
   var monthTotal=0,yearTotal=0,allTimeTotal=0;
-  (DB.students||[]).concat(DB.deletedStudents||[]).forEach(function(s){
+  // Include ALL students (active + left + deleted) for accurate total income
+  var allStudents=(DB.students||[]).concat(DB.deletedStudents||[]);
+  allStudents.forEach(function(s){
     (s.payments||[]).forEach(function(p){
       allTimeTotal+=p.amount;
       var pd=bsParse(p.date);
@@ -3461,86 +3513,181 @@ function updateStudentEarnings(){
 function renderStudents(){
   updateStudentEarnings();
   var todayDisp=document.getElementById('stu-today-display');
-  if(todayDisp)todayDisp.textContent='Today: '+bsFmt(bsToday())+' BS · '+nepalTimeString();
+  if(todayDisp)todayDisp.textContent='Today '+bsFmt(bsToday())+' BS';
   var wrap=document.getElementById('students-list');if(!wrap)return;
   var list=(DB.students||[]).filter(function(s){
     return studentTab==='active'?s.status!=='left':s.status==='left';
   });
   if(!list.length){
-    var emptyMsg=studentTab==='active'?'No active students yet':'No students have left yet';
-    var emptyIcon=studentTab==='active'?'🎓':'👋';
-    wrap.innerHTML='<div class="empty" style="padding:2rem;text-align:center"><div style="font-size:2.5rem;margin-bottom:.5rem;opacity:.4">'+emptyIcon+'</div><div style="color:var(--t3);font-size:13px;font-weight:600">'+emptyMsg+'</div></div>';
+    wrap.innerHTML='<div class="empty" style="padding:2.5rem 1rem;text-align:center"><div style="font-size:2.5rem;margin-bottom:.5rem;opacity:.3">'+(studentTab==='active'?'🎓':'👋')+'</div><div style="color:var(--t3);font-size:13px;font-weight:600">'+(studentTab==='active'?'No active students yet':'No students have left yet')+'</div></div>';
     return;
   }
   wrap.innerHTML='';
+  // Sort: overdue first, then by due date
+  list.sort(function(a,b){
+    var ia=studentDueInfo(a),ib=studentDueInfo(b);
+    if(ia.isOverdue&&!ib.isOverdue)return -1;
+    if(!ia.isOverdue&&ib.isOverdue)return 1;
+    return ia.overdueDays>ib.overdueDays?-1:ia.daysUntilDue<ib.daysUntilDue?-1:1;
+  });
   list.forEach(function(s){
     var info=studentDueInfo(s);
-    var statusColor=s.status==='left'?'var(--t3)':s.status==='hold'?'var(--orange)':info.isOverdue?'var(--red)':'var(--green)';
-    var statusLbl=s.status==='left'?'LEFT '+(s.leaveDate||''):s.status==='hold'?'ON HOLD':info.isOverdue?info.unpaidMonths+' MO OVERDUE':'ACTIVE';
+    var isOv=info.isOverdue,isHold=s.status='hold';
+    var dueColor=isOv?'var(--red)':isHold?'var(--orange)':(info.daysUntilDue<=5?'var(--orange)':'var(--accent)');
+    var dueLabel=isOv?'⚠ '+info.overdueDays+'d OD':isHold?'HOLD':(info.daysUntilDue===0?'DUE TODAY':(info.daysUntilDue<=5?info.daysUntilDue+'d left':info.nextDue.slice(5)));
+    
+    // Compact row
     var card=document.createElement('div');
-    card.className='hi2';card.style.flexDirection='column';card.style.alignItems='stretch';
-    card.style.padding='16px';
-    card.style.transition='all .2s cubic-bezier(.34,1.56,.64,1)';
-    var top=document.createElement('div');
-    top.style.cssText='display:flex;justify-content:space-between;align-items:flex-start;width:100%;cursor:pointer';
-    top.onclick=function(){openStudentProfile(s.id)};
-    var topHtml='<div class="hl" style="gap:6px">'
-      +'<div class="hm" style="font-size:16px">'+esc(s.name)+'</div>'
-      +'<div class="hdet" style="gap:4px"><span>Fee: Rs '+fmt(s.fee)+'/mo</span></div>';
-    if(studentTab==='active'){
-      topHtml+='<div style="margin-top:4px"><span style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700">Next Due</span><br>'
-        +'<span style="font-size:19px;font-weight:900;color:'+(info.isOverdue?'var(--red)':'var(--accent)')+';letter-spacing:-.3px">'+esc(info.nextDue)+'</span></div>';
-      if(info.isOverdue)topHtml+='<div style="margin-top:3px;font-size:11px;color:var(--red);font-weight:700">⚠ '+info.overdueDays+' days overdue</div>';
-      else if(info.daysUntilDue===0)topHtml+='<div style="margin-top:3px;font-size:11px;color:var(--orange);font-weight:700">⏰ Due today</div>';
-      else topHtml+='<div style="margin-top:3px;font-size:11px;color:var(--t3);font-weight:600">'+info.daysUntilDue+' day'+(info.daysUntilDue!==1?'s':'')+' remaining</div>';
-    }
-    topHtml+='</div><div style="text-align:right"><div class="badge" style="background:'+statusColor+'22;color:'+statusColor+';white-space:nowrap">'+statusLbl+'</div></div>';
-    top.innerHTML=topHtml;
-    card.appendChild(top);
-    if(studentTab==='active'){
-      var actions=document.createElement('div');
-      actions.style.cssText='display:flex;gap:6px;margin-top:12px;flex-wrap:wrap';
-      function mkBtn(label,color,fn){
-        var b=document.createElement('button');
-        b.textContent=label;
-        b.style.cssText='flex:1;min-width:58px;padding:10px 6px;border-radius:10px;border:1.5px solid '+color+'55;background:'+color+'14;color:'+color+';font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.2px;transition:all .15s cubic-bezier(.34,1.56,.64,1)';
-        b.onmousedown=function(){b.style.transform='scale(.92)'};
-        b.onmouseup=function(){b.style.transform='scale(1)'};
-        b.ontouchstart=function(){b.style.transform='scale(.92)'};
-        b.ontouchend=function(){b.style.transform='scale(1)'};
-        b.onclick=fn;
-        return b;
-      }
-      actions.appendChild(mkBtn('✓ PAID','var(--green)',function(){var ok=recordPayment(s.id,s.fee);renderStudents();if(ok)toast('Payment recorded ✓')}));
-      if(s.status==='hold'){
-        actions.appendChild(mkBtn('▶ UNHOLD','var(--blue)',function(){unholdStudent(s.id);renderStudents();toast('Resumed billing')}));
-      }else{
-        actions.appendChild(mkBtn('⏸ HOLD','var(--orange)',function(){holdStudent(s.id);renderStudents();toast('Student on hold')}));
-      }
-      actions.appendChild(mkBtn('✎ EDIT','var(--t2)',function(){editStudent(s.id)}));
-      actions.appendChild(mkBtn('LEFT','var(--red)',function(){leaveStudent(s.id)}));
-      actions.appendChild(mkBtn('🗑','var(--red)',function(){softDeleteStudent(s.id)}));
-      card.appendChild(actions);
-    }else{
-      // Left students: show a small history button + restore-to-active option
-      var leftActions=document.createElement('div');
-      leftActions.style.cssText='display:flex;gap:6px;margin-top:12px';
-      var histBtn=document.createElement('button');
-      histBtn.textContent='View History';
-      histBtn.style.cssText='flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--blue)55;background:var(--blue)14;color:var(--blue);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit';
-      histBtn.onclick=function(){openStudentProfile(s.id)};
-      var rejoinBtn=document.createElement('button');
-      rejoinBtn.textContent='Mark Active Again';
-      rejoinBtn.style.cssText='flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--green)55;background:var(--green)14;color:var(--green);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit';
-      rejoinBtn.onclick=function(){
-        s.status='active';delete s.leaveDate;save();renderStudents();toast(s.name+' is active again');
-      };
-      leftActions.appendChild(histBtn);leftActions.appendChild(rejoinBtn);
-      card.appendChild(leftActions);
-    }
+    card.style.cssText='background:var(--bg2);border-radius:12px;border:.5px solid var(--bd);margin-bottom:6px;overflow:hidden;transition:all .2s ease;box-shadow:var(--shadow2)';
+    if(isOv)card.style.borderColor='var(--red)44';
+    if(isHold)card.style.borderColor='var(--orange)44';
+
+    // Main row — always visible
+    var main=document.createElement('div');
+    main.style.cssText='display:flex;align-items:center;padding:10px 12px;gap:10px;cursor:pointer';
+    main.onclick=function(){toggleStudentExpanded(card,s,info)};
+    
+    // Avatar circle
+    var av=document.createElement('div');
+    av.style.cssText='width:36px;height:36px;border-radius:50%;background:'+dueColor+'22;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:'+dueColor+';flex-shrink:0';
+    av.textContent=s.name.charAt(0).toUpperCase();
+    main.appendChild(av);
+
+    // Name + fee
+    var mid=document.createElement('div');mid.style.cssText='flex:1;min-width:0';
+    var nm=document.createElement('div');nm.style.cssText='font-size:14px;font-weight:700;color:var(--t);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';nm.textContent=s.name;
+    var sub=document.createElement('div');sub.style.cssText='font-size:10px;color:var(--t3);margin-top:2px;font-weight:500';
+    sub.textContent='Rs '+fmt(s.fee)+'/mo'+(s.parent?' · '+s.parent:'');
+    mid.appendChild(nm);mid.appendChild(sub);
+    main.appendChild(mid);
+
+    // Due badge
+    var badge=document.createElement('div');
+    badge.style.cssText='font-size:11px;font-weight:800;color:'+dueColor+';background:'+dueColor+'18;padding:4px 9px;border-radius:20px;white-space:nowrap;border:.5px solid '+dueColor+'44';
+    badge.textContent=dueLabel;
+    main.appendChild(badge);
+
+    // Expand chevron
+    var chev=document.createElement('div');chev.style.cssText='font-size:12px;color:var(--t4);transition:transform .2s';chev.textContent='›';
+    main.appendChild(chev);
+    card.appendChild(main);
+
+    // Expanded panel — hidden by default
+    var panel=document.createElement('div');
+    panel.style.cssText='display:none;border-top:.5px solid var(--bd)';
+    panel.dataset.panel='1';
+    buildStudentPanel(panel,s,info,card,chev);
+    card.appendChild(panel);
     wrap.appendChild(card);
   });
 }
+
+function toggleStudentExpanded(card,s,info){
+  var panel=card.querySelector('[data-panel]');
+  var chev=card.querySelector('div[style*="›"]');
+  if(!panel)return;
+  var open=panel.style.display!=='none';
+  if(open){panel.style.display='none';if(chev)chev.style.transform='';}
+  else{panel.style.display='block';if(chev)chev.style.transform='rotate(90deg)';}
+}
+
+function buildStudentPanel(panel,s,info,card,chev){
+  // Full due date row
+  var dueRow=document.createElement('div');
+  dueRow.style.cssText='padding:10px 14px 8px;background:var(--bg3)';
+  var dueColor=info.isOverdue?'var(--red)':s.status==='hold'?'var(--orange)':(info.daysUntilDue<=5?'var(--orange)':'var(--accent)');
+  dueRow.innerHTML='<div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:3px">Next Due Date</div>'
+    +'<div style="font-size:22px;font-weight:900;color:'+dueColor+';letter-spacing:-.5px">'+esc(info.nextDue)+'</div>'
+    +(info.isOverdue?'<div style="font-size:11px;color:var(--red);font-weight:700;margin-top:3px">⚠ '+info.overdueDays+' days overdue · '+info.unpaidMonths+' month'+(info.unpaidMonths>1?'s':'')+' unpaid</div>':
+      info.daysUntilDue===0?'<div style="font-size:11px;color:var(--orange);font-weight:700;margin-top:3px">⏰ Due today</div>':
+      '<div style="font-size:11px;color:var(--t3);font-weight:600;margin-top:3px">'+info.daysUntilDue+' day'+(info.daysUntilDue!==1?'s':''+' remaining')+'</div>');
+  panel.appendChild(dueRow);
+
+  if(s.status!=='left'){
+    // Action buttons
+    var acts=document.createElement('div');acts.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:8px 10px';
+    function mkBtn2(label,color,fn){
+      var b=document.createElement('button');b.textContent=label;
+      b.style.cssText='padding:9px 4px;border-radius:9px;border:1.5px solid '+color+'55;background:'+color+'14;color:'+color+';font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s cubic-bezier(.34,1.56,.64,1)';
+      b.onmousedown=function(){b.style.transform='scale(.92)'};b.onmouseup=function(){b.style.transform=''};
+      b.ontouchstart=function(){b.style.transform='scale(.92)'};b.ontouchend=function(){b.style.transform=''};
+      b.onclick=fn;return b;
+    }
+    // Smart PAID button: shows number of months to pay if overdue
+    var paidBtn=document.createElement('button');
+    if(info.isOverdue&&info.unpaidMonths>1){
+      paidBtn.innerHTML='<div style="font-size:10px;font-weight:700">✓ PAY</div><div style="font-size:9px;opacity:.8">'+info.unpaidMonths+' months</div>';
+      paidBtn.style.cssText='padding:9px 4px;border-radius:9px;border:1.5px solid var(--green)55;background:var(--green)14;color:var(--green);font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s cubic-bezier(.34,1.56,.64,1)';
+      paidBtn.onmousedown=function(){paidBtn.style.transform='scale(.92)'};paidBtn.onmouseup=function(){paidBtn.style.transform=''};
+      paidBtn.ontouchstart=function(){paidBtn.style.transform='scale(.92)'};paidBtn.ontouchend=function(){paidBtn.style.transform=''};
+      paidBtn.onclick=function(){showPayMonthsModal(s,info)};
+    }else{
+      paidBtn.textContent='✓ PAID';
+      paidBtn.style.cssText='padding:9px 4px;border-radius:9px;border:1.5px solid var(--green)55;background:var(--green)14;color:var(--green);font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s cubic-bezier(.34,1.56,.64,1)';
+      paidBtn.onmousedown=function(){paidBtn.style.transform='scale(.92)'};paidBtn.onmouseup=function(){paidBtn.style.transform=''};
+      paidBtn.ontouchstart=function(){paidBtn.style.transform='scale(.92)'};paidBtn.ontouchend=function(){paidBtn.style.transform=''};
+      paidBtn.onclick=function(){var ok=recordPayment(s.id,s.fee);renderStudents();if(ok)toast('✓ Paid Rs '+fmt(s.fee))};
+    }
+    acts.appendChild(paidBtn);
+    if(s.status==='hold'){
+      acts.appendChild(mkBtn2('▶ UNHOLD','var(--blue)',function(){unholdStudent(s.id);renderStudents();toast('Resumed billing')}));
+    }else{
+      acts.appendChild(mkBtn2('⏸ HOLD','var(--orange)',function(){holdStudent(s.id);renderStudents();toast('On hold')}));
+    }
+    acts.appendChild(mkBtn2('✎ EDIT','var(--t2)',function(){editStudent(s.id)}));
+    acts.appendChild(mkBtn2('PROFILE','var(--accent)',function(){openStudentProfile(s.id)}));
+    acts.appendChild(mkBtn2('LEFT','var(--red)',function(){leaveStudent(s.id)}));
+    acts.appendChild(mkBtn2('🗑 DEL','var(--red)',function(){softDeleteStudent(s.id)}));
+    panel.appendChild(acts);
+  }else{
+    var la=document.createElement('div');la.style.cssText='display:flex;gap:6px;padding:8px 10px';
+    var hb=document.createElement('button');hb.textContent='View Profile';
+    hb.style.cssText='flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent)55;background:var(--accent)14;color:var(--accent);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit';
+    hb.onclick=function(){openStudentProfile(s.id)};
+    var rb=document.createElement('button');rb.textContent='Make Active';
+    rb.style.cssText='flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--green)55;background:var(--green)14;color:var(--green);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit';
+    rb.onclick=function(){s.status='active';delete s.leaveDate;save();renderStudents();toast(s.name+' is active again')};
+    la.appendChild(hb);la.appendChild(rb);panel.appendChild(la);
+  }
+}
+
+// ================================================================
+// PAY MULTIPLE MONTHS MODAL
+// ================================================================
+var payModalStudent=null;
+function showPayMonthsModal(s,info){
+  payModalStudent=s;
+  var ov=document.getElementById('pay-months-ov');if(!ov)return;
+  document.getElementById('pay-modal-name').textContent=s.name;
+  var list=document.getElementById('pay-months-list');
+  list.innerHTML='';
+  // Build options: 1 month, 2 months... up to unpaidMonths
+  for(var m=1;m<=Math.max(info.unpaidMonths,1);m++){
+    var mo=m;
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:.5px solid var(--bd);cursor:pointer;transition:background .1s';
+    row.onmouseenter=function(){this.style.background='var(--bg3)'};
+    row.onmouseleave=function(){this.style.background=''};
+    row.innerHTML='<div><div style="font-size:14px;font-weight:700;color:var(--t)">'+mo+' Month'+(mo>1?'s ':' ')+'</div><div style="font-size:11px;color:var(--t3)">Rs '+fmt(s.fee*mo)+'</div></div><div class="badge" style="background:var(--green)22;color:var(--green)">Pay Now</div>';
+    row.onclick=(function(months){return function(){recordMultiPayment(months);closePayModal()}})(mo);
+    list.appendChild(row);
+  }
+  ov.style.display='flex';
+}
+function recordMultiPayment(months){
+  var s=payModalStudent;if(!s)return;
+  var today=bsFmt(bsToday());
+  for(var m=0;m<months;m++){
+    // Each payment gets today's date with slightly different timestamp to avoid dedup
+    // allowSameDay=true so all months can be recorded on the same date
+    recordPayment(s.id,s.fee,today,true);
+  }
+  renderStudents();toast('✓ '+months+' month'+(months>1?'s ':' ')+'paid — Rs '+fmt(s.fee*months));
+}
+function closePayModal(){
+  var ov=document.getElementById('pay-months-ov');if(ov)ov.style.display='none';
+}
+
 
 function renderTrash(){
   var wrap=document.getElementById('trash-list');if(!wrap)return;
@@ -3806,7 +3953,8 @@ var currentCustomCatId=null;
 function openCustomCategory(catId){
   var cat=DB.customCats.find(function(c){return c.id===catId});if(!cat)return;
   currentCustomCatId=catId;
-  document.getElementById('ccs-title').textContent=cat.icon+' '+cat.name;
+  try{sessionStorage.setItem('lem_currentCatId',catId)}catch(e){}
+  document.getElementById('ccs-title').textContent=esc(cat.icon)+' '+esc(cat.name);
   document.getElementById('ccs-settings-btn').onclick=function(){openEditCategoryForm(catId)};
   buildCustomCatEntryForm(cat);
   renderCustomCatHistory(cat);
@@ -3845,7 +3993,7 @@ function buildCustomCatEntryForm(cat){
   var saveBtn=document.createElement('button');saveBtn.className='sbtn';
   saveBtn.style.background=cat.color;saveBtn.style.color='#fff';
   saveBtn.textContent='Save Entry';
-  saveBtn.onclick=function(){saveCustomCatEntry(cat)};
+  saveBtn.onclick=function(){saveCustomCatEntry(cat.id)};
   wrap.appendChild(saveBtn);
 }
 function calcCcTotal(){
@@ -3854,7 +4002,10 @@ function calcCcTotal(){
   var totEl=document.getElementById('ccs-total');
   if(totEl)totEl.value=(qty*rate)||'';
 }
-function saveCustomCatEntry(cat){
+function saveCustomCatEntry(catId){
+  // Always fetch FRESH from DB so we never write to a stale object
+  var cat=DB.customCats.find(function(c){return c.id===catId});
+  if(!cat){toast('Category not found');return}
   var name=document.getElementById('ccs-name').value.trim();
   var total=parseFloat(document.getElementById('ccs-total').value)||0;
   if(!name||total<=0){toast('Enter a description and amount');return}
@@ -3879,10 +4030,12 @@ function saveCustomCatEntry(cat){
   buildCustomCatDashboardTiles();
   toast('Entry saved ✓');
 }
-function renderCustomCatHistory(cat){
+function renderCustomCatHistory(catOrId){
+  var cat=typeof catOrId==='object'?catOrId:DB.customCats.find(function(c){return c.id===catOrId});
+  if(!cat)return;
   var wrap=document.getElementById('ccs-history');if(!wrap)return;
   if(!cat.entries||!cat.entries.length){
-    wrap.innerHTML='<div class="empty" style="padding:2rem;text-align:center"><div style="font-size:2.5rem;margin-bottom:.5rem;opacity:.4">'+esc(cat.icon)+'</div><div style="color:var(--t3);font-size:13px;font-weight:600">No entries yet</div></div>';
+    wrap.innerHTML='<div class="empty" style="padding:2rem;text-align:center"><div style="font-size:2.5rem;margin-bottom:.5rem;opacity:.4">'+esc(cat.icon)+'</div><div style="color:var(--t3);font-size:13px;font-weight:600">No entries yet. Add your first one above!</div></div>';
     return;
   }
   wrap.innerHTML='';
@@ -3894,15 +4047,29 @@ function renderCustomCatHistory(cat){
     row.innerHTML='<div class="hl"><div class="hd">'+esc(e.date)+'</div><div class="hm">'+esc(e.name)+'</div>'
       +(detailParts.length?'<div class="hdet">'+detailParts.map(function(d){return '<span>'+esc(d)+'</span>'}).join('')+'</div>':'')+'</div>'
       +'<div class="hr2"><div class="ha2" style="color:'+cat.color+'">Rs '+fmt(e.total)+'</div>'
-      +'<div class="hac"><div class="eb del" onclick="deleteCcEntry(\''+cat.id+'\','+e.id+')">🗑</div></div></div>';
+      +'<div class="hac"><div class="eb edit" id="ecc'+e.id+'">✏️</div><div class="eb del" id="dcc'+e.id+'">🗑</div></div></div>';
+    row.querySelector('#ecc'+e.id).onclick=function(){openCcEntryEdit(cat,e)};
+    row.querySelector('#dcc'+e.id).onclick=function(){deleteCcEntry(cat.id,e.id)};
     wrap.appendChild(row);
   });
 }
+
 function deleteCcEntry(catId,entryId){
   var cat=DB.customCats.find(function(c){return c.id===catId});if(!cat)return;
   if(!confirm('Delete this entry?'))return;
-  cat.entries=cat.entries.filter(function(e){return e.id!==entryId});
+  cat.entries=(cat.entries||[]).filter(function(e){return e.id!==entryId});
   save();renderCustomCatHistory(cat);buildCustomCatDashboardTiles();toast('Deleted');
+}
+
+// Inline edit for custom category entries
+function openCcEntryEdit(cat,e){
+  var newName=prompt('Item name:',e.name);if(newName===null)return;
+  var newAmt=prompt('Amount (Rs):',e.total);if(newAmt===null)return;
+  var freshCat=DB.customCats.find(function(c){return c.id===cat.id});if(!freshCat)return;
+  var entry=freshCat.entries.find(function(x){return x.id===e.id});if(!entry)return;
+  entry.name=newName.trim()||entry.name;
+  entry.total=parseFloat(newAmt)||entry.total;
+  save();renderCustomCatHistory(freshCat);buildCustomCatDashboardTiles();toast('Updated ✓');
 }
 
 function initCustomCategories(){
@@ -3947,6 +4114,19 @@ function init(){
       var savedGid=sessionStorage.getItem('lem_currentGroupId');
       if(savedGid){currentGroupId=parseInt(savedGid);var g=getGroup();if(g)renderGroupDash(g);}
     }
+    if(cur==='s-custom-cat-screen'){
+      var savedCatId=sessionStorage.getItem('lem_currentCatId');
+      if(savedCatId&&DB.customCats){
+        var foundCat=DB.customCats.find(function(c){return c.id===savedCatId});
+        if(foundCat){
+          document.getElementById('ccs-title').textContent=esc(foundCat.icon)+' '+esc(foundCat.name);
+          document.getElementById('ccs-settings-btn').onclick=function(){openEditCategoryForm(foundCat.id)};
+          buildCustomCatEntryForm(foundCat);
+          renderCustomCatHistory(foundCat);
+        }
+      }
+    }
+    if(cur==='s-students'){renderStudents();}
     if(CAN_NAV)try{history.replaceState({s:cur},'',cur==='s-dash'?location.pathname:'#'+cur)}catch(e){}
   }else{
     if(CAN_NAV)try{history.replaceState({s:'s-dash'},'',location.pathname+location.search)}catch(e){}
@@ -3955,5 +4135,20 @@ function init(){
 }
 init();
 </script>
+
+<!-- ===== PAY MONTHS MODAL ===== -->
+<div id="pay-months-ov" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:300;align-items:flex-end;justify-content:center">
+  <div style="background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-width:430px;border-top:.5px solid var(--bd);overflow:hidden">
+    <div style="padding:16px 18px 8px;border-bottom:.5px solid var(--bd)">
+      <div style="width:36px;height:4px;border-radius:2px;background:var(--bd2);margin:0 auto 14px"></div>
+      <div style="font-size:16px;font-weight:800;color:var(--t)">Pay for <span id="pay-modal-name"></span></div>
+      <div style="font-size:11px;color:var(--t3);margin-top:3px">Select how many months to pay</div>
+    </div>
+    <div id="pay-months-list" style="max-height:55vh;overflow-y:auto"></div>
+    <div style="padding:12px 14px 28px">
+      <button onclick="closePayModal()" style="width:100%;padding:12px;border-radius:12px;background:var(--bg3);border:.5px solid var(--bd);color:var(--t3);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
