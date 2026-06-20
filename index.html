@@ -545,6 +545,28 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'SF Pro Dis
     </div>
   </div>
 </div>
+<!-- Inline edit overlay -->
+<div class="ov" id="inline-edit-ov" style="z-index:310">
+  <div class="ovb" style="width:300px;text-align:left">
+    <div class="ovt" id="ie-title" style="margin-bottom:14px">Edit</div>
+    <div id="ie-fields"></div>
+    <div class="ovbtns" style="margin-top:12px">
+      <button class="cno" onclick="closeInlineEdit()">Cancel</button>
+      <button class="cdel" style="background:var(--accent);border-color:var(--accent)" onclick="saveInlineEdit()">Save</button>
+    </div>
+  </div>
+</div>
+<!-- Generic confirm modal (replaces browser confirm()) -->
+<div class="ov" id="gen-confirm-ov">
+  <div class="ovb">
+    <div class="ovt" id="gen-confirm-title">Are you sure?</div>
+    <div class="ovs" id="gen-confirm-msg"></div>
+    <div class="ovbtns">
+      <button class="cno" onclick="closeGenConfirm()">Cancel</button>
+      <button class="cdel" id="gen-confirm-ok" onclick="closeGenConfirm()">OK</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <!-- LOCK -->
 <div class="lscr" id="lscr">
@@ -1301,6 +1323,48 @@ function toast(msg,dur=2200){
 // ============================================================
 let delId=null,delMod=null;
 function askDel(id,mod){delId=id;delMod=mod;document.getElementById('ov').classList.add('on')}
+var _genConfirmCb=null;
+function showConfirm(msg,onYes,yesLabel){
+  var ov=document.getElementById('gen-confirm-ov');if(!ov)return;
+  document.getElementById('gen-confirm-msg').textContent=msg;
+  var okBtn=document.getElementById('gen-confirm-ok');
+  okBtn.textContent=yesLabel||'Confirm';
+  // Set danger color for destructive actions
+  if(msg.toLowerCase().includes('delete')||msg.toLowerCase().includes('trash')||msg.toLowerCase().includes('left')||msg.toLowerCase().includes('clear')){
+    okBtn.className='cdel';
+  }else{okBtn.className='cdel';okBtn.style.background='var(--accent)'}
+  _genConfirmCb=onYes;
+  ov.classList.add('on');
+}
+var _ieOnSave=null,_ieFields=[];
+function showInlineEdit(opts){
+  var ov=document.getElementById('inline-edit-ov');if(!ov)return;
+  document.getElementById('ie-title').textContent=opts.title||'Edit';
+  var wrap=document.getElementById('ie-fields');wrap.innerHTML='';
+  _ieFields=opts.fields||[];_ieOnSave=opts.onSave;
+  _ieFields.forEach(function(f){
+    var div=document.createElement('div');div.className='fl';div.style.marginBottom='10px';
+    var lbl=document.createElement('label');lbl.textContent=f.label;div.appendChild(lbl);
+    var inp=document.createElement('input');inp.type=f.type||'text';inp.id='ie-field-'+f.id;inp.value=f.value||'';
+    inp.style.cssText='width:100%;background:var(--bg3);border:1.5px solid var(--bd2);border-radius:10px;padding:11px 13px;font-size:14px;color:var(--t);outline:none;font-family:inherit';
+    inp.onfocus=function(){this.style.borderColor='var(--accent)'};inp.onblur=function(){this.style.borderColor='var(--bd2)'};
+    div.appendChild(inp);wrap.appendChild(div);
+  });
+  ov.classList.add('on');
+  if(_ieFields.length)setTimeout(function(){var el=document.getElementById('ie-field-'+_ieFields[0].id);if(el)el.focus()},100);
+}
+function closeInlineEdit(){document.getElementById('inline-edit-ov').classList.remove('on');_ieOnSave=null}
+function saveInlineEdit(){
+  var vals={};
+  _ieFields.forEach(function(f){var el=document.getElementById('ie-field-'+f.id);vals[f.id]=el?el.value:''});
+  document.getElementById('inline-edit-ov').classList.remove('on');
+  var cb=_ieOnSave;_ieOnSave=null;if(cb)cb(vals);
+}
+function closeGenConfirm(){
+  document.getElementById('gen-confirm-ov').classList.remove('on');
+  var cb=_genConfirmCb;_genConfirmCb=null;
+  if(cb)cb();
+}
 function closeOv(){document.getElementById('ov').classList.remove('on');delId=null;delMod=null}
 function confirmDel(){
   if(!delId||!delMod)return;
@@ -2340,7 +2404,7 @@ function doRestore(){
   var input=document.createElement('input');input.type='file';input.accept='.json';
   input.onchange=function(ev){var file=ev.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){try{var data=JSON.parse(e.target.result);if(data.DB){['bike','food','clothes','friends','others'].forEach(function(k){if(data.DB&&data.DB[k])DB[k]=data.DB[k]});if(data.budgets)Object.keys(data.budgets).forEach(function(k){if(BUD[k])BUD[k].b=data.budgets[k]});save();['bike','food','clothes','friends','others'].forEach(function(m){refresh(m)});updateDash();toast('Data restored')}}catch(err){toast('Restore failed')}};reader.readAsText(file)};input.click();
 }
-function clearAll(){if(confirm('Delete ALL data? Cannot be undone.')){['bike','food','clothes','friends','others'].forEach(function(m){DB[m]=[]});save();['bike','food','clothes','friends','others'].forEach(function(m){refresh(m)});updateDash();toast('All data cleared')}}
+function clearAll(){showConfirm('Delete ALL expense data? This cannot be undone.',function(){['bike','food','clothes','friends','others','splits','students','deletedStudents','customCats'].forEach(function(k){if(Array.isArray(DB[k]))DB[k]=[]});PREF.customCatOrder=[];save();['bike','food','clothes','friends','others'].forEach(function(m){refresh(m)});updateDash();buildCustomCatDashboardTiles();toast('All data cleared')})}
 function changeLock(){LOCK.type=null;LOCK.pin=null;LOCK.credential=null;LOCK.secQuestion=null;LOCK.secAnswer=null;LOCK.recoveryCode=null;LOCK.recoveryCodeHash=null;LOCK.salt=null;save();initLock()}
 
 // ============================================================
@@ -2353,7 +2417,7 @@ function editEntry(id,mod){
   else if(mod==='kitchen'){var p={solid:'ks',liquid:'kl',packet:'kp'}[e.type];openKF(e.type);if(p){document.getElementById(p+'-name').value=e.name||'';document.getElementById(p+'-unit').value=e.unit||'';document.getElementById(p+'-qty').value=e.qty||'';document.getElementById(p+'-rate').value=e.rate||'';document.getElementById(p+'-total').value=e.total||''}}
   else if(mod==='food'){openFF(e.cat);document.getElementById('f-'+e.cat+'-name').value=e.name||'';document.getElementById('f-'+e.cat+'-qty').value=e.qty||'';document.getElementById('f-'+e.cat+'-rate').value=e.rate||'';document.getElementById('f-'+e.cat+'-total').value=e.total||''}
   else if(mod==='clothes'){document.getElementById('c-name').value=e.name||'';document.getElementById('c-qty').value=e.qty||'';document.getElementById('c-price').value=e.price||'';document.getElementById('c-total').value=e.total||'';document.getElementById('c-season').value=e.season||'general';document.getElementById('c-shop').value=e.shop||''}
-  else if(mod==='friends'){if(e.type==='spent'){openFrF('spent');document.getElementById('frs-name').value=e.friend||'';document.getElementById('frs-desc').value=e.desc||'';document.getElementById('frs-amt').value=e.amount||''}}
+  else if(mod==='friends'){if(e.type==='spent'){nav('s-friends');setTimeout(function(){openFrF('spent');document.getElementById('frs-name').value=e.friend||'';document.getElementById('frs-desc').value=e.desc||'';document.getElementById('frs-amt').value=e.amount||''},50)}}
   else if(mod==='others'){document.getElementById('o-name').value=e.name||'';document.getElementById('o-cat').value=e.cat||'other';document.getElementById('o-amt').value=e.amount||''}
   refresh(mod);updateDash();
 }
@@ -2543,7 +2607,6 @@ function verifyRecCode(){
   });
 }
 function emergencyReset(){
-  if(!confirm('Remove the lock? Your data stays safe.')){return}
   LOCK.type='none';LOCK.pin=null;LOCK.credential=null;LOCK.secQuestion=null;LOCK.secAnswer=null;LOCK.recoveryCode=null;LOCK.recoveryCodeHash=null;LOCK.salt=null;
   save();unlockApp();toast('Lock removed. Data safe.');
 }
@@ -2963,7 +3026,13 @@ function addExpense(){
 
 function deleteExpense(eid){
   var g=getGroup();if(!g)return;
-  if(!confirm('Delete this expense?'))return;
+  showConfirm('Delete this expense?',function(){
+    var g2=getGroup();if(!g2)return;
+    g2.expenses=(g2.expenses||[]).filter(function(e){return e.id!==eid});
+    save();renderGroupDash(g2);renderExpensesTab(g2);updateDash();toast('Deleted');
+  });return;
+}
+function _dummy_delExp(){
   g.expenses=(g.expenses||[]).filter(function(e){return e.id!==eid});
   save();renderGroupDash(g);renderExpensesTab(g);updateDash();toast('Deleted');
 }
@@ -3143,7 +3212,13 @@ function checkJoinLink(){
 // ===== DELETE GROUP =====
 function deleteCurrentGroup(){
   var g=getGroup();if(!g)return;
-  if(!confirm('Delete "'+g.name+'" and all its data? Cannot be undone.'))return;
+  var gn=g.name;
+  showConfirm('Delete "'+gn+'" and all its data?',function(){
+    DB.splits=DB.splits.filter(function(x){return x.id!==currentGroupId});
+    save();goBack();renderSplitGroups();updateDash();toast('Group deleted');
+  });return;
+}
+function _dummy_deleteGroup(){
   DB.splits=DB.splits.filter(function(x){return x.id!==currentGroupId});
   save();goBack();renderSplitGroups();updateDash();toast('Group deleted');
 }
@@ -3343,34 +3418,34 @@ function bsDiffDaysSafe(a,b){
 // Given a student's anchor date (join date, or last hold-resume date) and "today",
 // returns: {dueDates:[...], unpaidCount, overdueDays, nextDue}
 function studentDueInfo(s){
-  var anchorStr=s.billingAnchor||s.joinDate;
-  var anchor=bsParse(anchorStr);
+  var anchor=bsParse(s.billingAnchor||s.joinDate);
   var today=bsToday();
-  var paidCount=(s.payments||[]).length;
-  // Generate due dates forward from anchor (first due = anchor+1 month, etc.)
-  var dues=[];
-  var cursor=anchor;
-  var i=1;
-  while(true){
-    cursor=bsAddMonths(anchor,i);
-    if(bsCompare(cursor,today)>0 && i> (paidCount+1)) break;
-    dues.push(bsFmt(cursor));
-    if(dues.length>240)break; // 20yr safety cap
-    if(bsCompare(cursor,today)>0)break;
-    i++;
-  }
-  var unpaidDues=dues.slice(paidCount); // dues not yet covered by recorded payments
-  var nextDueObj=bsAddMonths(anchor,paidCount+1);
-  var overdueDays=0;
-  var daysUntilDue=0;
+  var payments=s.payments||[];
+  // Sum up months paid so far
+  var paidMonths=payments.reduce(function(sum,p){return sum+(p.months||1)},0);
+  // nextDue = anchor + paidMonths + 1 month
+  var nextDueObj=bsAddMonths(anchor,paidMonths+1);
+  // Paid-up-to = anchor + paidMonths (the date they are paid through)
+  var paidUpto=bsAddMonths(anchor,paidMonths);
+  var overdueDays=0,daysUntilDue=0,unpaidMonths=0;
   if(bsCompare(nextDueObj,today)<0){
     overdueDays=bsDiffDaysSafe(nextDueObj,today);
+    // Count how many full months are unpaid
+    var i=paidMonths+1;
+    while(true){
+      var d=bsAddMonths(anchor,i);
+      if(bsCompare(d,today)>0)break;
+      unpaidMonths++;i++;
+      if(i>240)break;
+    }
   }else{
     daysUntilDue=bsDiffDaysSafe(today,nextDueObj);
   }
   return {
     nextDue:bsFmt(nextDueObj),
-    unpaidMonths:Math.max(0,unpaidDues.length-(bsCompare(nextDueObj,today)>0?1:0)),
+    paidUpto:bsFmt(paidUpto),
+    paidMonths:paidMonths,
+    unpaidMonths:unpaidMonths,
     overdueDays:overdueDays,
     daysUntilDue:daysUntilDue,
     isOverdue:overdueDays>0
@@ -3396,15 +3471,28 @@ function createStudent(data){
   return s;
 }
 
-function recordPayment(studentId,amount,dateStr,allowSameDay){
+function recordPayment(studentId,amount,dateStr,months,note){
+  // months: how many months this payment covers (default 1)
+  // dateStr: date of payment (default today BS)
+  // Returns false if duplicate on same date for same months count
   var s=DB.students.find(function(x){return x.id===studentId});if(!s)return false;
   var payDate=dateStr||bsFmt(bsToday());
-  // Dedup guard: block double-tap for single payments, but allow multi-month bulk pay
-  if(!allowSameDay&&s.payments&&s.payments.length&&s.payments[0].date===payDate){
-    toast('Already marked PAID today for '+s.name);
-    return false;
-  }
-  s.payments.unshift({id:Date.now()+Math.floor(Math.random()*1000),amount:amount||s.fee,date:payDate});
+  var mo=Math.max(1,parseInt(months)||1);
+  var anchor=bsParse(s.billingAnchor||s.joinDate);
+  var alreadyPaid=(s.payments||[]).reduce(function(sum,p){return sum+(p.months||1)},0);
+  var coveredFrom=bsFmt(bsAddMonths(anchor,alreadyPaid));
+  var coveredTo=bsFmt(bsAddMonths(anchor,alreadyPaid+mo));
+  var payment={
+    id:Date.now()+Math.floor(Math.random()*9999),
+    amount:(amount||s.fee)*mo,
+    date:payDate,
+    months:mo,
+    coveredFrom:coveredFrom,
+    coveredTo:coveredTo
+  };
+  if(note)payment.note=note;
+  if(!s.payments)s.payments=[];
+  s.payments.unshift(payment);
   save();
   return true;
 }
@@ -3447,19 +3535,21 @@ function unholdStudent(studentId,resumeDateStr){
 
 function leaveStudent(studentId){
   var s=DB.students.find(function(x){return x.id===studentId});if(!s)return;
-  if(!confirm('Mark '+s.name+' as LEFT? They will move to the Left tab. Full payment and hold history stays accessible there.'))return;
-  s.status='left';
-  s.leaveDate=bsFmt(bsToday());
-  save();renderStudents();toast(s.name+' marked as left');
+  var sn=s.name;
+  showConfirm('Mark '+sn+' as LEFT? History stays in the Left tab.',function(){
+    var st2=DB.students.find(function(x){return x.id===studentId});if(!st2)return;
+    st2.status='left';st2.leaveDate=bsFmt(bsToday());
+    save();renderStudents();toast(sn+' marked as left');
+  });
 }
 
 function softDeleteStudent(studentId){
-  var idx=DB.students.findIndex(function(x){return x.id===studentId});if(idx<0)return;
-  if(!confirm('Move this student to Trash? You can restore later.'))return;
-  var s=DB.students.splice(idx,1)[0];
-  s.deletedAt=new Date().toISOString();
-  DB.deletedStudents.unshift(s);
-  save();renderStudents();toast('Moved to Trash');
+  var s=DB.students.find(function(x){return x.id===studentId});if(!s)return;
+  showConfirm('Move '+s.name+' to Trash?',function(){
+    var i=DB.students.findIndex(function(x){return x.id===studentId});if(i<0)return;
+    var st=DB.students.splice(i,1)[0];st.deletedAt=new Date().toISOString();
+    DB.deletedStudents.unshift(st);save();renderStudents();toast('Moved to Trash');
+  });
 }
 function restoreStudent(studentId){
   var idx=DB.deletedStudents.findIndex(function(x){return x.id===studentId});if(idx<0)return;
@@ -3469,9 +3559,11 @@ function restoreStudent(studentId){
   save();renderStudents();renderTrash();toast('Restored');
 }
 function permanentDeleteStudent(studentId){
-  if(!confirm('Permanently delete this student? This CANNOT be undone.'))return;
-  DB.deletedStudents=DB.deletedStudents.filter(function(x){return x.id!==studentId});
-  save();renderTrash();toast('Permanently deleted');
+  var s=(DB.deletedStudents||[]).find(function(x){return x.id===studentId});if(!s)return;
+  showConfirm('Permanently delete '+s.name+'? Cannot be undone.',function(){
+    DB.deletedStudents=DB.deletedStudents.filter(function(x){return x.id!==studentId});
+    save();renderTrash();toast('Permanently deleted');
+  });
 }
 
 function editStudent(studentId){
@@ -3602,7 +3694,7 @@ function buildStudentRow(wrap,s){
       pb.onclick=function(e){e.stopPropagation();showPayMonthsModal(s,info)};
     }else{
       pb.textContent='✓ PAID';
-      pb.onclick=function(e){e.stopPropagation();var ok=recordPayment(s.id,s.fee);renderStudents();if(ok)toast('✓ Rs '+fmt(s.fee)+' paid')};
+      pb.onclick=function(e){e.stopPropagation();recordPayment(s.id,s.fee,null,1);renderStudents();toast('✓ Rs '+fmt(s.fee)+' paid')};
     }
     qb.appendChild(pb);
 
@@ -3691,25 +3783,49 @@ function showPayMonthsModal(s,info){
   document.getElementById('pay-modal-name').textContent=s.name;
   var list=document.getElementById('pay-months-list');
   list.innerHTML='';
-  var months=Math.max(info.unpaidMonths,1);
-  for(var m=1;m<=months;m++){
-    var mo=m;
+  // Header: paid-through info
+  var anchor=bsParse(s.billingAnchor||s.joinDate);
+  var paid=info.paidMonths||0;
+  var header=document.createElement('div');
+  header.style.cssText='padding:10px 14px;background:var(--bg3);border-bottom:.5px solid var(--bd)';
+  header.innerHTML='<div style="font-size:10px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Paid through <span style="color:var(--green)">'+esc(info.paidUpto)+'</span></div>'
+    +(info.isOverdue?'<div style="font-size:11px;color:var(--red);font-weight:700;margin-top:2px">'+info.unpaidMonths+' month'+(info.unpaidMonths!==1?'s':'')+' overdue · '+info.overdueDays+' days</div>':'');
+  list.appendChild(header);
+  function addRow(label,sublabel,months,color){
     var row=document.createElement('div');
-    row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--bd);cursor:pointer;transition:background .1s';
+    row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:.5px solid var(--bd);cursor:pointer;transition:background .1s;-webkit-tap-highlight-color:transparent';
     row.ontouchstart=function(){this.style.background='var(--bg3)'};row.ontouchend=function(){this.style.background=''};
     row.onmouseenter=function(){this.style.background='var(--bg3)'};row.onmouseleave=function(){this.style.background=''};
-    var isAll=(mo===months&&months>1);
-    var allTag2=isAll?' (all overdue)':'';
-    row.innerHTML='<div><div style="font-size:14px;font-weight:700;color:var(--t)">'+mo+' Month'+(mo>1?'s':'')+allTag2+'</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Rs '+fmt(s.fee*mo)+'</div></div><div class="badge" style="background:var(--green)22;color:var(--green)">Pay ›</div>';
-    row.onclick=(function(months){return function(){recordMultiPayment(months);closePayModal()}})(mo);
+    row.innerHTML='<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t)">'+esc(label)+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">'+esc(sublabel)+'</div></div>'
+      +'<div style="font-size:12px;font-weight:800;color:'+color+';background:'+color+'18;padding:5px 11px;border-radius:20px;border:.5px solid '+color+'44;white-space:nowrap">Rs '+fmt(s.fee*months)+'</div>';
+    row.onclick=(function(m){return function(){recordMultiPayment(m);closePayModal()}})(months);
     list.appendChild(row);
+  }
+  // Overdue options
+  var totalOv=Math.max(info.unpaidMonths,1);
+  for(var m=1;m<=totalOv;m++){
+    var fromDate=bsFmt(bsAddMonths(anchor,paid+(m-1)));
+    var toDate=bsFmt(bsAddMonths(anchor,paid+m));
+    var lbl=m===1?'1 Month':m+' Months'+(m===totalOv&&m>1?' (clear all)':'');
+    addRow(lbl,fromDate+' → '+toDate,m,'var(--red)');
+  }
+  // Advance payment options
+  var sep=document.createElement('div');sep.style.cssText='padding:7px 14px;background:var(--bg3);border-bottom:.5px solid var(--bd)';
+  sep.innerHTML='<div style="font-size:9px;color:var(--t3);font-weight:800;text-transform:uppercase;letter-spacing:.5px">💎 Pay in Advance</div>';
+  list.appendChild(sep);
+  for(var a=1;a<=3;a++){
+    var baseMo=totalOv+a;
+    var aFrom=bsFmt(bsAddMonths(anchor,paid+totalOv));
+    var aTo=bsFmt(bsAddMonths(anchor,paid+totalOv+a));
+    addRow('Clear overdue + '+a+' month'+(a>1?'s':'')+' advance',aFrom+' → '+aTo,baseMo,'var(--accent)');
   }
   ov.style.display='flex';
 }
+
 function recordMultiPayment(months){
   var s=payModalStudent;if(!s)return;
   var d=bsFmt(bsToday());
-  for(var m=0;m<months;m++)recordPayment(s.id,s.fee,d,true);
+  recordPayment(s.id,s.fee,d,months);
   renderStudents();toast('✓ '+months+' month'+(months>1?'s':'')+' paid · Rs '+fmt(s.fee*months));
 }
 function closePayModal(){
@@ -3766,7 +3882,7 @@ function openStudentProfile(studentId){
       if(info.isOverdue&&info.unpaidMonths>1){
         strip.appendChild(mkAS('PAY '+info.unpaidMonths+'mo','var(--green)',function(){showPayMonthsModal(s,info)}));
       }else{
-        strip.appendChild(mkAS('✓ PAID','var(--green)',function(){var ok=recordPayment(s.id,s.fee);renderStudents();if(ok)toast('✓ Rs '+fmt(s.fee)+' paid')}));
+        strip.appendChild(mkAS('✓ PAID','var(--green)',function(){recordPayment(s.id,s.fee,null,1);renderStudents();toast('✓ Rs '+fmt(s.fee)+' paid')}));
       }
       if(s.status==='hold'){
         strip.appendChild(mkAS('▶ RESUME','var(--blue)',function(){unholdStudent(s.id);renderStudents();openStudentProfile(s.id);toast('Billing resumed')}));
@@ -3787,8 +3903,14 @@ function openStudentProfile(studentId){
   var payWrap=document.getElementById('sp-payments');
   payWrap.innerHTML=(s.payments||[]).length?'':'<div class="empty">No payments yet</div>';
   (s.payments||[]).forEach(function(p){
-    var r=document.createElement('div');r.style.cssText='display:flex;justify-content:space-between;padding:8px 0;border-bottom:.5px solid var(--bd);font-size:13px';
-    r.innerHTML='<span style="color:var(--t2)">'+esc(p.date)+'</span><span style="font-weight:700;color:var(--green)">Paid Rs '+fmt(p.amount)+'</span>';
+    var r=document.createElement('div');r.style.cssText='padding:10px 0;border-bottom:.5px solid var(--bd)';
+    var mos=p.months||1;
+    r.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+      +'<div><div style="font-size:13px;color:var(--t);font-weight:700">Paid Rs '+fmt(p.amount)+'</div>'
+      +'<div style="font-size:10px;color:var(--t3);margin-top:3px">'+(p.coveredFrom?'<span style="color:var(--green)">'+esc(p.coveredFrom)+'</span> → <span style="color:var(--green)">'+esc(p.coveredTo)+'</span>':'On '+esc(p.date))+'</div></div>'
+      +'<div style="text-align:right;flex-shrink:0;margin-left:10px"><div style="font-size:10px;color:var(--green);font-weight:800;background:var(--green)18;padding:3px 9px;border-radius:10px;border:.5px solid var(--green)44">'+mos+' month'+(mos!==1?'s':'')+'</div>'
+      +'<div style="font-size:10px;color:var(--t3);margin-top:3px">'+esc(p.date)+'</div></div>'
+      +'</div>';
     payWrap.appendChild(r);
   });
   var holdWrap=document.getElementById('sp-holds');
@@ -3933,14 +4055,13 @@ function deleteCustomCategory(){
   if(!editingCustomCatId)return;
   var cat=DB.customCats.find(function(c){return c.id===editingCustomCatId});
   if(!cat)return;
-  if(!confirm('Delete "'+cat.name+'" and all its entries? This cannot be undone.'))return;
-  DB.customCats=DB.customCats.filter(function(c){return c.id!==editingCustomCatId});
-  PREF.customCatOrder=PREF.customCatOrder.filter(function(id){return id!==editingCustomCatId});
-  save();
-  buildCustomCatDashboardTiles();
-  buildCustomCatSettingsList();
-  goBack();goBack();
-  toast('Category deleted');
+  var cn2=cat.name;
+  showConfirm('Delete "'+cn2+'" and all its entries?',function(){
+    DB.customCats=DB.customCats.filter(function(cc){return cc.id!==editingCustomCatId});
+    PREF.customCatOrder=(PREF.customCatOrder||[]).filter(function(id){return id!==editingCustomCatId});
+    save();buildCustomCatDashboardTiles();buildCustomCatSettingsList();
+    goBack();goBack();toast('Category deleted');
+  });
 }
 
 function toggleCustomCatVisible(catId){
@@ -4120,20 +4241,29 @@ function renderCustomCatHistory(catOrId){
 
 function deleteCcEntry(catId,entryId){
   var cat=DB.customCats.find(function(c){return c.id===catId});if(!cat)return;
-  if(!confirm('Delete this entry?'))return;
-  cat.entries=(cat.entries||[]).filter(function(e){return e.id!==entryId});
-  save();renderCustomCatHistory(cat);buildCustomCatDashboardTiles();toast('Deleted');
+  showConfirm('Delete this entry?',function(){
+    var freshCat=DB.customCats.find(function(x){return x.id===catId});if(!freshCat)return;
+    freshCat.entries=(freshCat.entries||[]).filter(function(e){return e.id!==entryId});
+    save();renderCustomCatHistory(freshCat);buildCustomCatDashboardTiles();toast('Deleted');
+  });
 }
 
 // Inline edit for custom category entries
 function openCcEntryEdit(cat,e){
-  var newName=prompt('Item name:',e.name);if(newName===null)return;
-  var newAmt=prompt('Amount (Rs):',e.total);if(newAmt===null)return;
-  var freshCat=DB.customCats.find(function(c){return c.id===cat.id});if(!freshCat)return;
-  var entry=freshCat.entries.find(function(x){return x.id===e.id});if(!entry)return;
-  entry.name=newName.trim()||entry.name;
-  entry.total=parseFloat(newAmt)||entry.total;
-  save();renderCustomCatHistory(freshCat);buildCustomCatDashboardTiles();toast('Updated ✓');
+  showInlineEdit({
+    title:'Edit Entry',
+    fields:[
+      {label:'Item Name',id:'ieName',value:e.name,type:'text'},
+      {label:'Amount (Rs)',id:'ieAmt',value:e.total,type:'number'}
+    ],
+    onSave:function(vals){
+      var freshCat=DB.customCats.find(function(c){return c.id===cat.id});if(!freshCat)return;
+      var entry=freshCat.entries.find(function(x){return x.id===e.id});if(!entry)return;
+      entry.name=(vals.ieName||'').trim()||entry.name;
+      entry.total=parseFloat(vals.ieAmt)||entry.total;
+      save();renderCustomCatHistory(freshCat);buildCustomCatDashboardTiles();toast('Updated ✓');
+    }
+  });
 }
 
 function initCustomCategories(){
